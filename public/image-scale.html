@@ -2,96 +2,157 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>IronLinks | Model Viewer Test</title>
+  <title>IronLinks | Image-Based Placement</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Google Model Viewer -->
+  <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+  </script>
+
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
-      text-align: center;
+    #imageWrapper {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
     }
-    h1 {
-      margin: 20px 0;
+
+    #imageCanvas {
+      display: block;
+      max-width: 100%;
+      border: 1px solid #ccc;
     }
-    #viewer {
-      width: 100%;
-      height: 500px;
+
+    model-viewer {
+      position: absolute;
+      display: none;
+      background: transparent;
+      pointer-events: none;
+
+      /* IMPORTANT */
+      --poster-color: transparent;
+    }
+
+    button {
+      margin-top: 10px;
     }
   </style>
-
-  <!-- Three.js -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 
 <body>
 
-<h1>Model Viewer Test</h1>
-<p>If you can see the gate below, your model is working.</p>
+<header>
+  <h1>Image-Based Design Placement</h1>
+  <nav>
+    <a href="products.html">← Back to Products</a>
+  </nav>
+</header>
 
-<div id="viewer"></div>
+<section class="product-section">
+  <p>
+    Upload a photo and tap the four corners of the opening.
+    The model will be fitted exactly to the selected area.
+  </p>
+
+  <input type="file" id="imageInput" accept="image/*">
+  <br><br>
+
+  <div id="imageWrapper">
+    <canvas id="imageCanvas"></canvas>
+
+    <!-- MODEL OVERLAY -->
+<model-viewer
+  id="gateViewer"
+  src="models/window.glb"
+  camera-controls
+  exposure="1"
+  shadow-intensity="1"
+  camera-orbit="0deg 90deg auto"
+  field-of-view="20deg"
+  interaction-prompt="none">
+</model-viewer>
+
+  </div>
+
+  <br>
+  <button id="placeBtn">Place Model</button>
+</section>
 
 <script>
-  // Scene
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf0f0f0);
+const imageInput = document.getElementById("imageInput");
+const canvas = document.getElementById("imageCanvas");
+const ctx = canvas.getContext("2d");
+const viewer = document.getElementById("gateViewer");
 
-  // Camera
-  const camera = new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth / 500,
-    0.1,
-    1000
-  );
-  camera.position.set(0, 1.5, 5);
+let img = new Image();
+let corners = [];
 
-  // Renderer
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, 500);
-  document.getElementById("viewer").appendChild(renderer.domElement);
+imageInput.addEventListener("change", (e) => {
+  img.src = URL.createObjectURL(e.target.files[0]);
+  img.onload = () => {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    corners = [];
+    viewer.style.display = "none";
+  };
+});
 
-  // Lights
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
-  hemiLight.position.set(0, 20, 0);
-  scene.add(hemiLight);
+canvas.addEventListener("click", (e) => {
+  if (corners.length >= 4) return;
 
-  const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-  dirLight.position.set(5, 10, 7);
-  scene.add(dirLight);
+  corners.push({ x: e.offsetX, y: e.offsetY });
 
-  // Load model
-  const loader = new THREE.GLTFLoader();
-  loader.load(
-    "models/window.glb",
-    (gltf) => {
-      const model = gltf.scene;
-      scene.add(model);
+  ctx.fillStyle = "red";
+  ctx.beginPath();
+  ctx.arc(e.offsetX, e.offsetY, 6, 0, Math.PI * 2);
+  ctx.fill();
 
-      // Normalize scale
-      model.scale.set(1, 1, 1);
-      model.position.set(0, 0, 0);
-
-      // Optional rotation
-      model.rotation.y = Math.PI;
-
-      console.log("✅ Model loaded successfully");
-    },
-    undefined,
-    (error) => {
-      console.error("❌ Model failed to load:", error);
+  if (corners.length === 4) {
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(corners[0].x, corners[0].y);
+    for (let i = 1; i < 4; i++) {
+      ctx.lineTo(corners[i].x, corners[i].y);
     }
-  );
-
-  // Animate
-  function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+    ctx.closePath();
+    ctx.stroke();
   }
-  animate();
+});
+
+document.getElementById("placeBtn").addEventListener("click", () => {
+  if (corners.length !== 4) {
+    alert("Please select all four corners.");
+    return;
+  }
+
+  // Compute bounding box of the 4 corners
+  const xs = corners.map(p => p.x);
+  const ys = corners.map(p => p.y);
+
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+
+  const width = maxX - minX;
+  const height = maxY - minY;
+
+  // EXACT pixel-fit overlay
+  viewer.style.display = "block";
+  viewer.style.left = `${minX}px`;
+  viewer.style.top = `${minY}px`;
+  viewer.style.width = `${width}px`;
+  viewer.style.height = `${height}px`;
+  viewer.style.pointerEvents = "auto"; // 🔥 ENABLE ROTATION
+
+  // Force re-frame of model
+  viewer.updateFraming?.();
+});
 </script>
 
 </body>
 </html>
-

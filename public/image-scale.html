@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IronLinks | Image-Based Placement</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Google Model Viewer -->
+  <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+  </script>
+
+  <style>
+    #imageWrapper {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+    }
+
+    #imageCanvas {
+      display: block;
+      max-width: 100%;
+      border: 1px solid #ccc;
+    }
+
+    model-viewer {
+      position: absolute;
+      display: none;
+      background: transparent;
+      pointer-events: none;
+
+      /* IMPORTANT */
+      --poster-color: transparent;
+    }
+
+    button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Image-Based Design Placement</h1>
+  <nav>
+    <a href="products.html">← Back to Products</a>
+  </nav>
+</header>
+
+<section class="product-section">
+  <p>
+    Upload a photo and tap the four corners of the opening.
+    The model will be fitted exactly to the selected area.
+  </p>
+
+  <input type="file" id="imageInput" accept="image/*">
+  <br><br>
+
+  <div id="imageWrapper">
+    <canvas id="imageCanvas"></canvas>
+
+    <!-- MODEL OVERLAY -->
+<model-viewer
+  id="gateViewer"
+  src="models/window.glb"
+  camera-controls
+  exposure="1"
+  shadow-intensity="1"
+  camera-orbit="0deg 90deg auto"
+  field-of-view="20deg"
+  interaction-prompt="none">
+</model-viewer>
+
+  </div>
+
+  <br>
+  <button id="placeBtn">Place Model</button>
+</section>
+
+<script>
+const imageInput = document.getElementById("imageInput");
+const canvas = document.getElementById("imageCanvas");
+const ctx = canvas.getContext("2d");
+const viewer = document.getElementById("gateViewer");
+
+let img = new Image();
+let corners = [];
+
+imageInput.addEventListener("change", (e) => {
+  img.src = URL.createObjectURL(e.target.files[0]);
+  img.onload = () => {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    corners = [];
+    viewer.style.display = "none";
+  };
+});
+
+canvas.addEventListener("click", (e) => {
+  if (corners.length >= 4) return;
+
+  corners.push({ x: e.offsetX, y: e.offsetY });
+
+  ctx.fillStyle = "red";
+  ctx.beginPath();
+  ctx.arc(e.offsetX, e.offsetY, 6, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (corners.length === 4) {
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(corners[0].x, corners[0].y);
+    for (let i = 1; i < 4; i++) {
+      ctx.lineTo(corners[i].x, corners[i].y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+});
+
+document.getElementById("placeBtn").addEventListener("click", () => {
+  if (corners.length !== 4) {
+    alert("Please select all four corners.");
+    return;
+  }
+
+  // Compute bounding box of the 4 corners
+  const xs = corners.map(p => p.x);
+  const ys = corners.map(p => p.y);
+
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+
+  const width = maxX - minX;
+  const height = maxY - minY;
+
+  // EXACT pixel-fit overlay
+  viewer.style.display = "block";
+  viewer.style.left = `${minX}px`;
+  viewer.style.top = `${minY}px`;
+  viewer.style.width = `${width}px`;
+  viewer.style.height = `${height}px`;
+  viewer.style.pointerEvents = "auto"; // 🔥 ENABLE ROTATION
+
+  // Force re-frame of model
+  viewer.updateFraming?.();
+});
+</script>
+
+</body>
+</html>

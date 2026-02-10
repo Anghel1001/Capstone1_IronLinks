@@ -4,109 +4,102 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book Consultation | IronLinks</title>
+
 <link rel="stylesheet" href="style.css">
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+<style>
+#calendar {
+  max-width: 900px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.fc-day.available:hover {
+  background: #e8f5e9;
+  cursor: pointer;
+}
+
+.fc-day.selected {
+  background: #c8e6c9 !important;
+}
+</style>
 </head>
+
 <body>
 
 <header>
   <h1>Iron <span>works</span></h1>
-  <nav>
-    <a href="index.html">about us</a> |
-    <a href="products.html">products</a> |
-    <a href="book.html">book now</a> |
-    <a href="#contact">contact</a>
-  </nav>
 </header>
 
 <section class="book-section">
   <h2>Book a Consultation</h2>
 
+  <div id="calendar"></div>
+
   <form id="bookingForm" class="book-form" enctype="multipart/form-data">
-
-    <!-- Name: letters, spaces, and dots (for middle initials) -->
-    <input
-      type="text"
-      name="name"
-      placeholder="Full Name"
-      pattern="[A-Za-z.\s]+"
-      title="Letters, spaces, and dots only (e.g., Juan D. Cruz)"
-      required
-    >
-
-    <!-- Email -->
+    <input type="text" name="name" placeholder="Full Name" required>
     <input type="email" name="email" placeholder="Email" required>
+    <input type="tel" name="phone" placeholder="09XXXXXXXXX" required>
 
-    <!-- Phone: 11 digits starting with 09 -->
-    <input
-      type="tel"
-      name="phone"
-      placeholder="Phone Number (09XXXXXXXXX)"
-      pattern="09[0-9]{9}"
-      title="11 digits starting with 09"
-      required
-    >
-
-    <!-- Date -->
     <input type="date" name="date" id="dateInput" required>
-
-    <!-- Time -->
     <input type="time" name="time" required>
 
-    <!-- Additional request -->
-    <textarea name="request" placeholder="Additional Details"></textarea>
-
-    <!-- Optional image -->
-    <label>
-      Upload reference image (optional)
-      <input type="file" name="reference_image" accept="image/*">
-    </label>
-
+    <textarea name="request" placeholder="Additional details"></textarea>
     <button type="submit">Submit Booking</button>
   </form>
-
-  <p id="statusMessage" style="color:red;"></p>
 </section>
 
 <script>
-  // Prevent past dates
+document.addEventListener('DOMContentLoaded', async () => {
   const dateInput = document.getElementById('dateInput');
-  dateInput.min = new Date().toISOString().split('T')[0];
 
-  const form = document.getElementById('bookingForm');
-  const statusMessage = document.getElementById('statusMessage');
+  const res = await fetch('/bookings');
+  const bookings = res.ok ? await res.json() : [];
+  const bookedDates = bookings.map(b => b.date);
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    statusMessage.textContent = '';
+  const calendar = new FullCalendar.Calendar(
+    document.getElementById('calendar'),
+    {
+      initialView: 'dayGridMonth',
+      height: 'auto',
+      validRange: {
+        start: new Date().toISOString().split('T')[0]
+      },
 
-    const formData = new FormData(form);
+      events: bookedDates.map(d => ({
+        start: d,
+        allDay: true,
+        display: 'background',
+        backgroundColor: '#f8d7da'
+      })),
 
-    try {
-      const res = await fetch('/book', {
-        method: 'POST',
-        body: formData
-      });
+      dayCellDidMount(info) {
+        if (!bookedDates.includes(info.dateStr)) {
+          info.el.classList.add('available');
+        }
+      },
 
-      const text = await res.text();
-      if (!res.ok) throw new Error(text);
+      dateClick(info) {
+        if (bookedDates.includes(info.dateStr)) return;
 
-      alert("Booking successful!");
-      form.reset();
-    } catch (err) {
-      statusMessage.textContent = err.message;
+        document
+          .querySelectorAll('.fc-day.selected')
+          .forEach(d => d.classList.remove('selected'));
+
+        info.dayEl.classList.add('selected');
+        dateInput.value = info.dateStr;
+      }
     }
-  });
-</script>
+  );
 
-<footer id="contact">
-  <div class="footer-container">
-    <h2>Contact Us</h2>
-    <p>📍 Address</p>
-    <p>📱 Phone Number</p>
-    <p>📧 Email</p>
-    <p class="footer-note">© 2025 IronLinks. All Rights Reserved.</p>
-  </div>
-</footer>
+  calendar.render();
+});
+</script>
 
 </body>
 </html>

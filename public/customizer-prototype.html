@@ -2,176 +2,177 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Custom Ironwork Designer</title>
+<title>IronLinks | Image-Based Placement</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Model Viewer -->
+<script type="module"
+  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
 
 <style>
 body {
   font-family: Arial, sans-serif;
-  display: flex;
-  gap: 40px;
-  padding: 30px;
+  padding: 20px;
 }
 
-.controls {
-  width: 320px;
+#imageWrapper {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
 }
 
-label {
+#imageCanvas {
   display: block;
-  margin-top: 15px;
+  max-width: 100%;
+  border: 1px solid #ccc;
 }
 
-svg {
-  background: #f4f4f4;
-  border: 1px solid #aaa;
+model-viewer {
+  position: absolute;
+  display: none;
+  background: transparent;
+  pointer-events: none;
 }
 
-.price {
-  margin-top: 20px;
-  font-weight: bold;
-  font-size: 18px;
+#resetBtn {
+  display: inline-block !important;
+}
+
+button {
+  margin-top: 10px;
+  margin-right: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: none;
 }
 </style>
 </head>
 <body>
 
-<div class="controls">
-  <h2>Custom Ironwork Design</h2>
+<h2>Image-Based Design Placement</h2>
 
-  <label>
-    Pattern Style
-    <select id="pattern">
-      <option value="linear">Linear</option>
-      <option value="curve">Curved</option>
-      <option value="wave">Wave</option>
-      <option value="cross">Cross Hatch</option>
-      <option value="organic">Organic Flow</option>
-    </select>
-  </label>
+<input type="file" id="imageInput" accept="image/*">
+<br><br>
 
-  <label>
-    Density
-    <input type="range" id="density" min="6" max="24" value="12">
-  </label>
+<div id="imageWrapper">
+  <canvas id="imageCanvas"></canvas>
 
-  <label>
-    Complexity
-    <input type="range" id="complexity" min="1" max="10" value="5">
-  </label>
-
-  <label>
-    Symmetry
-    <select id="symmetry">
-      <option value="none">None</option>
-      <option value="vertical">Vertical</option>
-      <option value="full">Full</option>
-    </select>
-  </label>
-
-  <label>
-    Material
-    <select id="material">
-      <option value="hollow">Hollow Bar</option>
-      <option value="solid">Solid Bar</option>
-    </select>
-  </label>
-
-  <label>
-    <input type="checkbox" id="motorized">
-    Motorized
-  </label>
-
-  <div class="price" id="price">Estimated Price: ₱0</div>
+  <model-viewer
+    id="gateViewer"
+    src="models/wall.glb"
+    camera-controls
+    exposure="1"
+    shadow-intensity="1"
+    camera-orbit="0deg 90deg auto"
+    field-of-view="20deg"
+    interaction-prompt="none">
+  </model-viewer>
 </div>
 
-<svg id="canvas" width="520" height="320"></svg>
+<br>
+<button id="placeBtn">Place Model</button>
+<button id="resetBtn" type="button">Reset Corners</button>
 
 <script>
-const svg = document.getElementById("canvas");
+const imageInput = document.getElementById("imageInput");
+const canvas = document.getElementById("imageCanvas");
+const ctx = canvas.getContext("2d");
+const viewer = document.getElementById("gateViewer");
+const placeBtn = document.getElementById("placeBtn");
+const resetBtn = document.getElementById("resetBtn");
 
-const inputs = {
-  pattern: document.getElementById("pattern"),
-  density: document.getElementById("density"),
-  complexity: document.getElementById("complexity"),
-  symmetry: document.getElementById("symmetry"),
-  material: document.getElementById("material"),
-  motorized: document.getElementById("motorized")
-};
+let img = new Image();
+let corners = [];
 
-function rand(min, max) {
-  return Math.random() * (max - min) + min;
-}
+/* =========================
+   IMAGE LOAD
+   ========================= */
+imageInput.addEventListener("change", (e) => {
+  img.src = URL.createObjectURL(e.target.files[0]);
 
-function draw() {
-  svg.innerHTML = "";
+  img.onload = () => {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    corners = [];
+    viewer.style.display = "none";
+    viewer.style.pointerEvents = "none";
+  };
+});
 
-  const density = +inputs.density.value;
-  const complexity = +inputs.complexity.value;
-  const pattern = inputs.pattern.value;
-  const symmetry = inputs.symmetry.value;
-  const material = inputs.material.value;
+/* =========================
+   CORNER SELECTION
+   ========================= */
+canvas.addEventListener("click", (e) => {
 
-  const stroke = material === "solid" ? 5 : 3;
-  const color = material === "solid" ? "#222" : "#555";
+  if (corners.length >= 4) return;
 
-  let paths = [];
+  corners.push({ x: e.offsetX, y: e.offsetY });
 
-  for (let i = 0; i < density; i++) {
-    let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    let d = "";
+  ctx.fillStyle = "red";
+  ctx.beginPath();
+  ctx.arc(e.offsetX, e.offsetY, 6, 0, Math.PI * 2);
+  ctx.fill();
 
-    let x = rand(20, 500);
-    let y = rand(20, 300);
-
-    d += `M ${x} ${y} `;
-
-    for (let c = 0; c < complexity; c++) {
-      let cx = rand(0, 520);
-      let cy = rand(0, 320);
-      let ex = rand(0, 520);
-      let ey = rand(0, 320);
-      d += `Q ${cx} ${cy}, ${ex} ${ey} `;
+  if (corners.length === 4) {
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(corners[0].x, corners[0].y);
+    for (let i = 1; i < 4; i++) {
+      ctx.lineTo(corners[i].x, corners[i].y);
     }
+    ctx.closePath();
+    ctx.stroke();
+  }
+});
 
-    path.setAttribute("d", d);
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke", color);
-    path.setAttribute("stroke-width", stroke);
-    paths.push(path);
-    svg.appendChild(path);
+/* =========================
+   PLACE MODEL
+   ========================= */
+placeBtn.addEventListener("click", () => {
+
+  if (corners.length !== 4) {
+    alert("Please select all four corners.");
+    return;
   }
 
-  if (symmetry !== "none") {
-    paths.forEach(p => {
-      let clone = p.cloneNode();
-      let transform =
-        symmetry === "vertical"
-        ? "scale(-1,1) translate(-520,0)"
-        : "scale(-1,-1) translate(-520,-320)";
-      clone.setAttribute("transform", transform);
-      svg.appendChild(clone);
-    });
-  }
+  const xs = corners.map(p => p.x);
+  const ys = corners.map(p => p.y);
 
-  calculatePrice(density, complexity, material);
-}
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
 
-function calculatePrice(d, c, material) {
-  let base = 25000;
-  base += d * 1200;
-  base += c * 2500;
-  if (material === "solid") base *= 1.25;
-  if (inputs.motorized.checked) base += 30000;
+  const width = maxX - minX;
+  const height = maxY - minY;
 
-  document.getElementById("price").textContent =
-    `Estimated Price: ₱${Math.round(base * 0.9)} – ₱${Math.round(base * 1.2)}`;
-}
+  viewer.style.display = "block";
+  viewer.style.left = `${minX}px`;
+  viewer.style.top = `${minY}px`;
+  viewer.style.width = `${width}px`;
+  viewer.style.height = `${height}px`;
 
-Object.values(inputs).forEach(i =>
-  i.addEventListener("input", draw)
-);
+  viewer.style.pointerEvents = "auto"; // allow rotation
 
-draw();
+  viewer.cameraOrbit = "0deg 90deg auto";
+});
+
+/* =========================
+   RESET CORNERS
+   ========================= */
+resetBtn.addEventListener("click", () => {
+
+  corners = [];
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+
+  viewer.style.display = "none";
+  viewer.style.pointerEvents = "none";
+});
 </script>
 
 </body>

@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>IronLinks | Image-Based Placement</title>
+<title>Image Placement Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Model Viewer -->
 <script type="module"
   src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
 </script>
@@ -16,82 +15,57 @@ body {
   padding: 20px;
 }
 
-#imageWrapper {
-  position: relative;
-  display: inline-block;
-  max-width: 100%;
-}
-
-#imageCanvas {
+canvas {
+  border: 1px solid black;
   display: block;
-  max-width: 100%;
-  border: 1px solid #ccc;
 }
 
-model-viewer {
+#viewer {
   position: absolute;
   display: none;
-  background: transparent;
   pointer-events: none;
-}
-
-#resetBtn {
-  display: inline-block !important;
-}
-
-button {
-  margin-top: 10px;
-  margin-right: 10px;
-  padding: 8px 12px;
-  cursor: pointer;
-  display: none;
 }
 </style>
 </head>
 <body>
 
-<h2>Image-Based Design Placement</h2>
+<h2>Image Placement</h2>
 
 <input type="file" id="imageInput" accept="image/*">
 <br><br>
 
-<div id="imageWrapper">
-  <canvas id="imageCanvas"></canvas>
+<div id="wrapper" style="position:relative; display:inline-block;">
+  <canvas id="canvas"></canvas>
 
   <model-viewer
-    id="gateViewer"
+    id="viewer"
     src="models/wall.glb"
     camera-controls
     exposure="1"
     shadow-intensity="1"
-    camera-orbit="0deg 90deg auto"
-    field-of-view="20deg"
-    interaction-prompt="none">
+    style="background:transparent;">
   </model-viewer>
 </div>
 
-<br>
+<br><br>
+
 <button id="placeBtn">Place Model</button>
-<button id="resetBtn" type="button">Reset Corners</button>
+<button id="resetBtn">Reset Corners</button>
 
 <script>
-const imageInput = document.getElementById("imageInput");
-const canvas = document.getElementById("imageCanvas");
+const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const viewer = document.getElementById("gateViewer");
-const placeBtn = document.getElementById("placeBtn");
-const resetBtn = document.getElementById("resetBtn");
+const imageInput = document.getElementById("imageInput");
+const viewer = document.getElementById("viewer");
 
 let img = new Image();
 let corners = [];
 
-/* =========================
-   IMAGE LOAD
-   ========================= */
-imageInput.addEventListener("change", (e) => {
+/* IMAGE LOAD */
+imageInput.addEventListener("change", function(e) {
   img.src = URL.createObjectURL(e.target.files[0]);
 
-  img.onload = () => {
+  img.onload = function() {
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0, 0);
@@ -101,10 +75,8 @@ imageInput.addEventListener("change", (e) => {
   };
 });
 
-/* =========================
-   CORNER SELECTION
-   ========================= */
-canvas.addEventListener("click", (e) => {
+/* CORNER SELECTION */
+canvas.addEventListener("click", function(e) {
 
   if (corners.length >= 4) return;
 
@@ -112,29 +84,26 @@ canvas.addEventListener("click", (e) => {
 
   ctx.fillStyle = "red";
   ctx.beginPath();
-  ctx.arc(e.offsetX, e.offsetY, 6, 0, Math.PI * 2);
+  ctx.arc(e.offsetX, e.offsetY, 5, 0, Math.PI * 2);
   ctx.fill();
 
   if (corners.length === 4) {
     ctx.strokeStyle = "red";
-    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(corners[0].x, corners[0].y);
-    for (let i = 1; i < 4; i++) {
-      ctx.lineTo(corners[i].x, corners[i].y);
-    }
+    ctx.lineTo(corners[1].x, corners[1].y);
+    ctx.lineTo(corners[2].x, corners[2].y);
+    ctx.lineTo(corners[3].x, corners[3].y);
     ctx.closePath();
     ctx.stroke();
   }
 });
 
-/* =========================
-   PLACE MODEL
-   ========================= */
-placeBtn.addEventListener("click", () => {
+/* PLACE MODEL */
+document.getElementById("placeBtn").addEventListener("click", function() {
 
   if (corners.length !== 4) {
-    alert("Please select all four corners.");
+    alert("Select 4 corners first.");
     return;
   }
 
@@ -146,30 +115,20 @@ placeBtn.addEventListener("click", () => {
   const minY = Math.min(...ys);
   const maxY = Math.max(...ys);
 
-  const width = maxX - minX;
-  const height = maxY - minY;
-
   viewer.style.display = "block";
-  viewer.style.left = `${minX}px`;
-  viewer.style.top = `${minY}px`;
-  viewer.style.width = `${width}px`;
-  viewer.style.height = `${height}px`;
+  viewer.style.left = minX + "px";
+  viewer.style.top = minY + "px";
+  viewer.style.width = (maxX - minX) + "px";
+  viewer.style.height = (maxY - minY) + "px";
 
-  viewer.style.pointerEvents = "auto"; // allow rotation
-
-  viewer.cameraOrbit = "0deg 90deg auto";
+  viewer.style.pointerEvents = "auto";
 });
 
-/* =========================
-   RESET CORNERS
-   ========================= */
-resetBtn.addEventListener("click", () => {
-
+/* RESET */
+document.getElementById("resetBtn").addEventListener("click", function() {
   corners = [];
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, 0);
-
   viewer.style.display = "none";
   viewer.style.pointerEvents = "none";
 });

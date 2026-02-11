@@ -18,8 +18,57 @@
   border-radius: 14px;
 }
 
-.highlight {
-  background: #fff3cd !important;
+.pending-list {
+  max-width: 1100px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+}
+
+.pending-card {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.pending-card h3 {
+  margin-bottom: 8px;
+}
+
+.pending-details {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.pending-details strong {
+  color: #000;
+}
+
+.pending-actions {
+  margin-top: 12px;
+}
+
+.pending-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #198754;
+  color: #fff;
+  cursor: pointer;
+}
+
+.pending-actions button:hover {
+  background: #157347;
+}
+
+.img-thumb {
+  width: 100px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 </style>
 </head>
@@ -35,47 +84,88 @@
   <div id="admin-calendar"></div>
 </section>
 
+<section class="pending-list">
+  <h2>Pending Bookings</h2>
+  <div id="pendingContainer"></div>
+</section>
+
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
+async function loadAdminView() {
   const res = await fetch('/bookings');
   const bookings = await res.json();
 
-  const calendar = new FullCalendar.Calendar(
-    document.getElementById('admin-calendar'),
-    {
-      initialView: 'dayGridMonth',
-      height: 'auto',
+  // ---------- CALENDAR ----------
+  const calendarEl = document.getElementById('admin-calendar');
+  calendarEl.innerHTML = '';
 
-      events: bookings.map(b => ({
-        title: b.name,
-        start: b.date,
-        allDay: true,
-        color: '#dc3545',
-        extendedProps: b
-      })),
-
-      eventClick(info) {
-        document
-          .querySelectorAll('.fc-event')
-          .forEach(e => e.classList.remove('highlight'));
-
-        info.el.classList.add('highlight');
-      },
-
-      dateClick(info) {
-        document
-          .querySelectorAll('.fc-event')
-          .forEach(e => {
-            if (e.dataset.date === info.dateStr) {
-              e.classList.add('highlight');
-            }
-          });
-      }
-    }
-  );
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    height: 'auto',
+    events: bookings.map(b => ({
+      title: b.name,
+      start: b.date,
+      allDay: true,
+      color: b.status === 'approved' ? '#dc3545' : '#ffc107'
+    }))
+  });
 
   calendar.render();
-});
+
+  // ---------- PENDING LIST ----------
+  const pendingContainer = document.getElementById('pendingContainer');
+  pendingContainer.innerHTML = '';
+
+  const pending = bookings.filter(b => b.status === 'pending');
+
+  if (!pending.length) {
+    pendingContainer.innerHTML = '<p>No pending bookings 🎉</p>';
+    return;
+  }
+
+  pending.forEach(b => {
+    const div = document.createElement('div');
+    div.className = 'pending-card';
+
+    div.innerHTML = `
+      <h3>${b.name}</h3>
+
+      <div class="pending-details">
+        <strong>Email:</strong> ${b.email}<br>
+        <strong>Phone:</strong> ${b.phone}<br>
+        <strong>Date:</strong> ${b.date}<br>
+        <strong>Time:</strong> ${b.time}<br>
+        <strong>Request:</strong> ${b.request || '—'}
+        ${
+          b.reference_image_url
+            ? `<br><strong>Reference Image:</strong><br>
+               <a href="${b.reference_image_url}" target="_blank">
+                 <img src="${b.reference_image_url}" class="img-thumb">
+               </a>`
+            : ''
+        }
+      </div>
+
+      <div class="pending-actions">
+        <button onclick="approveBooking(${b.id})">Approve Booking</button>
+      </div>
+    `;
+
+    pendingContainer.appendChild(div);
+  });
+}
+
+// ---------- APPROVE ----------
+async function approveBooking(id) {
+  await fetch(`/bookings/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: 'approved' })
+  });
+
+  loadAdminView();
+}
+
+document.addEventListener('DOMContentLoaded', loadAdminView);
 </script>
 
 </body>

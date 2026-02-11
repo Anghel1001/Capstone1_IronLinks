@@ -1,16 +1,17 @@
-import 'dotenv/config';
+import "dotenv/config";
 import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
 import { createClient } from "@supabase/supabase-js";
 import multer from "multer";
+import OpenAI from "openai";
 
 const __dirname = path.resolve();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ============================
-// MULTER CONFIG (MEMORY)
+// MULTER CONFIG (MEMORY ONLY)
 // ============================
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -33,6 +34,13 @@ const supabase = createClient(
 );
 
 // ============================
+// OPENAI CLIENT
+// ============================
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+// ============================
 // HOME
 // ============================
 app.get("/", (req, res) => {
@@ -50,7 +58,6 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
       return res.status(400).send("Please fill in all required fields.");
     }
 
-    // Check duplicate booking
     const { data: existing = [], error: checkError } = await supabase
       .from("bookings")
       .select("*")
@@ -58,14 +65,12 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
       .eq("time", time);
 
     if (checkError) throw checkError;
-
     if (existing.length > 0) {
       return res.status(400).send("This date and time is already booked.");
     }
 
     let imageUrl = null;
 
-    // OPTIONAL IMAGE UPLOAD
     if (req.file) {
       const filePath = `bookings/${Date.now()}-${req.file.originalname}`;
 
@@ -96,7 +101,7 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
 
     res.send("Booking successful!");
   } catch (err) {
-    console.error(err);
+    console.error("❌ Booking error:", err);
     res.status(500).send(err.message);
   }
 });
@@ -137,7 +142,7 @@ app.post("/gallery", upload.single("image"), async (req, res) => {
         contentType: req.file.mimetype
       });
 
-    if (uploadError) throw uploadError;
+      if (uploadError) throw uploadError;
 
     const imageUrl = supabase.storage
       .from("gallery-images")
@@ -151,13 +156,13 @@ app.post("/gallery", upload.single("image"), async (req, res) => {
 
     res.send("Gallery image uploaded");
   } catch (err) {
-    console.error(err);
+    console.error("❌ Gallery upload error:", err);
     res.status(500).send(err.message);
   }
 });
 
 // ============================
-// GET GALLERY (INDEX + ADMIN)
+// GET GALLERY
 // ============================
 app.get("/gallery", async (req, res) => {
   const { data, error } = await supabase
@@ -192,9 +197,55 @@ app.delete("/gallery/:id", async (req, res) => {
   res.send("Gallery image deleted");
 });
 
+// =================================================
+// 🔥 OPENAI GENERATIVE DESIGN FINDER (FIXED)
+// =================================================
+app.post(
+  "/design-finder",
+  upload.single("reference_image"),
+  async (req, res) => {
+    try {
+      const { description } = req.body;
+
+      if (!description) {
+        return res.json({ success: false });
+      }
+
+      const prompt = `
+A professional, realistic wrought iron design.
+${description}.
+Front view.
+Black iron.
+Ornamental but buildable.
+White background.
+High detail.
+Concept design only.
+`;
+
+      const image = await openai.images.generate({
+        model: "gpt-image-1",
+        prompt,
+        size: "1024x1024"
+      });
+
+      // 🔥 FIX: use base64 instead of URL
+      const base64Image = image.data[0].b64_json;
+
+      res.json({
+        success: true,
+        generated_image: `data:image/png;base64,${base64Image}`
+      });
+
+    } catch (err) {
+      console.error("❌ OpenAI generation error:", err);
+      res.status(500).json({ success: false });
+    }
+  }
+);
+
 // ============================
 // SERVER RUN
 // ============================
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Custom Ironwork Designer</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  gap: 40px;
+  padding: 30px;
+}
+
+.controls {
+  width: 320px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+}
+
+svg {
+  background: #f4f4f4;
+  border: 1px solid #aaa;
+}
+
+.price {
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 18px;
+}
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <h2>Custom Ironwork Design</h2>
+
+  <label>
+    Pattern Style
+    <select id="pattern">
+      <option value="linear">Linear</option>
+      <option value="curve">Curved</option>
+      <option value="wave">Wave</option>
+      <option value="cross">Cross Hatch</option>
+      <option value="organic">Organic Flow</option>
+    </select>
+  </label>
+
+  <label>
+    Density
+    <input type="range" id="density" min="6" max="24" value="12">
+  </label>
+
+  <label>
+    Complexity
+    <input type="range" id="complexity" min="1" max="10" value="5">
+  </label>
+
+  <label>
+    Symmetry
+    <select id="symmetry">
+      <option value="none">None</option>
+      <option value="vertical">Vertical</option>
+      <option value="full">Full</option>
+    </select>
+  </label>
+
+  <label>
+    Material
+    <select id="material">
+      <option value="hollow">Hollow Bar</option>
+      <option value="solid">Solid Bar</option>
+    </select>
+  </label>
+
+  <label>
+    <input type="checkbox" id="motorized">
+    Motorized
+  </label>
+
+  <div class="price" id="price">Estimated Price: ₱0</div>
+</div>
+
+<svg id="canvas" width="520" height="320"></svg>
+
+<script>
+const svg = document.getElementById("canvas");
+
+const inputs = {
+  pattern: document.getElementById("pattern"),
+  density: document.getElementById("density"),
+  complexity: document.getElementById("complexity"),
+  symmetry: document.getElementById("symmetry"),
+  material: document.getElementById("material"),
+  motorized: document.getElementById("motorized")
+};
+
+function rand(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function draw() {
+  svg.innerHTML = "";
+
+  const density = +inputs.density.value;
+  const complexity = +inputs.complexity.value;
+  const pattern = inputs.pattern.value;
+  const symmetry = inputs.symmetry.value;
+  const material = inputs.material.value;
+
+  const stroke = material === "solid" ? 5 : 3;
+  const color = material === "solid" ? "#222" : "#555";
+
+  let paths = [];
+
+  for (let i = 0; i < density; i++) {
+    let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    let d = "";
+
+    let x = rand(20, 500);
+    let y = rand(20, 300);
+
+    d += `M ${x} ${y} `;
+
+    for (let c = 0; c < complexity; c++) {
+      let cx = rand(0, 520);
+      let cy = rand(0, 320);
+      let ex = rand(0, 520);
+      let ey = rand(0, 320);
+      d += `Q ${cx} ${cy}, ${ex} ${ey} `;
+    }
+
+    path.setAttribute("d", d);
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", color);
+    path.setAttribute("stroke-width", stroke);
+    paths.push(path);
+    svg.appendChild(path);
+  }
+
+  if (symmetry !== "none") {
+    paths.forEach(p => {
+      let clone = p.cloneNode();
+      let transform =
+        symmetry === "vertical"
+        ? "scale(-1,1) translate(-520,0)"
+        : "scale(-1,-1) translate(-520,-320)";
+      clone.setAttribute("transform", transform);
+      svg.appendChild(clone);
+    });
+  }
+
+  calculatePrice(density, complexity, material);
+}
+
+function calculatePrice(d, c, material) {
+  let base = 25000;
+  base += d * 1200;
+  base += c * 2500;
+  if (material === "solid") base *= 1.25;
+  if (inputs.motorized.checked) base += 30000;
+
+  document.getElementById("price").textContent =
+    `Estimated Price: ₱${Math.round(base * 0.9)} – ₱${Math.round(base * 1.2)}`;
+}
+
+Object.values(inputs).forEach(i =>
+  i.addEventListener("input", draw)
+);
+
+draw();
+</script>
+
+</body>
+</html>

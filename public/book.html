@@ -27,6 +27,37 @@
 .fc-day.selected {
   background: #c8e6c9 !important;
 }
+
+/* STATUS NOTE */
+.status-message {
+  margin-top: 16px;
+  font-weight: 600;
+}
+.status-pending { color: #856404; }
+.status-success { color: #155724; }
+.status-error { color: #721c24; }
+
+/* LEGEND */
+.legend {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.box {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+.box-approved { background: #f8d7da; }
+.box-pending { background: #fff3cd; }
+.box-selected { background: #c8e6c9; }
 </style>
 </head>
 
@@ -34,13 +65,28 @@
 
 <header>
   <h1>Iron <span>works</span></h1>
+  <nav>
+    <a href="index.html">about us</a> |
+    <a href="products.html">products</a> |
+    <a href="book.html">book now</a> |
+    <a href="#contact">contact</a>
+  </nav>
 </header>
 
 <section class="book-section">
   <h2>Book a Consultation</h2>
 
+  <!-- LEGEND -->
+  <div class="legend">
+    <span><div class="box box-approved"></div> Approved</span>
+    <span><div class="box box-pending"></div> Pending</span>
+    <span><div class="box box-selected"></div> Selected</span>
+  </div>
+
+  <!-- CALENDAR -->
   <div id="calendar"></div>
 
+  <!-- FORM -->
   <form id="bookingForm" class="book-form" enctype="multipart/form-data">
     <input type="text" name="name" placeholder="Full Name" required>
     <input type="email" name="email" placeholder="Email" required>
@@ -52,15 +98,32 @@
     <textarea name="request" placeholder="Additional details"></textarea>
     <button type="submit">Submit Booking</button>
   </form>
+
+  <!-- STATUS NOTE -->
+  <div id="statusMessage" class="status-message"></div>
 </section>
+
+<footer id="contact">
+  <p>© 2025 IronLinks. All Rights Reserved.</p>
+</footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   const dateInput = document.getElementById('dateInput');
+  const statusMessage = document.getElementById('statusMessage');
+  const form = document.getElementById('bookingForm');
 
+  // FETCH BOOKINGS
   const res = await fetch('/bookings');
   const bookings = res.ok ? await res.json() : [];
-  const bookedDates = bookings.map(b => b.date);
+
+  const approvedDates = bookings
+    .filter(b => b.status === 'approved')
+    .map(b => b.date);
+
+  const pendingDates = bookings
+    .filter(b => b.status === 'pending')
+    .map(b => b.date);
 
   const calendar = new FullCalendar.Calendar(
     document.getElementById('calendar'),
@@ -71,21 +134,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         start: new Date().toISOString().split('T')[0]
       },
 
-      events: bookedDates.map(d => ({
-        start: d,
-        allDay: true,
-        display: 'background',
-        backgroundColor: '#f8d7da'
-      })),
+      events: [
+        ...approvedDates.map(d => ({
+          start: d,
+          allDay: true,
+          display: 'background',
+          backgroundColor: '#f8d7da'
+        })),
+        ...pendingDates.map(d => ({
+          start: d,
+          allDay: true,
+          display: 'background',
+          backgroundColor: '#fff3cd'
+        }))
+      ],
 
       dayCellDidMount(info) {
-        if (!bookedDates.includes(info.dateStr)) {
+        if (
+          !approvedDates.includes(info.dateStr) &&
+          !pendingDates.includes(info.dateStr)
+        ) {
           info.el.classList.add('available');
         }
       },
 
       dateClick(info) {
-        if (bookedDates.includes(info.dateStr)) return;
+        if (
+          approvedDates.includes(info.dateStr) ||
+          pendingDates.includes(info.dateStr)
+        ) return;
 
         document
           .querySelectorAll('.fc-day.selected')
@@ -98,6 +175,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   );
 
   calendar.render();
+
+  // SUBMIT (PENDING FIRST)
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+
+    statusMessage.textContent = '⏳ Booking submitted. Awaiting admin approval.';
+    statusMessage.className = 'status-message status-pending';
+
+    const formData = new FormData(form);
+
+    try {
+      const submitRes = await fetch('/book', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!submitRes.ok) throw new Error();
+
+      form.reset();
+    } catch {
+      statusMessage.textContent = '❌ Booking failed. Please try again.';
+      statusMessage.className = 'status-message status-error';
+    }
+  });
 });
 </script>
 

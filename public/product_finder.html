@@ -1,19 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Design Finder | IronLinks</title>
+<meta charset="UTF-8">
+<title>Design Finder | IronLinks</title>
 
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
 
-  <!-- Google Model Viewer -->
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<style>
+/* -------------------------
+   LOCAL STYLES (SAFE)
+-------------------------- */
+.product-section {
+  padding: 60px 10%;
+}
+
+.product-container {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.product-image {
+  flex: 1;
+  min-width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  background: #fafafa;
+  text-align: center;
+}
+
+.product-details {
+  flex: 1;
+  min-width: 300px;
+}
+
+.product-details label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.product-details textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 10px;
+  margin-top: 5px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.product-details input[type="file"] {
+  margin-top: 8px;
+}
+
+.quote-btn {
+  margin-top: 20px;
+  padding: 12px 25px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.quote-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #eee;
+  border-top: 6px solid #000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 30px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.disclaimer {
+  font-size: 12px;
+  color: #777;
+  margin-top: 10px;
+}
+</style>
 </head>
 
 <body>
-
 
 <header>
   <h1>Iron <span>works</span></h1>
@@ -25,100 +103,103 @@
   </nav>
 </header>
 
-
 <section class="product-section">
-  <h2>Design Finder</h2>
-    
-    <div class="product-nav">
-      <button onclick="location.href='products.html'">Gates</button>
-      <button onclick="location.href='product_grills.html'">Grills</button>
-      <button onclick="location.href='product_railings.html'">Railings</button>
-      <button class="active" onclick="location.href='product_finder.html'">Design Finder</button>
-    </div>   
-
-  <p class="section-desc">
-    Upload a sketch or describe your preferred design,<br>
-    IronLinks will find the closest matching gate design.<br><br>
-  </p>
+  <h2>Custom Ironwork Design Finder</h2>
 
   <div class="product-container">
 
-    <!-- Product Image and 3D/AR View -->
+    <!-- RESULT / IMAGE -->
     <div class="product-image">
-
-      <!-- Placeholder 3D Model (hidden by default) -->
-      <model-viewer
-        id="finder3D"
-        src="models/wall.glb"
-        alt="Design Finder 3D Result"
-        camera-controls
-        auto-rotate
-        ar
-        ar-modes="webxr scene-viewer quick-look"
-        style="display: none; width: 100%; height: 400px;"
-      ></model-viewer>
-
-      <p id="placeholderText">
-  🧩 No design generated yet<br><br>
-  Upload a sketch or describe your idea to preview a matching design.
-</p>
-
+      <div id="result">
+        🧩 No design generated yet
+      </div>
     </div>
 
-    <!-- Design Input Section -->
+    <!-- INPUTS -->
     <div class="product-details">
 
-      <h3>Input Your Design</h3>
-
-      <label>Upload a sketch (optional)</label>
-      <input type="file" id="sketchUpload" accept="image/*">
+      <label>Upload reference image (optional)</label>
+      <input type="file" id="referenceImage" accept="image/*">
 
       <label>Describe your design</label>
-      <textarea id="designText" placeholder="Example: double swing iron gate with floral patterns..."></textarea>
+      <textarea
+        id="description"
+        placeholder="Example: Modern black wrought iron gate with ornamental curves and medium density bars">
+      </textarea>
 
-      <button class="quote-btn" id="findDesign">Find Closest Design</button>
+      <button class="quote-btn" id="generateBtn">
+        Generate Design
+      </button>
 
-      <p class="future-note">
-        ⚠️ Currently uses a placeholder 3D model.  
-        <!--AI-based matching will be implemented in a future update.-->
+      <p class="disclaimer">
+        AI-generated images are for conceptual reference only.
+        Final designs are reviewed by the ironworks professional.
       </p>
 
-      <div class="quote-box">
-          <h4>Start Your Custom Project</h4>
-          <p>Schedule a free consultation to discuss your custom gate, grill, or railing design.</p>
-          <a href="book.html" class="quote-btn">Request a Quote</a>
-        </div>
     </div>
-    
+
   </div>
 </section>
 
-<script>
-  const findBtn = document.getElementById("findDesign");
-  const model3D = document.getElementById("finder3D");
-  const placeholderText = document.getElementById("placeholderText");
-
-  findBtn.addEventListener("click", () => {
-    placeholderText.style.display = "none";
-    model3D.style.display = "block";
-  });
-</script>
-
 <footer id="contact">
-  <div class="footer-container">
-    <h2>Contact Us</h2>
-    <p>📍 Address</p>
-    <p>📱 Phone Number</p>
-    <p>📧 Email</p>
-
-    <div class="social-links">
-      <a href="#">Facebook</a> |
-      <a href="#">Messenger</a>
-    </div>
-
-    <p class="footer-note">© 2025 IronLinks. All Rights Reserved.</p>
-  </div>
+  <p>© 2025 IronLinks. All Rights Reserved.</p>
 </footer>
+
+<script>
+const generateBtn = document.getElementById("generateBtn");
+const result = document.getElementById("result");
+const description = document.getElementById("description");
+const referenceImage = document.getElementById("referenceImage");
+
+generateBtn.addEventListener("click", async () => {
+  if (!description.value.trim()) {
+    alert("Please describe your design.");
+    return;
+  }
+
+  generateBtn.disabled = true;
+
+  result.innerHTML = `
+    <div class="spinner"></div>
+    <p>AI is generating your design…</p>
+  `;
+
+  try {
+    const formData = new FormData();
+    formData.append("description", description.value);
+
+    if (referenceImage.files[0]) {
+      formData.append("reference_image", referenceImage.files[0]);
+    }
+
+    const res = await fetch("/design-finder", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      throw new Error("Generation failed");
+    }
+
+    result.innerHTML = `
+      <img
+        src="${data.generated_image}"
+        alt="Generated ironwork design"
+        style="width:100%; border-radius:10px;"
+      >
+      <p><small>✔ AI design generated</small></p>
+    `;
+
+  } catch (err) {
+    console.error(err);
+    result.innerHTML = "❌ Failed to generate design. Please try again.";
+  }
+
+  generateBtn.disabled = false;
+});
+</script>
 
 </body>
 </html>

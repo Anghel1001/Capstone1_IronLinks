@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Our Products | IronLinks</title>
+
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
 
@@ -28,14 +29,14 @@
   <section class="product-section">
     <h2>Our Products</h2>
     <h3>Gates</h3>
-    
+
     <div class="product-nav">
       <button class="active" onclick="location.href='products.html'">Gates</button>
       <button onclick="location.href='product_grills.html'">Grills</button>
       <button onclick="location.href='product_railings.html'">Railings</button>
       <button onclick="location.href='product_finder.html'">Design Finder</button>
-    </div>   
-    
+    </div>
+
     <div class="product-container">
 
       <!-- Product Image and 3D/AR View -->
@@ -47,7 +48,7 @@
         <!-- 3D & AR viewer -->
         <model-viewer
           id="gate3D"
-          src="models/wall.glb"
+          src="window/wall.glb"
           ios-src="models/wall.usdz"
           alt="Iron Gate 3D Model"
           auto-rotate
@@ -57,9 +58,11 @@
           style="display: none;"
         ></model-viewer>
 
+        <!-- ACTION BUTTONS -->
         <div class="product-icons">
           <button id="view3d">3D View</button>
           <button id="viewQR">QR Code</button>
+          <button id="viewScale">📐 Image Scale</button>
         </div>
 
         <p class="ar-notice">📱 Tap “View in AR” (on mobile) to place it in your space!</p>
@@ -68,7 +71,7 @@
       <!-- Product Details -->
       <div class="product-details">
         <h3>Modular Arc Gate Display (MAGD)</h3>
-        
+
         <h4>Details</h4>
         <ul>
           <li><strong>Price Range:</strong> ₱45,000 – ₱70,000</li>
@@ -77,7 +80,7 @@
           <li><strong>Welding:</strong> Fully Welded Joints</li>
           <li><strong>Customization:</strong> Size, color, and pattern available</li>
         </ul>
-        
+
         <h4>Design Variations</h4>
         <div id="variationOptions" class="options">
           <button class="option-btn active" data-variation="classic">Classic</button>
@@ -104,6 +107,9 @@
     </div>
   </div>
 
+  <!-- ============================
+       SCRIPTS
+       ============================ -->
   <script>
     /* ============================
        3D VIEW TOGGLE
@@ -139,9 +145,17 @@
     });
 
     /* ============================
+       IMAGE SCALE BUTTON
+       ============================ */
+    const viewScaleBtn = document.getElementById("viewScale");
+
+    viewScaleBtn.addEventListener("click", () => {
+      window.location.href = "image-scale.html";
+    });
+
+    /* ============================
        DESIGN VARIATION SWITCHER
        ============================ */
-
     const variations = {
       classic: {
         image: "hompage_photos/gate2_classic.webp",
@@ -164,41 +178,36 @@
 
     variationButtons.forEach(btn => {
       btn.addEventListener("click", () => {
-
-        // active button UI
         variationButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
 
         const selected = btn.dataset.variation;
         const data = variations[selected];
 
-        // reset to image view
         model3D.style.display = "none";
         mainImage.style.display = "block";
         view3dBtn.textContent = "3D View";
 
-        // update image
         mainImage.src = data.image;
-
-        // update 3D / AR model
         model3D.setAttribute("src", data.glb);
         model3D.setAttribute("ios-src", data.usdz);
       });
     });
   </script>
 
+  <!-- Footer -->
   <footer id="contact">
     <div class="footer-container">
       <h2>Contact Us</h2>
       <p>📍 Address</p>
       <p>📱 Phone Number</p>
       <p>📧 email</p>
-  
+
       <div class="social-links">
         <a href="#">Facebook</a> |
         <a href="#">Messenger</a>
       </div>
-  
+
       <p class="footer-note">© 2025 IronLinks. All Rights Reserved.</p>
     </div>
   </footer>

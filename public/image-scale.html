@@ -25,33 +25,25 @@ body {
   text-align: center;
 }
 
-h2 {
-  margin-bottom: 20px;
-}
-
 #wrapper {
   position: relative;
   display: inline-block;
-  width: 100%;
-  max-width: 100%;
 }
 
 canvas {
-  width: 100%;
-  height: auto;
+  position: relative;
+  z-index: 2;
   border: 1px solid #000;
   display: block;
 }
 
 model-viewer {
   position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
   display: none;
   pointer-events: none;
-  background: transparent;
-}
-
-input[type="file"] {
-  margin-bottom: 20px;
 }
 
 .buttons {
@@ -69,23 +61,6 @@ button {
   background: #222;
   color: white;
   border-radius: 6px;
-  transition: 0.2s ease;
-}
-
-button:hover {
-  background: #444;
-}
-
-/* Mobile adjustments */
-@media (max-width: 600px) {
-  body {
-    padding: 15px;
-  }
-
-  button {
-    width: 100%;
-    max-width: 200px;
-  }
 }
 </style>
 </head>
@@ -122,50 +97,98 @@ const viewer = document.getElementById("viewer");
 const placeBtn = document.getElementById("placeBtn");
 const resetBtn = document.getElementById("resetBtn");
 
-let img = new Image();
+let img = null;
 let corners = [];
 
-/* IMAGE LOAD */
+/* ================= IMAGE LOAD ================= */
 imageInput.addEventListener("change", (e) => {
+
   const file = e.target.files[0];
   if (!file) return;
 
+  img = new Image();
   img.src = URL.createObjectURL(file);
 
   img.onload = () => {
-    canvas.width = img.width;
-    canvas.height = img.height;
-    reset();
+
+    const maxWidth = 700;
+
+    let width = img.width;
+    let height = img.height;
+
+    if (width > maxWidth) {
+      const ratio = maxWidth / width;
+      width = maxWidth;
+      height = height * ratio;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(img, 0, 0, width, height);
+
+    corners = [];
+
+    viewer.style.display = "none";
+    viewer.style.pointerEvents = "none";
+    viewer.style.zIndex = "1";
   };
 });
 
-/* CORNER SELECTION */
+/* ================= CLICK HANDLER ================= */
 canvas.addEventListener("click", (e) => {
+
+  if (!img) return;
   if (corners.length >= 4) return;
 
   const rect = canvas.getBoundingClientRect();
 
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-
-  const x = (e.clientX - rect.left) * scaleX;
-  const y = (e.clientY - rect.top) * scaleY;
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
 
   corners.push({ x, y });
-  drawCorners();
+
+  redraw();
 });
 
-/* PLACE MODEL */
+/* ================= REDRAW ================= */
+function redraw() {
+
+  if (!img) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "red";
+
+  corners.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  if (corners.length === 4) {
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(corners[0].x, corners[0].y);
+    ctx.lineTo(corners[1].x, corners[1].y);
+    ctx.lineTo(corners[2].x, corners[2].y);
+    ctx.lineTo(corners[3].x, corners[3].y);
+    ctx.closePath();
+    ctx.stroke();
+  }
+}
+
+/* ================= PLACE MODEL ================= */
 placeBtn.addEventListener("click", () => {
 
   if (corners.length !== 4) {
     alert("Select 4 corners first.");
     return;
   }
-
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = rect.width / canvas.width;
-  const scaleY = rect.height / canvas.height;
 
   const xs = corners.map(p => p.x);
   const ys = corners.map(p => p.y);
@@ -175,79 +198,27 @@ placeBtn.addEventListener("click", () => {
   const minY = Math.min(...ys);
   const maxY = Math.max(...ys);
 
-  // 🔥 Force clean rectangle shape
-  const rectCorners = [
-    { x: minX, y: minY },
-    { x: maxX, y: minY },
-    { x: maxX, y: maxY },
-    { x: minX, y: maxY }
-  ];
-
-  corners = rectCorners;
-
-  // Redraw corrected rectangle
-  drawCorners();
-
-  const displayLeft = minX * scaleX;
-  const displayTop = minY * scaleY;
-  const displayWidth = (maxX - minX) * scaleX;
-  const displayHeight = (maxY - minY) * scaleY;
-
   viewer.style.display = "block";
-  viewer.style.left = `${displayLeft}px`;
-  viewer.style.top = `${displayTop}px`;
-  viewer.style.width = `${displayWidth}px`;
-  viewer.style.height = `${displayHeight}px`;
+  viewer.style.left = minX + "px";
+  viewer.style.top = minY + "px";
+  viewer.style.width = (maxX - minX) + "px";
+  viewer.style.height = (maxY - minY) + "px";
 
+  viewer.style.zIndex = "3";
   viewer.style.pointerEvents = "auto";
-  viewer.updateFraming?.();
 });
 
-/* RESET */
-resetBtn.addEventListener("click", reset);
+/* ================= RESET ================= */
+resetBtn.addEventListener("click", () => {
 
-function reset() {
   corners = [];
+
   viewer.style.display = "none";
   viewer.style.pointerEvents = "none";
+  viewer.style.zIndex = "1";
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img, 0, 0);
-}
-
-/* HELPERS */
-function drawCorners() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img, 0, 0);
-
-  ctx.fillStyle = "red";
-  corners.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-    ctx.fill();
-  });
-
-  if (corners.length === 4) {
-    ctx.strokeStyle = "red";
-    ctx.beginPath();
-    ctx.moveTo(corners[0].x, corners[0].y);
-    corners.slice(1).forEach(p => ctx.lineTo(p.x, p.y));
-    ctx.closePath();
-    ctx.stroke();
-  }
-}
-
-function getBoundingBox() {
-  const xs = corners.map(p => p.x);
-  const ys = corners.map(p => p.y);
-
-  return {
-    minX: Math.min(...xs),
-    maxX: Math.max(...xs),
-    minY: Math.min(...ys),
-    maxY: Math.max(...ys)
-  };
-}
+  redraw();
+});
 </script>
 
 </body>

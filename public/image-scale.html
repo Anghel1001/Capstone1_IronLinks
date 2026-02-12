@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Image Placement</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Placement</title>
 
 <script type="module"
   src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
@@ -12,97 +11,44 @@
 <style>
 body {
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  background: #f4f4f4;
-}
-
-.container {
-  width: 100%;
-  max-width: 700px;
   text-align: center;
-}
-
-#wrapper {
-  position: relative;
-  display: inline-block;
+  background: #f4f4f4;
+  padding: 20px;
 }
 
 canvas {
-  position: relative;
-  z-index: 2;
-  border: 1px solid #000;
   display: block;
-}
-
-model-viewer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  display: none;
-  pointer-events: none;
-}
-
-.buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-button {
-  padding: 10px 16px;
-  cursor: pointer;
-  border: none;
-  background: #222;
-  color: white;
-  border-radius: 6px;
+  margin: 20px auto;
+  cursor: crosshair;
 }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Image Placement</h2>
+<h2>Image Placement</h2>
 
-  <input type="file" id="imageInput" accept="image/*">
+<input type="file" id="imageInput" accept="image/*">
+<br>
 
-  <div id="wrapper">
-    <canvas id="canvas"></canvas>
+<canvas id="canvas"></canvas>
 
-    <model-viewer
-      id="viewer"
-      src="models/wall.glb"
-      camera-controls
-      exposure="1"
-      shadow-intensity="1">
-    </model-viewer>
-  </div>
-
-  <div class="buttons">
-    <button id="placeBtn">Place Model</button>
-    <button id="resetBtn">Reset Corners</button>
-  </div>
-</div>
+<br>
+<button id="placeBtn">Place Model</button>
+<button id="resetBtn">Reset</button>
 
 <script>
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const imageInput = document.getElementById("imageInput");
-const viewer = document.getElementById("viewer");
 const placeBtn = document.getElementById("placeBtn");
 const resetBtn = document.getElementById("resetBtn");
 
 let img = null;
 let corners = [];
+let viewer = null;
 
-/* ================= IMAGE LOAD ================= */
+/* LOAD IMAGE */
 imageInput.addEventListener("change", (e) => {
-
   const file = e.target.files[0];
   if (!file) return;
 
@@ -111,39 +57,40 @@ imageInput.addEventListener("change", (e) => {
 
   img.onload = () => {
 
-    const maxWidth = 700;
+  const containerWidth = document.body.clientWidth - 40; // small margin
 
-    let width = img.width;
-    let height = img.height;
+  let width = img.width;
+  let height = img.height;
 
-    if (width > maxWidth) {
-      const ratio = maxWidth / width;
-      width = maxWidth;
-      height = height * ratio;
-    }
+  if (width > containerWidth) {
+    const ratio = containerWidth / width;
+    width = containerWidth;
+    height = height * ratio;
+  }
 
-    canvas.width = width;
-    canvas.height = height;
+  canvas.width = width;
+  canvas.height = height;
 
-    ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(img, 0, 0, width, height);
+  ctx.clearRect(0, 0, width, height);
+  ctx.drawImage(img, 0, 0, width, height);
 
     corners = [];
 
-    viewer.style.display = "none";
-    viewer.style.pointerEvents = "none";
-    viewer.style.zIndex = "1";
+    // Remove model if exists
+    if (viewer) {
+      viewer.remove();
+      viewer = null;
+    }
   };
 });
 
-/* ================= CLICK HANDLER ================= */
+/* CLICK HANDLER */
 canvas.addEventListener("click", (e) => {
 
   if (!img) return;
   if (corners.length >= 4) return;
 
   const rect = canvas.getBoundingClientRect();
-
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
 
@@ -152,10 +99,8 @@ canvas.addEventListener("click", (e) => {
   redraw();
 });
 
-/* ================= REDRAW ================= */
+/* DRAW DOTS */
 function redraw() {
-
-  if (!img) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -167,26 +112,13 @@ function redraw() {
     ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
     ctx.fill();
   });
-
-  if (corners.length === 4) {
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 2;
-
-    ctx.beginPath();
-    ctx.moveTo(corners[0].x, corners[0].y);
-    ctx.lineTo(corners[1].x, corners[1].y);
-    ctx.lineTo(corners[2].x, corners[2].y);
-    ctx.lineTo(corners[3].x, corners[3].y);
-    ctx.closePath();
-    ctx.stroke();
-  }
 }
 
-/* ================= PLACE MODEL ================= */
+/* PLACE MODEL */
 placeBtn.addEventListener("click", () => {
 
   if (corners.length !== 4) {
-    alert("Select 4 corners first.");
+    alert("Select 4 points first.");
     return;
   }
 
@@ -198,25 +130,28 @@ placeBtn.addEventListener("click", () => {
   const minY = Math.min(...ys);
   const maxY = Math.max(...ys);
 
-  viewer.style.display = "block";
-  viewer.style.left = minX + "px";
-  viewer.style.top = minY + "px";
+  // Remove old model
+  if (viewer) viewer.remove();
+
+  viewer = document.createElement("model-viewer");
+  viewer.src = "models/wall.glb";
+  viewer.setAttribute("camera-controls", "");
+  viewer.style.position = "absolute";
+  viewer.style.left = canvas.offsetLeft + minX + "px";
+  viewer.style.top = canvas.offsetTop + minY + "px";
   viewer.style.width = (maxX - minX) + "px";
   viewer.style.height = (maxY - minY) + "px";
 
-  viewer.style.zIndex = "3";
-  viewer.style.pointerEvents = "auto";
+  document.body.appendChild(viewer);
 });
 
-/* ================= RESET ================= */
+/* RESET */
 resetBtn.addEventListener("click", () => {
-
   corners = [];
-
-  viewer.style.display = "none";
-  viewer.style.pointerEvents = "none";
-  viewer.style.zIndex = "1";
-
+  if (viewer) {
+    viewer.remove();
+    viewer = null;
+  }
   redraw();
 });
 </script>

@@ -1,135 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>IronLinks | Image-Based Placement</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Image Placement</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="style.css">
+<script type="module"
+  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
 
-  <!-- Google Model Viewer -->
-  <script type="module"
-    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-  </script>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  background: #f4f4f4;
+}
 
-  <style>
-    #imageWrapper {
-      position: relative;
-      display: inline-block;
-      max-width: 100%;
-    }
+.container {
+  width: 100%;
+  max-width: 700px;
+  text-align: center;
+}
 
-    #imageCanvas {
-      display: block;
-      max-width: 100%;
-      border: 1px solid #ccc;
-    }
+h2 {
+  margin-bottom: 20px;
+}
 
-    model-viewer {
-      position: absolute;
-      display: none;
-      background: transparent;
-      pointer-events: none;
+#wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+}
 
-      /* IMPORTANT */
-      --poster-color: transparent;
-    }
+canvas {
+  width: 100%;
+  height: auto;
+  border: 1px solid #000;
+  display: block;
+}
 
-    button {
-      margin-top: 10px;
-    }
-  </style>
+model-viewer {
+  position: absolute;
+  display: none;
+  pointer-events: none;
+  background: transparent;
+}
+
+input[type="file"] {
+  margin-bottom: 20px;
+}
+
+.buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 10px 16px;
+  cursor: pointer;
+  border: none;
+  background: #222;
+  color: white;
+  border-radius: 6px;
+  transition: 0.2s ease;
+}
+
+button:hover {
+  background: #444;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  body {
+    padding: 15px;
+  }
+
+  button {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+</style>
 </head>
-
 <body>
 
-<header>
-  <h1>Image-Based Design Placement</h1>
-  <nav>
-    <a href="products.html">← Back to Products</a>
-  </nav>
-</header>
-
-<section class="product-section">
-  <p>
-    Upload a photo and tap the four corners of the opening.
-    The model will be fitted exactly to the selected area.
-  </p>
+<div class="container">
+  <h2>Image Placement</h2>
 
   <input type="file" id="imageInput" accept="image/*">
-  <br><br>
 
-  <div id="imageWrapper">
-    <canvas id="imageCanvas"></canvas>
+  <div id="wrapper">
+    <canvas id="canvas"></canvas>
 
-    <!-- MODEL OVERLAY -->
-<model-viewer
-  id="gateViewer"
-  src="models/window.glb"
-  camera-controls
-  exposure="1"
-  shadow-intensity="1"
-  camera-orbit="0deg 90deg auto"
-  field-of-view="20deg"
-  interaction-prompt="none">
-</model-viewer>
-
+    <model-viewer
+      id="viewer"
+      src="models/wall.glb"
+      camera-controls
+      exposure="1"
+      shadow-intensity="1">
+    </model-viewer>
   </div>
 
-  <br>
-  <button id="placeBtn">Place Model</button>
-</section>
+  <div class="buttons">
+    <button id="placeBtn">Place Model</button>
+    <button id="resetBtn">Reset Corners</button>
+  </div>
+</div>
 
 <script>
-const imageInput = document.getElementById("imageInput");
-const canvas = document.getElementById("imageCanvas");
+const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const viewer = document.getElementById("gateViewer");
+const imageInput = document.getElementById("imageInput");
+const viewer = document.getElementById("viewer");
+const placeBtn = document.getElementById("placeBtn");
+const resetBtn = document.getElementById("resetBtn");
 
 let img = new Image();
 let corners = [];
 
+/* IMAGE LOAD */
 imageInput.addEventListener("change", (e) => {
-  img.src = URL.createObjectURL(e.target.files[0]);
+  const file = e.target.files[0];
+  if (!file) return;
+
+  img.src = URL.createObjectURL(file);
+
   img.onload = () => {
     canvas.width = img.width;
     canvas.height = img.height;
-    ctx.drawImage(img, 0, 0);
-    corners = [];
-    viewer.style.display = "none";
+    reset();
   };
 });
 
+/* CORNER SELECTION */
 canvas.addEventListener("click", (e) => {
   if (corners.length >= 4) return;
 
-  corners.push({ x: e.offsetX, y: e.offsetY });
+  const rect = canvas.getBoundingClientRect();
 
-  ctx.fillStyle = "red";
-  ctx.beginPath();
-  ctx.arc(e.offsetX, e.offsetY, 6, 0, Math.PI * 2);
-  ctx.fill();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
 
-  if (corners.length === 4) {
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(corners[0].x, corners[0].y);
-    for (let i = 1; i < 4; i++) {
-      ctx.lineTo(corners[i].x, corners[i].y);
-    }
-    ctx.closePath();
-    ctx.stroke();
-  }
+  const x = (e.clientX - rect.left) * scaleX;
+  const y = (e.clientY - rect.top) * scaleY;
+
+  corners.push({ x, y });
+  drawCorners();
 });
 
-document.getElementById("placeBtn").addEventListener("click", () => {
+/* PLACE MODEL */
+placeBtn.addEventListener("click", () => {
+
   if (corners.length !== 4) {
-    alert("Please select all four corners.");
+    alert("Select 4 corners first.");
     return;
   }
 
-  // Compute bounding box of the 4 corners
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = rect.width / canvas.width;
+  const scaleY = rect.height / canvas.height;
+
   const xs = corners.map(p => p.x);
   const ys = corners.map(p => p.y);
 
@@ -138,20 +175,79 @@ document.getElementById("placeBtn").addEventListener("click", () => {
   const minY = Math.min(...ys);
   const maxY = Math.max(...ys);
 
-  const width = maxX - minX;
-  const height = maxY - minY;
+  // 🔥 Force clean rectangle shape
+  const rectCorners = [
+    { x: minX, y: minY },
+    { x: maxX, y: minY },
+    { x: maxX, y: maxY },
+    { x: minX, y: maxY }
+  ];
 
-  // EXACT pixel-fit overlay
+  corners = rectCorners;
+
+  // Redraw corrected rectangle
+  drawCorners();
+
+  const displayLeft = minX * scaleX;
+  const displayTop = minY * scaleY;
+  const displayWidth = (maxX - minX) * scaleX;
+  const displayHeight = (maxY - minY) * scaleY;
+
   viewer.style.display = "block";
-  viewer.style.left = `${minX}px`;
-  viewer.style.top = `${minY}px`;
-  viewer.style.width = `${width}px`;
-  viewer.style.height = `${height}px`;
-  viewer.style.pointerEvents = "auto"; // 🔥 ENABLE ROTATION
+  viewer.style.left = `${displayLeft}px`;
+  viewer.style.top = `${displayTop}px`;
+  viewer.style.width = `${displayWidth}px`;
+  viewer.style.height = `${displayHeight}px`;
 
-  // Force re-frame of model
+  viewer.style.pointerEvents = "auto";
   viewer.updateFraming?.();
 });
+
+/* RESET */
+resetBtn.addEventListener("click", reset);
+
+function reset() {
+  corners = [];
+  viewer.style.display = "none";
+  viewer.style.pointerEvents = "none";
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+}
+
+/* HELPERS */
+function drawCorners() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+
+  ctx.fillStyle = "red";
+  corners.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  if (corners.length === 4) {
+    ctx.strokeStyle = "red";
+    ctx.beginPath();
+    ctx.moveTo(corners[0].x, corners[0].y);
+    corners.slice(1).forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.closePath();
+    ctx.stroke();
+  }
+}
+
+function getBoundingBox() {
+  const xs = corners.map(p => p.x);
+  const ys = corners.map(p => p.y);
+
+  return {
+    minX: Math.min(...xs),
+    maxX: Math.max(...xs),
+    minY: Math.min(...ys),
+    maxY: Math.max(...ys)
+  };
+}
 </script>
 
 </body>

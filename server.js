@@ -212,11 +212,9 @@ app.post(
       }
 
       const prompt = `
-A professional, realistic wrought iron design.
+A professional, realistic wrought iron design
 ${description}.
 Front view.
-Black iron.
-Ornamental but buildable.
 White background.
 High detail.
 Concept design only.

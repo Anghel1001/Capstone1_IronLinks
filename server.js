@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 // ============================
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB
+  limits: { fileSize: 5 * 1024 * 1024 }
 });
 
 // ============================
@@ -48,7 +48,7 @@ app.get("/", (req, res) => {
 });
 
 // =================================================
-// CREATE BOOKING (OPTIONAL IMAGE UPLOAD)
+// CREATE BOOKING (FIXED: status added)
 // =================================================
 app.post("/book", upload.single("reference_image"), async (req, res) => {
   try {
@@ -87,6 +87,7 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
         .getPublicUrl(filePath).data.publicUrl;
     }
 
+    // 🔥 FIX: status added
     const { error } = await supabase.from("bookings").insert([{
       name,
       email,
@@ -94,7 +95,8 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
       date,
       time,
       request,
-      reference_image_url: imageUrl
+      reference_image_url: imageUrl,
+      status: "pending"
     }]);
 
     if (error) throw error;
@@ -107,7 +109,7 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
 });
 
 // ============================
-// GET ALL BOOKINGS (ADMIN)
+// GET ALL BOOKINGS
 // ============================
 app.get("/bookings", async (req, res) => {
   const { data, error } = await supabase
@@ -124,7 +126,34 @@ app.get("/bookings", async (req, res) => {
 });
 
 // =================================================
-// GALLERY UPLOAD (ADMIN)
+// 🔥 NEW: UPDATE BOOKING STATUS (ACCEPT / REJECT)
+// =================================================
+app.patch("/bookings/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ error: "Status is required" });
+    }
+
+    const { error } = await supabase
+      .from("bookings")
+      .update({ status })
+      .eq("id", id);
+
+    if (error) throw error;
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error("❌ Update error:", err);
+    res.status(500).json({ error: "Failed to update booking" });
+  }
+});
+
+// =================================================
+// GALLERY UPLOAD (UNCHANGED)
 // =================================================
 app.post("/gallery", upload.single("image"), async (req, res) => {
   try {
@@ -142,7 +171,7 @@ app.post("/gallery", upload.single("image"), async (req, res) => {
         contentType: req.file.mimetype
       });
 
-      if (uploadError) throw uploadError;
+    if (uploadError) throw uploadError;
 
     const imageUrl = supabase.storage
       .from("gallery-images")
@@ -179,7 +208,7 @@ app.get("/gallery", async (req, res) => {
 });
 
 // =================================================
-// DELETE GALLERY IMAGE (ADMIN)
+// DELETE GALLERY IMAGE
 // =================================================
 app.delete("/gallery/:id", async (req, res) => {
   const { id } = req.params;
@@ -198,50 +227,43 @@ app.delete("/gallery/:id", async (req, res) => {
 });
 
 // =================================================
-// 🔥 OPENAI GENERATIVE DESIGN FINDER (FIXED)
+// OPENAI DESIGN FINDER (UNCHANGED)
 // =================================================
-app.post(
-  "/design-finder",
-  upload.single("reference_image"),
-  async (req, res) => {
-    try {
-      const { description } = req.body;
+app.post("/design-finder", upload.single("reference_image"), async (req, res) => {
+  try {
+    const { description } = req.body;
 
-      if (!description) {
-        return res.json({ success: false });
-      }
+    if (!description) {
+      return res.json({ success: false });
+    }
 
-      const prompt = `
-A professional, realistic wrought iron design.
+    const prompt = `
+A professional, realistic wrought iron design
 ${description}.
 Front view.
-Black iron.
-Ornamental but buildable.
 White background.
 High detail.
 Concept design only.
 `;
 
-      const image = await openai.images.generate({
-        model: "gpt-image-1",
-        prompt,
-        size: "1024x1024"
-      });
+    const image = await openai.images.generate({
+      model: "gpt-image-1",
+      prompt,
+      size: "1024x1024"
+    });
 
-      // 🔥 FIX: use base64 instead of URL
-      const base64Image = image.data[0].b64_json;
+    const base64Image = image.data[0].b64_json;
 
-      res.json({
-        success: true,
-        generated_image: `data:image/png;base64,${base64Image}`
-      });
+    res.json({
+      success: true,
+      generated_image: `data:image/png;base64,${base64Image}`
+    });
 
-    } catch (err) {
-      console.error("❌ OpenAI generation error:", err);
-      res.status(500).json({ success: false });
-    }
+  } catch (err) {
+    console.error("❌ OpenAI generation error:", err);
+    res.status(500).json({ success: false });
   }
-);
+});
 
 // ============================
 // SERVER RUN

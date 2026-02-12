@@ -18,58 +18,49 @@
   border-radius: 14px;
 }
 
-.pending-list {
+.table-wrapper {
   max-width: 1100px;
   margin: 40px auto;
-  background: #fff;
-  padding: 20px;
+  background: white;
   border-radius: 14px;
+  padding: 20px;
+  overflow-x: auto;
 }
 
-.pending-card {
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 16px;
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.pending-card h3 {
-  margin-bottom: 8px;
-}
-
-.pending-details {
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
   font-size: 14px;
-  color: #444;
-  line-height: 1.6;
 }
 
-.pending-details strong {
-  color: #000;
+th {
+  background: #111;
+  color: #fff;
 }
 
-.pending-actions {
-  margin-top: 12px;
-}
+.status-pending { color: #856404; }
+.status-approved { color: #198754; }
+.status-rejected { color: #dc3545; }
 
-.pending-actions button {
-  padding: 8px 16px;
+button {
+  padding: 6px 12px;
   border: none;
   border-radius: 6px;
-  background: #198754;
-  color: #fff;
   cursor: pointer;
+  color: #fff;
+  font-size: 13px;
 }
 
-.pending-actions button:hover {
-  background: #157347;
-}
+.btn-approve { background: #198754; }
+.btn-reject { background: #dc3545; }
 
-.img-thumb {
-  width: 100px;
-  margin-top: 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
+.btn-approve:hover { background: #157347; }
+.btn-reject:hover { background: #bb2d3b; }
 </style>
 </head>
 
@@ -77,95 +68,120 @@
 
 <header>
   <h1>Iron <span>works</span> Admin</h1>
+  <nav>
+    <a href="index.html">view public page</a> |
+    <a href="admin.html">admin profile</a> |
+    <a href="admin_booking.html">Schedules</a>
+  </nav>
 </header>
 
-<section class="admin-container">
-  <h2>Booking Calendar</h2>
+<section>
+  <h2 style="text-align:center;">Booking Calendar</h2>
   <div id="admin-calendar"></div>
 </section>
 
-<section class="pending-list">
-  <h2>Pending Bookings</h2>
-  <div id="pendingContainer"></div>
+<section class="table-wrapper">
+  <h2>All Bookings (Database)</h2>
+  <table id="bookingsTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </section>
 
 <script>
-async function loadAdminView() {
-  const res = await fetch('/bookings');
-  const bookings = await res.json();
+async function loadAdmin() {
+  try {
+    const res = await fetch("/bookings");
+    const bookings = await res.json();
 
-  // ---------- CALENDAR ----------
-  const calendarEl = document.getElementById('admin-calendar');
-  calendarEl.innerHTML = '';
+    // ======================
+    // CALENDAR
+    // ======================
+    const calendar = new FullCalendar.Calendar(
+      document.getElementById("admin-calendar"),
+      {
+        initialView: "dayGridMonth",
+        height: "auto",
+        events: bookings.map(b => ({
+          title: b.name,
+          start: b.date,
+          allDay: true,
+          color:
+            b.status === "approved" ? "#198754" :  // green
+            b.status === "pending" ? "#ffc107" :   // yellow
+            b.status === "rejected" ? "#dc3545" :  // red
+            "#6c757d"
+        }))
+      }
+    );
 
-  const calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
-    height: 'auto',
-    events: bookings.map(b => ({
-      title: b.name,
-      start: b.date,
-      allDay: true,
-      color: b.status === 'approved' ? '#dc3545' : '#ffc107'
-    }))
-  });
+    calendar.render();
 
-  calendar.render();
+    // ======================
+    // TABLE (FULL DATABASE)
+    // ======================
+    const tbody = document.querySelector("#bookingsTable tbody");
+    tbody.innerHTML = "";
 
-  // ---------- PENDING LIST ----------
-  const pendingContainer = document.getElementById('pendingContainer');
-  pendingContainer.innerHTML = '';
+    bookings.forEach(b => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${b.name}</td>
+          <td>${b.email}</td>
+          <td>${b.phone}</td>
+          <td>${b.date}</td>
+          <td>${b.time}</td>
+          <td class="status-${b.status}">${b.status}</td>
+          <td>
+            <button class="btn-approve" onclick="approve('${b.id}')">Accept</button>
+            <button class="btn-reject" onclick="reject('${b.id}')">Reject</button>
+          </td>
+        </tr>
+      `;
+    });
 
-  const pending = bookings.filter(b => b.status === 'pending');
-
-  if (!pending.length) {
-    pendingContainer.innerHTML = '<p>No pending bookings 🎉</p>';
-    return;
+  } catch (err) {
+    console.error("Admin load error:", err);
   }
-
-  pending.forEach(b => {
-    const div = document.createElement('div');
-    div.className = 'pending-card';
-
-    div.innerHTML = `
-      <h3>${b.name}</h3>
-
-      <div class="pending-details">
-        <strong>Email:</strong> ${b.email}<br>
-        <strong>Phone:</strong> ${b.phone}<br>
-        <strong>Date:</strong> ${b.date}<br>
-        <strong>Time:</strong> ${b.time}<br>
-        <strong>Request:</strong> ${b.request || '—'}
-        ${
-          b.reference_image_url
-            ? `<br><strong>Reference Image:</strong><br>
-               <a href="${b.reference_image_url}" target="_blank">
-                 <img src="${b.reference_image_url}" class="img-thumb">
-               </a>`
-            : ''
-        }
-      </div>
-
-      <div class="pending-actions">
-        <button onclick="approveBooking(${b.id})">Approve Booking</button>
-      </div>
-    `;
-
-    pendingContainer.appendChild(div);
-  });
 }
 
-// ---------- APPROVE ----------
-async function approveBooking(id) {
+// ======================
+// APPROVE
+// ======================
+async function approve(id) {
   await fetch(`/bookings/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: 'approved' })
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "approved" })
   });
 
-  loadAdminView();
+  location.reload();
 }
 
-document.addEventListener('DOMContentLoaded', loadAdminView);
+// ======================
+// REJECT
+// ======================
+async function reject(id) {
+  await fetch(`/bookings/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "rejected" })
+  });
+
+  location.reload();
+}
+
+document.addEventListener("DOMContentLoaded", loadAdmin);
 </script>
 
 </body>

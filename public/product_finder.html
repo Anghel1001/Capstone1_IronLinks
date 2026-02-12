@@ -8,9 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
 
 <style>
-/* -------------------------
-   LOCAL STYLES (SAFE)
--------------------------- */
 .product-section {
   padding: 60px 10%;
 }
@@ -88,6 +85,18 @@
   color: #777;
   margin-top: 10px;
 }
+
+.instructions {
+  background: #f4f4f4;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.instructions h4 {
+  margin-bottom: 10px;
+}
 </style>
 </head>
 
@@ -106,9 +115,28 @@
 <section class="product-section">
   <h2>Custom Ironwork Design Finder</h2>
 
+  <div class="product-nav">
+    <button onclick="location.href='products.html'">Gates</button>
+    <button onclick="location.href='product_grills.html'">Grills</button>
+    <button onclick="location.href='product_railings.html'">Railings</button>
+    <button class="active" onclick="location.href='product_finder.html'">Design Finder</button>
+  </div>   
+  <!-- 🆕 UX INSTRUCTIONS -->
+  <div class="instructions">
+    <h4>How It Works</h4>
+    <ol>
+      <li><strong>Upload a reference image (optional)</strong> : a sketch, Pinterest image, or existing gate style.</li>
+      <li><strong>Describe your design clearly</strong> : include style, color, details, and type (gate, railing, grill).</li>
+      <li>Clicçk <strong>Generate Design</strong> and wait 20–40 seconds for AI to create your preview.</li>
+    </ol>
+    <p><strong>Tip:</strong> Be specific! Example:
+      <em>"Modern black sliding gate with vertical bars, medium spacing, minimalist design."</em>
+    </p>
+  </div>
+
   <div class="product-container">
 
-    <!-- RESULT / IMAGE -->
+    <!-- RESULT -->
     <div class="product-image">
       <div id="result">
         🧩 No design generated yet
@@ -124,7 +152,7 @@
       <label>Describe your design</label>
       <textarea
         id="description"
-        placeholder="Example: Modern black wrought iron gate with ornamental curves and medium density bars">
+        placeholder="Example: Modern black wrought iron sliding gate with vertical bars and minimal curves">
       </textarea>
 
       <button class="quote-btn" id="generateBtn">
@@ -133,7 +161,7 @@
 
       <p class="disclaimer">
         AI-generated images are for conceptual reference only.
-        Final designs are reviewed by the ironworks professional.
+        Final fabrication design will be reviewed and approved by IronLinks.
       </p>
 
     </div>
@@ -152,8 +180,9 @@ const description = document.getElementById("description");
 const referenceImage = document.getElementById("referenceImage");
 
 generateBtn.addEventListener("click", async () => {
+
   if (!description.value.trim()) {
-    alert("Please describe your design.");
+    alert("Please describe your design before generating.");
     return;
   }
 
@@ -161,7 +190,10 @@ generateBtn.addEventListener("click", async () => {
 
   result.innerHTML = `
     <div class="spinner"></div>
-    <p>AI is generating your design…</p>
+    <p><strong>AI is generating your design…</strong></p>
+    <p style="font-size:12px; color:#777;">
+      This may take 20–40 seconds. Please do not refresh the page.
+    </p>
   `;
 
   try {
@@ -189,7 +221,12 @@ generateBtn.addEventListener("click", async () => {
         alt="Generated ironwork design"
         style="width:100%; border-radius:10px;"
       >
-      <p><small>✔ AI design generated</small></p>
+      <p><small>✔ AI design generated successfully</small></p>
+      <p style="margin-top:10px;">
+        <a href="book.html" style="color:black; font-weight:bold;">
+          Proceed to Book a Consultation →
+        </a>
+      </p>
     `;
 
   } catch (err) {

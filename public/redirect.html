@@ -22,7 +22,9 @@
 (async function(){
   // EDIT THIS — registry of your models (keys are case-sensitive)
   const MODELS = {
-    "wall": { glb: "/models/gate1.glb", usdz: "/models/gate1?v=2.usdz" },
+    "wall": { glb: "/models/gate1.glb",
+             usdz: "/models/gate1.usdz?v=2" 
+            },
     // add others: "grill_white": { glb: "/models/grill_white.glb", usdz: "/models/grill_white.usdz" }
   };
 
@@ -133,7 +135,7 @@ const isLikelyIOS = isIOSUA || (isTouchDevice && /Macintosh/i.test(ua));
 
     // final step: navigate
     window.location.replace(intent);
-
+    
     // After a timeout, show a link so the user can manually open the GLB (debug)
     setTimeout(()=>{
       box.innerHTML = `<h3 class="error">Scene Viewer did not start</h3>

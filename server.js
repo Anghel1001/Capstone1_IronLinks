@@ -48,7 +48,7 @@ app.get("/", (req, res) => {
 });
 
 // =================================================
-// CREATE BOOKING (FIXED: status added)
+// CREATE BOOKING (WITH TIME + SUNDAY VALIDATION)
 // =================================================
 app.post("/book", upload.single("reference_image"), async (req, res) => {
   try {
@@ -58,6 +58,39 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
       return res.status(400).send("Please fill in all required fields.");
     }
 
+    // ============================
+    // 🚫 BLOCK SUNDAYS
+    // ============================
+    const selectedDate = new Date(date);
+    const day = selectedDate.getDay(); // 0 = Sunday
+
+    if (day === 0) {
+      return res.status(400).send("We are closed on Sundays.");
+    }
+
+    // ============================
+    // ⏰ ALLOWED TIME SLOTS ONLY
+    // ============================
+    const allowedTimes = [
+      "08:00",
+      "09:00",
+      "10:00",
+      "11:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00"
+    ];
+
+    if (!allowedTimes.includes(time)) {
+      return res.status(400).send(
+        "Invalid booking time. Available slots: 8AM–11AM and 1PM–4PM only."
+      );
+    }
+
+    // ============================
+    // 🚫 PREVENT DOUBLE BOOKING
+    // ============================
     const { data: existing = [], error: checkError } = await supabase
       .from("bookings")
       .select("*")
@@ -65,10 +98,14 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
       .eq("time", time);
 
     if (checkError) throw checkError;
+
     if (existing.length > 0) {
       return res.status(400).send("This date and time is already booked.");
     }
 
+    // ============================
+    // IMAGE UPLOAD
+    // ============================
     let imageUrl = null;
 
     if (req.file) {
@@ -87,7 +124,9 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
         .getPublicUrl(filePath).data.publicUrl;
     }
 
-    // 🔥 FIX: status added
+    // ============================
+    // INSERT BOOKING
+    // ============================
     const { error } = await supabase.from("bookings").insert([{
       name,
       email,
@@ -102,6 +141,7 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
     if (error) throw error;
 
     res.send("Booking successful!");
+
   } catch (err) {
     console.error("❌ Booking error:", err);
     res.status(500).send(err.message);
@@ -126,7 +166,7 @@ app.get("/bookings", async (req, res) => {
 });
 
 // =================================================
-// 🔥 NEW: UPDATE BOOKING STATUS (ACCEPT / REJECT)
+// UPDATE BOOKING STATUS
 // =================================================
 app.patch("/bookings/:id", async (req, res) => {
   try {
@@ -184,6 +224,7 @@ app.post("/gallery", upload.single("image"), async (req, res) => {
     if (error) throw error;
 
     res.send("Gallery image uploaded");
+
   } catch (err) {
     console.error("❌ Gallery upload error:", err);
     res.status(500).send(err.message);

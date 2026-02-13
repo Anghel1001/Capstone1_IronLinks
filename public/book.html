@@ -19,16 +19,10 @@
   border-radius: 12px;
 }
 
-.fc-day.available:hover {
-  background: #e8f5e9;
-  cursor: pointer;
-}
-
 .fc-day.selected {
   background: #c8e6c9 !important;
 }
 
-/* STATUS NOTE */
 .status-message {
   margin-top: 16px;
   font-weight: 600;
@@ -37,7 +31,6 @@
 .status-success { color: #155724; }
 .status-error { color: #721c24; }
 
-/* LEGEND */
 .legend {
   display: flex;
   gap: 16px;
@@ -76,30 +69,38 @@
 <section class="book-section">
   <h2>Book a Consultation</h2>
 
-  <!-- LEGEND -->
   <div class="legend">
     <span><div class="box box-approved"></div> Approved</span>
     <span><div class="box box-pending"></div> Pending</span>
     <span><div class="box box-selected"></div> Selected</span>
   </div>
 
-  <!-- CALENDAR -->
   <div id="calendar"></div>
 
-  <!-- FORM -->
   <form id="bookingForm" class="book-form" enctype="multipart/form-data">
     <input type="text" name="name" placeholder="Full Name" required>
     <input type="email" name="email" placeholder="Email" required>
     <input type="tel" name="phone" placeholder="09XXXXXXXXX" required>
 
-    <input type="date" name="date" id="dateInput" required>
-    <input type="time" name="time" required>
+    <input type="date" name="date" id="dateInput" required readonly>
+
+    <!-- TIME SLOT DROPDOWN (STRICT 1 HOUR SLOTS) -->
+    <select name="time" id="timeSelect" required>
+      <option value="">Select Time</option>
+      <option value="08:00">08:00 AM</option>
+      <option value="09:00">09:00 AM</option>
+      <option value="10:00">10:00 AM</option>
+      <option value="11:00">11:00 AM</option>
+      <option value="13:00">01:00 PM</option>
+      <option value="14:00">02:00 PM</option>
+      <option value="15:00">03:00 PM</option>
+      <option value="16:00">04:00 PM</option>
+    </select>
 
     <textarea name="request" placeholder="Additional details"></textarea>
     <button type="submit">Submit Booking</button>
   </form>
 
-  <!-- STATUS NOTE -->
   <div id="statusMessage" class="status-message"></div>
 </section>
 
@@ -111,6 +112,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
   const dateInput = document.getElementById('dateInput');
+  const timeSelect = document.getElementById('timeSelect');
   const statusMessage = document.getElementById('statusMessage');
   const form = document.getElementById('bookingForm');
 
@@ -138,15 +140,24 @@ document.addEventListener('DOMContentLoaded', async () => {
           ...approvedDates.map(d => ({
             start: d,
             display: 'background',
-            backgroundColor: '#c8e6c9' // green approved
+            backgroundColor: '#c8e6c9'
           })),
           ...pendingDates.map(d => ({
             start: d,
             display: 'background',
-            backgroundColor: '#fff3cd' // yellow pending
+            backgroundColor: '#fff3cd'
           }))
         ],
         dateClick(info) {
+
+          const selectedDate = new Date(info.dateStr);
+          const day = selectedDate.getDay(); // 0 = Sunday
+
+          if (day === 0) {
+            alert("We are closed on Sundays.");
+            return;
+          }
+
           if (
             approvedDates.includes(info.dateStr) ||
             pendingDates.includes(info.dateStr)
@@ -167,7 +178,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error("Calendar load error:", err);
   }
 
-  // SUBMIT BOOKING (uses backend /book)
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 

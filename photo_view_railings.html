@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Placement</title>
+
+<script type="module"
+  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #f4f4f4;
+  padding: 20px;
+}
+
+canvas {
+  display: block;
+  margin: 20px auto;
+  cursor: crosshair;
+}
+</style>
+</head>
+<body>
+
+<h2>Image Placement</h2>
+
+<div id="instructions" style="
+  background:#ffffff;
+  padding:15px;
+  border-radius:8px;
+  margin-bottom:20px;
+  text-align:left;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+">
+  <strong>How to Use the Image Scaler:</strong>
+  <ol style="margin-top:8px; padding-left:18px;">
+    <li>Upload or take a photo of the area.</li>
+    <li>Tap 4 corners of the opening where the design should fit.</li>
+    <li>Press <b>Place Model</b> to preview it.</li>
+    <li>You can rotate and zoom the model after placing.</li>
+    <li>Press <b>Reset</b> if you want to try again.</li>
+  </ol>
+</div>
+
+<input type="file" id="imageInput" accept="image/*">
+<br>
+
+<canvas id="canvas"></canvas>
+
+<br>
+<button id="placeBtn">Place Model</button>
+<button id="resetBtn">Reset</button>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const imageInput = document.getElementById("imageInput");
+const placeBtn = document.getElementById("placeBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+let img = null;
+let corners = [];
+let viewer = null;
+
+/* LOAD IMAGE */
+imageInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  img = new Image();
+  img.src = URL.createObjectURL(file);
+
+  img.onload = () => {
+
+  const containerWidth = document.body.clientWidth - 40; // small margin
+
+  let width = img.width;
+  let height = img.height;
+
+  if (width > containerWidth) {
+    const ratio = containerWidth / width;
+    width = containerWidth;
+    height = height * ratio;
+  }
+
+  canvas.width = width;
+  canvas.height = height;
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.drawImage(img, 0, 0, width, height);
+
+    corners = [];
+
+    // Remove model if exists
+    if (viewer) {
+      viewer.remove();
+      viewer = null;
+    }
+  };
+});
+
+/* CLICK HANDLER */
+canvas.addEventListener("click", (e) => {
+
+  if (!img) return;
+  if (corners.length >= 4) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  corners.push({ x, y });
+
+  redraw();
+});
+
+/* DRAW DOTS */
+function redraw() {
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "red";
+
+  corners.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+/* PLACE MODEL */
+placeBtn.addEventListener("click", () => {
+
+  if (corners.length !== 4) {
+    alert("Select 4 points first.");
+    return;
+  }
+
+  const xs = corners.map(p => p.x);
+  const ys = corners.map(p => p.y);
+
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+
+  // Remove old model
+  if (viewer) viewer.remove();
+
+  viewer = document.createElement("model-viewer");
+  viewer.src = "models/grill1.glb?v=2";
+  viewer.setAttribute("camera-controls", "");
+  viewer.style.position = "absolute";
+  viewer.style.left = canvas.offsetLeft + minX + "px";
+  viewer.style.top = canvas.offsetTop + minY + "px";
+  viewer.style.width = (maxX - minX) + "px";
+  viewer.style.height = (maxY - minY) + "px";
+
+  document.body.appendChild(viewer);
+});
+
+/* RESET */
+resetBtn.addEventListener("click", () => {
+  corners = [];
+  if (viewer) {
+    viewer.remove();
+    viewer = null;
+  }
+  redraw();
+});
+</script>
+
+</body>
+</html>

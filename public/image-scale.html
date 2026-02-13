@@ -152,7 +152,7 @@ placeBtn.addEventListener("click", () => {
   if (viewer) viewer.remove();
 
   viewer = document.createElement("model-viewer");
-  viewer.src = "models/gate1.glb";
+  viewer.src = "models/gate1.glb?v=2";
   viewer.setAttribute("camera-controls", "");
   viewer.style.position = "absolute";
   viewer.style.left = canvas.offsetLeft + minX + "px";

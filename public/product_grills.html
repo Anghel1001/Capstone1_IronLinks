@@ -100,6 +100,13 @@
   </div>
 
   <script>
+    /*PHOTOVIEW*/    
+    const viewScaleBtn = document.getElementById("viewScale");
+
+    viewScaleBtn.addEventListener("click", () => {
+      window.location.href = "photo_view_grills.html";
+    });
+
     // 3D view toggle
     const view3dBtn = document.getElementById("view3d");
     const model3D = document.getElementById("gate3D");

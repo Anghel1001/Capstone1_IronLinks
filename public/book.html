@@ -109,101 +109,98 @@
 </footer>
 
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-
-  const dateInput = document.getElementById('dateInput');
-  const timeSelect = document.getElementById('timeSelect');
-  const statusMessage = document.getElementById('statusMessage');
-  const form = document.getElementById('bookingForm');
-
-  try {
-    const res = await fetch('/bookings');
-    const bookings = await res.json();
-
-    const approvedDates = bookings
-      .filter(b => b.status === 'approved')
-      .map(b => b.date);
-
-    const pendingDates = bookings
-      .filter(b => b.status === 'pending')
-      .map(b => b.date);
-
-    const calendar = new FullCalendar.Calendar(
-      document.getElementById('calendar'),
-      {
-        initialView: 'dayGridMonth',
-        height: 'auto',
-        validRange: {
-          start: new Date().toISOString().split('T')[0]
-        },
-        events: [
-          ...approvedDates.map(d => ({
-            start: d,
-            display: 'background',
-            backgroundColor: '#c8e6c9'
-          })),
-          ...pendingDates.map(d => ({
-            start: d,
-            display: 'background',
-            backgroundColor: '#fff3cd'
-          }))
-        ],
-        dateClick(info) {
-
-          const selectedDate = new Date(info.dateStr);
-          const day = selectedDate.getDay(); // 0 = Sunday
-
-          if (day === 0) {
-            alert("We are closed on Sundays.");
-            return;
-          }
-
-          if (
-            approvedDates.includes(info.dateStr) ||
-            pendingDates.includes(info.dateStr)
-          ) return;
-
-          document.querySelectorAll('.fc-day.selected')
-            .forEach(d => d.classList.remove('selected'));
-
-          info.dayEl.classList.add('selected');
-          dateInput.value = info.dateStr;
-        }
-      }
-    );
-
-    calendar.render();
-
-  } catch (err) {
-    console.error("Calendar load error:", err);
-  }
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    statusMessage.textContent = "⏳ Booking submitted. Awaiting admin approval.";
-    statusMessage.className = "status-message status-pending";
-
-    const formData = new FormData(form);
-
+  document.addEventListener('DOMContentLoaded', async () => {
+  
+    const dateInput = document.getElementById('dateInput');
+    const statusMessage = document.getElementById('statusMessage');
+    const form = document.getElementById('bookingForm');
+  
     try {
-      const submitRes = await fetch('/book', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!submitRes.ok) throw new Error();
-
-      form.reset();
-
+      const res = await fetch('/bookings');
+      const bookings = await res.json();
+  
+      const calendar = new FullCalendar.Calendar(
+        document.getElementById('calendar'),
+        {
+          initialView: 'dayGridMonth',
+          height: 'auto',
+          validRange: {
+            start: new Date().toISOString().split('T')[0]
+          },
+  
+          // 🔥 SHOW TIME WITH DIFFERENT COLORS
+          events: bookings
+            .filter(b => b.status !== "rejected")
+            .map(b => ({
+              title: formatTime(b.time),
+              start: b.date,
+              allDay: true,
+              color: b.status === "approved"
+                ? "#dc3545"   // 🔴 red
+                : "#fd7e14"   // 🟠 orange for pending
+            })),
+  
+          dateClick(info) {
+  
+            const selectedDate = new Date(info.dateStr);
+            const day = selectedDate.getDay(); // 0 = Sunday
+  
+            if (day === 0) {
+              alert("We are closed on Sundays.");
+              return;
+            }
+  
+            document.querySelectorAll('.fc-day.selected')
+              .forEach(d => d.classList.remove('selected'));
+  
+            info.dayEl.classList.add('selected');
+            dateInput.value = info.dateStr;
+          }
+        }
+      );
+  
+      calendar.render();
+  
     } catch (err) {
-      statusMessage.textContent = "❌ Booking failed. Please try again.";
-      statusMessage.className = "status-message status-error";
+      console.error("Calendar load error:", err);
     }
+  
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+  
+      statusMessage.textContent = "⏳ Booking submitted. Awaiting admin approval.";
+      statusMessage.className = "status-message status-pending";
+  
+      const formData = new FormData(form);
+  
+      try {
+        const submitRes = await fetch('/book', {
+          method: 'POST',
+          body: formData
+        });
+  
+        if (!submitRes.ok) throw new Error();
+  
+        form.reset();
+        location.reload();
+  
+      } catch (err) {
+        statusMessage.textContent = "❌ Booking failed. Please try again.";
+        statusMessage.className = "status-message status-error";
+      }
+    });
+  
   });
-
-});
-</script>
+  
+  // 🔥 Convert 24hr → 12hr format
+  function formatTime(time24) {
+    const [hour, minute] = time24.split(':');
+    let h = parseInt(hour);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${h}:${minute} ${ampm}`;
+  }
+  </script>
 
 </body>
 </html>

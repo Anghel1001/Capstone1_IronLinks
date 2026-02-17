@@ -48,9 +48,10 @@
   height: 14px;
   border-radius: 3px;
 }
-.box-approved { background: #c8e6c9; }
-.box-pending { background: #fff3cd; }
-.box-selected { background: #c8e6c9; }
+/* LEGEND COLORS MATCH CALENDAR EVENTS */
+.box-approved { background: #dc3545; }   /* 🔴 Approved */
+.box-pending { background: #fd7e14; }    /* 🟠 Pending */
+.box-selected { background: #28a745; }   /* 🟢 Selected date */
 </style>
 </head>
 
@@ -70,7 +71,7 @@
   <h2>Book a Consultation</h2>
 
   <div class="legend">
-    <span><div class="box box-approved"></div> Approved</span>
+    <span><div class="box box-approved"></div> Unavailable</span>
     <span><div class="box box-pending"></div> Pending</span>
     <span><div class="box box-selected"></div> Selected</span>
   </div>

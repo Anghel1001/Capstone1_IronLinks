@@ -2,176 +2,322 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Image Placement</title>
+<title>IronLinks AR Placement</title>
 
 <script type="module"
-  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-</script>
+src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background: #f4f4f4;
-  padding: 20px;
+
+/* ===== BACKGROUND ===== */
+
+body{
+font-family:"Segoe UI",Arial,sans-serif;
+margin:0;
+padding:30px 20px;
+text-align:center;
+color:#6b4252;
+
+background:
+radial-gradient(circle at 20% 20%,rgba(255,180,200,0.15),transparent 40%),
+radial-gradient(circle at 80% 70%,rgba(255,160,180,0.15),transparent 40%),
+url("https://images.unsplash.com/photo-1503387762-592deb58ef4e");
+
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
 }
 
-canvas {
-  display: block;
-  margin: 20px auto;
-  cursor: crosshair;
+/* ===== TITLE ===== */
+
+h2{
+margin-bottom:20px;
+letter-spacing:1px;
 }
+
+/* ===== MAIN CARD ===== */
+
+.card{
+max-width:650px;
+margin:auto;
+padding:25px;
+
+background:rgba(255,240,245,0.95);
+backdrop-filter:blur(8px);
+
+border-radius:16px;
+
+box-shadow:
+0 12px 30px rgba(0,0,0,0.25);
+
+border:3px solid #d18aa5;
+}
+
+/* ===== STEPS ===== */
+
+.steps{
+display:flex;
+justify-content:space-between;
+margin-bottom:20px;
+font-size:13px;
+}
+
+.step{
+flex:1;
+padding:8px;
+border-radius:8px;
+background:#f8d6e0;
+margin:3px;
+}
+
+/* ===== INSTRUCTIONS ===== */
+
+#instructions{
+background:white;
+padding:15px;
+border-radius:10px;
+text-align:left;
+margin-bottom:20px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* ===== INPUTS ===== */
+
+input{
+margin:10px;
+}
+
+/* ===== CANVAS ===== */
+
+canvas{
+display:block;
+margin:15px auto;
+border-radius:12px;
+cursor:crosshair;
+
+box-shadow:
+0 6px 18px rgba(0,0,0,0.25);
+
+max-width:100%;
+}
+
+/* ===== BUTTONS ===== */
+
+button{
+background:#e89bb7;
+border:none;
+padding:12px 22px;
+margin:10px 5px;
+
+border-radius:10px;
+
+font-weight:600;
+color:white;
+cursor:pointer;
+
+transition:0.25s;
+}
+
+button:hover{
+background:#c76b8e;
+transform:translateY(-2px);
+}
+
+/* ===== CORNER MARKER ANIMATION ===== */
+
+@keyframes pulse{
+
+0%{transform:scale(1);}
+50%{transform:scale(1.3);}
+100%{transform:scale(1);}
+
+}
+
 </style>
 </head>
+
 <body>
 
-<h2>Image Placement</h2>
+<h2>IronLinks AR Placement</h2>
 
-<div id="instructions" style="
-  background:#ffffff;
-  padding:15px;
-  border-radius:8px;
-  margin-bottom:20px;
-  text-align:left;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-">
-  <strong>How to Use the Photo View:</strong>
-  <ol style="margin-top:8px; padding-left:18px;">
-    <li>Upload or take a photo of the area.</li>
-    <li>Tap 4 corners of the opening where the design should fit.</li>
-    <li>Press <b>Place Model</b> to preview it.</li>
-    <li>You can rotate and zoom the model after placing.</li>
-    <li>Press <b>Reset</b> if you want to try again.</li>
-  </ol>
+<div class="card">
+
+<div class="steps">
+<div class="step">1 Upload / Capture</div>
+<div class="step">2 Select 4 Corners</div>
+<div class="step">3 Preview Model</div>
+</div>
+
+<div id="instructions">
+<b>How to Use:</b>
+<ol>
+<li>Upload or take a photo of the area.</li>
+<li>Tap 4 corners where the iron design should fit.</li>
+<li>Press <b>Place Model</b> to preview.</li>
+<li>Rotate or zoom the model.</li>
+<li>Press <b>Reset</b> to try again.</li>
+</ol>
 </div>
 
 <input type="file" id="imageInput" accept="image/*">
-<br>
+<input type="file" accept="image/*" capture="environment">
 
 <canvas id="canvas"></canvas>
 
-<br>
 <button id="placeBtn">Place Model</button>
 <button id="resetBtn">Reset</button>
 
-<script>
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-const imageInput = document.getElementById("imageInput");
-const placeBtn = document.getElementById("placeBtn");
-const resetBtn = document.getElementById("resetBtn");
+</div>
 
-let img = null;
-let corners = [];
-let viewer = null;
+<script>
+
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+const imageInput=document.getElementById("imageInput");
+const placeBtn=document.getElementById("placeBtn");
+const resetBtn=document.getElementById("resetBtn");
+
+let img=null;
+let corners=[];
+let viewer=null;
 
 /* LOAD IMAGE */
-imageInput.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
 
-  img = new Image();
-  img.src = URL.createObjectURL(file);
+imageInput.addEventListener("change",(e)=>{
 
-  img.onload = () => {
+const file=e.target.files[0];
+if(!file) return;
 
-  const containerWidth = document.body.clientWidth - 40; // small margin
+img=new Image();
+img.src=URL.createObjectURL(file);
 
-  let width = img.width;
-  let height = img.height;
+img.onload=()=>{
 
-  if (width > containerWidth) {
-    const ratio = containerWidth / width;
-    width = containerWidth;
-    height = height * ratio;
-  }
+const containerWidth=document.body.clientWidth-40;
 
-  canvas.width = width;
-  canvas.height = height;
+let width=img.width;
+let height=img.height;
 
-  ctx.clearRect(0, 0, width, height);
-  ctx.drawImage(img, 0, 0, width, height);
+if(width>containerWidth){
 
-    corners = [];
+const ratio=containerWidth/width;
 
-    // Remove model if exists
-    if (viewer) {
-      viewer.remove();
-      viewer = null;
-    }
-  };
+width=containerWidth;
+height=height*ratio;
+
+}
+
+canvas.width=width;
+canvas.height=height;
+
+ctx.clearRect(0,0,width,height);
+ctx.drawImage(img,0,0,width,height);
+
+corners=[];
+
+if(viewer){
+
+viewer.remove();
+viewer=null;
+
+}
+
+};
+
 });
 
 /* CLICK HANDLER */
-canvas.addEventListener("click", (e) => {
 
-  if (!img) return;
-  if (corners.length >= 4) return;
+canvas.addEventListener("click",(e)=>{
 
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+if(!img) return;
+if(corners.length>=4) return;
 
-  corners.push({ x, y });
+const rect=canvas.getBoundingClientRect();
 
-  redraw();
+const x=e.clientX-rect.left;
+const y=e.clientY-rect.top;
+
+corners.push({x,y});
+
+redraw();
+
 });
 
-/* DRAW DOTS */
-function redraw() {
+/* DRAW MARKERS */
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+function redraw(){
 
-  ctx.fillStyle = "red";
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.drawImage(img,0,0,canvas.width,canvas.height);
 
-  corners.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
-    ctx.fill();
-  });
+corners.forEach(p=>{
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,8,0,Math.PI*2);
+
+ctx.fillStyle="#c76b8e";
+ctx.fill();
+
+});
+
 }
 
 /* PLACE MODEL */
-placeBtn.addEventListener("click", () => {
 
-  if (corners.length !== 4) {
-    alert("Select 4 points first.");
-    return;
-  }
+placeBtn.addEventListener("click",()=>{
 
-  const xs = corners.map(p => p.x);
-  const ys = corners.map(p => p.y);
+if(corners.length!==4){
 
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minY = Math.min(...ys);
-  const maxY = Math.max(...ys);
+alert("Select 4 points first.");
+return;
 
-  // Remove old model
-  if (viewer) viewer.remove();
+}
 
-  viewer = document.createElement("model-viewer");
-  viewer.src = "models/gate1.glb?v=2";
-  viewer.setAttribute("camera-controls", "");
-  viewer.style.position = "absolute";
-  viewer.style.left = canvas.offsetLeft + minX + "px";
-  viewer.style.top = canvas.offsetTop + minY + "px";
-  viewer.style.width = (maxX - minX) + "px";
-  viewer.style.height = (maxY - minY) + "px";
+const xs=corners.map(p=>p.x);
+const ys=corners.map(p=>p.y);
 
-  document.body.appendChild(viewer);
+const minX=Math.min(...xs);
+const maxX=Math.max(...xs);
+const minY=Math.min(...ys);
+const maxY=Math.max(...ys);
+
+if(viewer) viewer.remove();
+
+viewer=document.createElement("model-viewer");
+
+viewer.src="models/gate1.glb?v=2";
+viewer.setAttribute("camera-controls","");
+
+viewer.style.position="absolute";
+
+viewer.style.left=canvas.offsetLeft+minX+"px";
+viewer.style.top=canvas.offsetTop+minY+"px";
+
+viewer.style.width=(maxX-minX)+"px";
+viewer.style.height=(maxY-minY)+"px";
+
+document.body.appendChild(viewer);
+
 });
 
 /* RESET */
-resetBtn.addEventListener("click", () => {
-  corners = [];
-  if (viewer) {
-    viewer.remove();
-    viewer = null;
-  }
-  redraw();
+
+resetBtn.addEventListener("click",()=>{
+
+corners=[];
+
+if(viewer){
+
+viewer.remove();
+viewer=null;
+
+}
+
+redraw();
+
 });
+
 </script>
 
 </body>

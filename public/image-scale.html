@@ -100,8 +100,9 @@ color:white;
 
 canvas{
 
-width:100%;
+max-width:100%;
 margin-top:10px;
+height:auto;
 
 border-radius:10px;
 
@@ -283,10 +284,15 @@ canvas.addEventListener("click",(e)=>{
 if(!img) return;
 if(corners.length>=4) return;
 
-const rect=canvas.getBoundingClientRect();
+const rect = canvas.getBoundingClientRect();
 
-const x=e.clientX-rect.left;
-const y=e.clientY-rect.top;
+/* SCALE FIX */
+
+const scaleX = canvas.width / rect.width;
+const scaleY = canvas.height / rect.height;
+
+const x = (e.clientX - rect.left) * scaleX;
+const y = (e.clientY - rect.top) * scaleY;
 
 corners.push({x,y});
 

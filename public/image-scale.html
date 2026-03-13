@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IronLinks AR Placement</title>
 
@@ -9,163 +10,212 @@ src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
 <style>
 
-/* ===== BACKGROUND ===== */
+/* ===== GLOBAL ===== */
 
 body{
-font-family:"Segoe UI",Arial,sans-serif;
 margin:0;
-padding:30px 20px;
-text-align:center;
-color:#6b4252;
-
-background:
-radial-gradient(circle at 20% 20%,rgba(255,180,200,0.15),transparent 40%),
-radial-gradient(circle at 80% 70%,rgba(255,160,180,0.15),transparent 40%),
-url("https://images.unsplash.com/photo-1503387762-592deb58ef4e");
-
-background-size:cover;
-background-position:center;
-background-attachment:fixed;
-}
-
-/* ===== TITLE ===== */
-
-h2{
-margin-bottom:20px;
-letter-spacing:1px;
+font-family:Segoe UI,Arial,sans-serif;
+background:#1f1f1f;
+color:#e5e5e5;
+display:flex;
+justify-content:center;
+padding:30px 15px;
 }
 
 /* ===== MAIN CARD ===== */
 
-.card{
-max-width:650px;
-margin:auto;
+.container{
+
+width:100%;
+max-width:700px;
+
+background:#2a2a2a;
+
+border-radius:14px;
+
 padding:25px;
 
-background:rgba(255,240,245,0.95);
-backdrop-filter:blur(8px);
-
-border-radius:16px;
-
 box-shadow:
-0 12px 30px rgba(0,0,0,0.25);
+0 10px 30px rgba(0,0,0,0.6);
 
-border:3px solid #d18aa5;
+}
+
+/* ===== HEADER ===== */
+
+h1{
+margin-top:0;
+font-size:24px;
+letter-spacing:1px;
+}
+
+.subtitle{
+color:#9ca3af;
+margin-bottom:20px;
 }
 
 /* ===== STEPS ===== */
 
 .steps{
+
 display:flex;
-justify-content:space-between;
+gap:10px;
 margin-bottom:20px;
-font-size:13px;
+
 }
 
 .step{
+
 flex:1;
-padding:8px;
+background:#1f1f1f;
+padding:10px;
 border-radius:8px;
-background:#f8d6e0;
-margin:3px;
+font-size:13px;
+color:#9ca3af;
+
 }
 
 /* ===== INSTRUCTIONS ===== */
 
-#instructions{
-background:white;
+.instructions{
+
+background:#1f1f1f;
 padding:15px;
-border-radius:10px;
-text-align:left;
+border-radius:8px;
 margin-bottom:20px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+font-size:14px;
+line-height:1.6;
+
 }
 
-/* ===== INPUTS ===== */
+/* ===== INPUT ===== */
 
 input{
-margin:10px;
+
+margin-bottom:15px;
+color:white;
+
 }
 
 /* ===== CANVAS ===== */
 
 canvas{
-display:block;
-margin:15px auto;
-border-radius:12px;
-cursor:crosshair;
+
+width:100%;
+margin-top:10px;
+
+border-radius:10px;
+
+background:#111;
 
 box-shadow:
-0 6px 18px rgba(0,0,0,0.25);
+0 5px 15px rgba(0,0,0,0.5);
 
-max-width:100%;
+cursor:crosshair;
+
 }
 
 /* ===== BUTTONS ===== */
 
-button{
-background:#e89bb7;
-border:none;
-padding:12px 22px;
-margin:10px 5px;
+.buttons{
 
-border-radius:10px;
+margin-top:15px;
+
+display:flex;
+gap:10px;
+
+}
+
+button{
+
+flex:1;
+
+border:none;
+
+padding:12px;
+
+border-radius:8px;
 
 font-weight:600;
-color:white;
+
 cursor:pointer;
 
-transition:0.25s;
+transition:0.2s;
+
 }
 
-button:hover{
-background:#c76b8e;
-transform:translateY(-2px);
+/* place button */
+
+.place{
+
+background:#3b82f6;
+color:white;
+
 }
 
-/* ===== CORNER MARKER ANIMATION ===== */
+.place:hover{
 
-@keyframes pulse{
+background:#2563eb;
 
-0%{transform:scale(1);}
-50%{transform:scale(1.3);}
-100%{transform:scale(1);}
+}
+
+/* reset button */
+
+.reset{
+
+background:#4b5563;
+color:white;
+
+}
+
+.reset:hover{
+
+background:#374151;
 
 }
 
 </style>
+
 </head>
 
 <body>
 
-<h2>IronLinks AR Placement</h2>
+<div class="container">
 
-<div class="card">
+<h1>IronLinks AR Preview</h1>
+<div class="subtitle">Place iron gates, grills, or railings in your space</div>
 
 <div class="steps">
-<div class="step">1 Upload / Capture</div>
-<div class="step">2 Select 4 Corners</div>
+
+<div class="step">1 Upload Photo</div>
+<div class="step">2 Select Corners</div>
 <div class="step">3 Preview Model</div>
+
 </div>
 
-<div id="instructions">
-<b>How to Use:</b>
+<div class="instructions">
+
+<b>How it works:</b>
+
 <ol>
-<li>Upload or take a photo of the area.</li>
-<li>Tap 4 corners where the iron design should fit.</li>
-<li>Press <b>Place Model</b> to preview.</li>
-<li>Rotate or zoom the model.</li>
-<li>Press <b>Reset</b> to try again.</li>
+<li>Upload or capture a photo of your space.</li>
+<li>Tap four corners where the iron structure should be placed.</li>
+<li>Click <b>Place Model</b> to preview the design.</li>
+<li>Use gestures to rotate or zoom the model.</li>
+
 </ol>
+
 </div>
 
 <input type="file" id="imageInput" accept="image/*">
-<input type="file" accept="image/*" capture="environment">
 
 <canvas id="canvas"></canvas>
 
-<button id="placeBtn">Place Model</button>
-<button id="resetBtn">Reset</button>
+<div class="buttons">
+
+<button class="place" id="placeBtn">Place Model</button>
+<button class="reset" id="resetBtn">Reset</button>
+
+</div>
 
 </div>
 
@@ -193,7 +243,7 @@ img.src=URL.createObjectURL(file);
 
 img.onload=()=>{
 
-const containerWidth=document.body.clientWidth-40;
+const containerWidth=document.querySelector(".container").clientWidth;
 
 let width=img.width;
 let height=img.height;
@@ -256,7 +306,7 @@ corners.forEach(p=>{
 ctx.beginPath();
 ctx.arc(p.x,p.y,8,0,Math.PI*2);
 
-ctx.fillStyle="#c76b8e";
+ctx.fillStyle="#3b82f6";
 ctx.fill();
 
 });

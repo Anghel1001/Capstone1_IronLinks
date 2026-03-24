@@ -10,198 +10,377 @@
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 #calendar {
-  max-width: 900px;
-  margin: 30px auto;
-  background: #fff;
-  padding: 15px;
-  border-radius: 12px;
+max-width: 900px;
+margin: 30px auto;
+background: #fff;
+padding: 15px;
+border-radius: 12px;
 }
 
-.fc-day.selected {
-  background: #c8e6c9 !important;
+.hidden { display:none; }
+
+.auth-box {
+max-width:400px;
+margin:20px auto;
+background:#fff;
+padding:20px;
+border-radius:12px;
 }
 
-.status-message {
-  margin-top: 16px;
-  font-weight: 600;
+.auth-box input{
+width:100%;
+margin-bottom:10px;
+padding:8px;
 }
-.status-pending { color: #856404; }
-.status-success { color: #155724; }
-.status-error { color: #721c24; }
 
-.legend {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin-bottom: 10px;
-  font-size: 14px;
+.auth-box button{
+width:100%;
+padding:10px;
 }
-.legend span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+
+.switch{
+text-align:center;
+cursor:pointer;
+color:blue;
 }
-.box {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
+
+.legend{
+display:flex;
+gap:16px;
+justify-content:center;
+margin-bottom:10px;
 }
-/* LEGEND COLORS MATCH CALENDAR EVENTS */
-.box-approved { background: #dc3545; }   /* 🔴 Approved */
-.box-pending { background: #fd7e14; }    /* 🟠 Pending */
-.box-selected { background: #28a745; }   /* 🟢 Selected date */
+
+.box{
+width:14px;
+height:14px;
+border-radius:3px;
+}
+
+.box-approved{ background:#dc3545;}
+.box-pending{ background:#fd7e14;}
+.box-selected{ background:#28a745;}
 </style>
+
 </head>
 
 <body>
 
 <header>
-  <h1>Iron <span>works</span></h1>
-  <nav>
-    <a href="index.html">about us</a> |
-    <a href="products.html">products</a> |
-    <a href="book.html">book now</a> |
-    <a href="#contact">contact</a>
-  </nav>
+<h1>Iron <span>works</span></h1>
 </header>
 
-<section class="book-section">
-  <h2>Book a Consultation</h2>
 
-  <div class="legend">
-    <span><div class="box box-approved"></div> Unavailable</span>
-    <span><div class="box box-pending"></div> Pending</span>
-    <span><div class="box box-selected"></div> Selected</span>
-  </div>
+<!-- AUTH -->
+<div id="authSection" class="auth-box">
+<h3 id="authTitle">Login</h3>
 
-  <div id="calendar"></div>
+<input type="text" id="authName" placeholder="Full Name" class="hidden">
+<input type="email" id="authEmail" placeholder="Email">
+<input type="password" id="authPassword" placeholder="Password">
 
-  <form id="bookingForm" class="book-form" enctype="multipart/form-data">
-    <input type="text" name="name" placeholder="Full Name" required>
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="tel" name="phone" placeholder="09XXXXXXXXX" required>
+<button type="button" onclick="handleAuth()">Login</button>
+<p class="switch" onclick="toggleAuth()">Create account</p>
+</div>
 
-    <input type="date" name="date" id="dateInput" required readonly>
 
-    <!-- TIME SLOT DROPDOWN (STRICT 1 HOUR SLOTS) -->
-    <select name="time" id="timeSelect" required>
-      <option value="">Select Time</option>
-      <option value="08:00">08:00 AM</option>
-      <option value="09:00">09:00 AM</option>
-      <option value="10:00">10:00 AM</option>
-      <option value="11:00">11:00 AM</option>
-      <option value="13:00">01:00 PM</option>
-      <option value="14:00">02:00 PM</option>
-      <option value="15:00">03:00 PM</option>
-      <option value="16:00">04:00 PM</option>
-    </select>
+<!-- BOOKING -->
+<section id="bookingSection" class="hidden">
 
-    <textarea name="request" placeholder="Additional details"></textarea>
-    <button type="submit">Submit Booking</button>
-  </form>
+<h2>Book Consultation</h2>
 
-  <div id="statusMessage" class="status-message"></div>
+<button onclick="logout()">Logout</button>
+
+<div class="legend">
+<span><div class="box box-approved"></div>Unavailable</span>
+<span><div class="box box-pending"></div>Pending</span>
+<span><div class="box box-selected"></div>Selected</span>
+</div>
+
+<div id="calendar"></div>
+
+<form id="bookingForm">
+
+<input type="text" id="userName" readonly>
+<input type="email" id="userEmail" readonly>
+
+<input type="tel" name="phone" placeholder="09XXXXXXXXX" required>
+
+<input type="date" id="dateInput" required readonly>
+
+<select name="time" required>
+<option value="">Select Time</option>
+<option value="08:00">08:00 AM</option>
+<option value="09:00">09:00 AM</option>
+<option value="10:00">10:00 AM</option>
+<option value="11:00">11:00 AM</option>
+<option value="13:00">01:00 PM</option>
+<option value="14:00">02:00 PM</option>
+<option value="15:00">03:00 PM</option>
+<option value="16:00">04:00 PM</option>
+</select>
+
+<textarea name="request"></textarea>
+
+<button type="submit">Submit Booking</button>
+
+</form>
+
+<div id="statusMessage"></div>
+
 </section>
 
-<footer id="contact">
-  <p>© 2025 IronLinks. All Rights Reserved.</p>
-</footer>
 
 <script>
-  document.addEventListener('DOMContentLoaded', async () => {
-  
-    const dateInput = document.getElementById('dateInput');
-    const statusMessage = document.getElementById('statusMessage');
-    const form = document.getElementById('bookingForm');
-  
-    try {
-      const res = await fetch('/bookings');
-      const bookings = await res.json();
-  
-      const calendar = new FullCalendar.Calendar(
-        document.getElementById('calendar'),
-        {
-          initialView: 'dayGridMonth',
-          height: 'auto',
-          validRange: {
-            start: new Date().toISOString().split('T')[0]
-          },
-  
-          // 🔥 SHOW TIME WITH DIFFERENT COLORS
-          events: bookings
-            .filter(b => b.status !== "rejected")
-            .map(b => ({
-              title: formatTime(b.time),
-              start: b.date,
-              allDay: true,
-              color: b.status === "approved"
-                ? "#dc3545"   // 🔴 red
-                : "#fd7e14"   // 🟠 orange for pending
-            })),
-  
-          dateClick(info) {
-  
-            const selectedDate = new Date(info.dateStr);
-            const day = selectedDate.getDay(); // 0 = Sunday
-  
-            if (day === 0) {
-              alert("We are closed on Sundays.");
-              return;
-            }
-  
-            document.querySelectorAll('.fc-day.selected')
-              .forEach(d => d.classList.remove('selected'));
-  
-            info.dayEl.classList.add('selected');
-            dateInput.value = info.dateStr;
-          }
-        }
-      );
-  
-      calendar.render();
-  
-    } catch (err) {
-      console.error("Calendar load error:", err);
-    }
-  
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-  
-      statusMessage.textContent = "⏳ Booking submitted. Awaiting admin approval.";
-      statusMessage.className = "status-message status-pending";
-  
-      const formData = new FormData(form);
-  
-      try {
-        const submitRes = await fetch('/book', {
-          method: 'POST',
-          body: formData
-        });
-  
-        if (!submitRes.ok) throw new Error();
-  
-        form.reset();
-        location.reload();
-  
-      } catch (err) {
-        statusMessage.textContent = "❌ Booking failed. Please try again.";
-        statusMessage.className = "status-message status-error";
-      }
-    });
-  
-  });
-  
-  // 🔥 Convert 24hr → 12hr format
-  function formatTime(time24) {
-    const [hour, minute] = time24.split(':');
-    let h = parseInt(hour);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    h = h % 12 || 12;
-    return `${h}:${minute} ${ampm}`;
-  }
-  </script>
+
+/* CONNECT SUPABASE */
+
+const supabaseUrl = "https://ntuikmoiajlqlzehqwkw.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50dWlrbW9pYWpscWx6ZWhxd2t3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NTQ2MjUsImV4cCI6MjA3OTAzMDYyNX0.Zxrk09S04mRqjbCih9MlZ43YPaw6VUV0obR9qzxQ2Fk";
+
+const { createClient } = supabase;
+const supabaseClient = createClient(supabaseUrl, supabaseKey);
+let isLogin = true;
+
+
+/* SWITCH LOGIN REGISTER */
+
+function toggleAuth(){
+
+isLogin = !isLogin;
+
+document.getElementById("authTitle").textContent =
+isLogin ? "Login" : "Register";
+
+document.querySelector(".auth-box button").textContent =
+isLogin ? "Login" : "Register";
+
+document.querySelector(".switch").textContent =
+isLogin ? "Create account" : "Already have account?";
+
+document.getElementById("authName").classList.toggle("hidden");
+
+}
+
+
+/* LOGIN / REGISTER */
+
+async function handleAuth(){
+
+const name = document.getElementById("authName").value.trim();
+const email = document.getElementById("authEmail").value.trim();
+const password = document.getElementById("authPassword").value.trim();
+
+
+// REGISTER
+if(!isLogin){
+
+const { data, error } = await supabaseClient
+.from("users")
+.insert([
+{
+name: name,
+email: email,
+password: password
+}
+])
+.select()
+.single();
+
+if(error){
+alert(error.message);
+return;
+}
+
+localStorage.setItem("user", JSON.stringify(data));
+loadUser();
+return;
+
+}
+
+
+// LOGIN
+const { data, error } = await supabaseClient
+.from("users")
+.select("*")
+.eq("email", email);
+
+if(error){
+alert(error.message);
+return;
+}
+
+if(!data || data.length === 0){
+alert("User not found");
+return;
+}
+
+// Check password manually
+if(data[0].password !== password){
+alert("Incorrect password");
+return;
+}
+
+localStorage.setItem("user", JSON.stringify(data[0]));
+loadUser();
+
+}
+
+
+/* LOAD USER */
+
+function loadUser(){
+
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(!user) return;
+
+document.getElementById("authSection").classList.add("hidden");
+document.getElementById("bookingSection").classList.remove("hidden");
+
+document.getElementById("userName").value = user.name;
+document.getElementById("userEmail").value = user.email;
+
+initCalendar();
+
+}
+
+
+/* LOGOUT */
+
+function logout(){
+localStorage.removeItem("user");
+location.reload();
+}
+
+
+/* CALENDAR */
+
+async function initCalendar() {
+
+const dateInput = document.getElementById('dateInput');
+const statusMessage = document.getElementById('statusMessage');
+const form = document.getElementById('bookingForm');
+
+try {
+
+// 🔥 Load from Supabase instead of /bookings
+const { data: bookings, error } = await supabaseClient
+.from("bookings")
+.select("*");
+
+if(error){
+console.error(error);
+return;
+}
+
+const calendar = new FullCalendar.Calendar(
+document.getElementById('calendar'),
+{
+initialView: 'dayGridMonth',
+height: 'auto',
+
+validRange: {
+start: new Date().toISOString().split('T')[0]
+},
+
+events: bookings
+.filter(b => b.status !== "rejected")
+.map(b => ({
+title: formatTime(b.time),
+start: b.date,
+allDay: true,
+color: b.status === "approved"
+? "#dc3545"
+: "#fd7e14"
+})),
+
+dateClick(info) {
+
+const selectedDate = new Date(info.dateStr);
+const day = selectedDate.getDay();
+
+if (day === 0) {
+alert("We are closed on Sundays.");
+return;
+}
+
+document.querySelectorAll('.fc-day.selected')
+.forEach(d => d.classList.remove('selected'));
+
+info.dayEl.classList.add('selected');
+dateInput.value = info.dateStr;
+
+}
+
+}
+);
+
+calendar.render();
+
+} catch (err) {
+console.error("Calendar load error:", err);
+}
+
+
+form.addEventListener('submit', async (e) => {
+
+e.preventDefault();
+
+statusMessage.textContent =
+"⏳ Booking submitted. Awaiting admin approval.";
+
+statusMessage.className =
+"status-message status-pending";
+
+const user =
+JSON.parse(localStorage.getItem("user"));
+
+const booking = {
+name: user.name,
+email: user.email,
+phone: form.phone.value,
+date: form.date.value,
+time: form.time.value,
+request: form.request.value,
+status: "pending"
+};
+
+const { error } = await supabaseClient
+.from("bookings")
+.insert([booking]);
+
+if(error){
+statusMessage.textContent =
+"❌ Booking failed";
+
+return;
+}
+
+form.reset();
+location.reload();
+
+});
+
+}
+
+
+
+// 🔥 Convert 24hr → 12hr format
+function formatTime(time24) {
+const [hour, minute] = time24.split(':');
+let h = parseInt(hour);
+const ampm = h >= 12 ? 'PM' : 'AM';
+h = h % 12 || 12;
+return `${h}:${minute} ${ampm}`;
+}
+
+</script>
 
 </body>
 </html>

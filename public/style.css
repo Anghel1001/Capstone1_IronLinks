@@ -747,3 +747,61 @@ footer {
   color: #ffffff;          /* ⬅ prevents purple visited link */
 }
 
+.auth-box {
+max-width: 600px;
+margin: 60px auto;
+padding: 30px 25px;
+background: #f9f9f9;
+border-radius: 15px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+text-align: center;
+}
+
+.auth-box h3 {
+font-family: 'Playfair Display', serif;
+margin-bottom: 20px;
+font-size: 22px;
+}
+
+.auth-box input {
+width: 100%;
+padding: 12px 15px;
+margin: 10px 0;
+border-radius: 8px;
+border: 1px solid #ccc;
+font-size: 14px;
+}
+
+.auth-box input:focus {
+outline: none;
+border-color: gray;
+box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
+.auth-box button {
+width: 100%;
+padding: 12px;
+background-color: #444;
+color: white;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-size: 15px;
+transition: 0.3s;
+margin-top: 10px;
+}
+
+.auth-box button:hover {
+background-color: #666;
+}
+
+.switch {
+margin-top: 15px;
+font-size: 14px;
+color: #444;
+cursor: pointer;
+}
+
+.switch:hover {
+text-decoration: underline;
+}

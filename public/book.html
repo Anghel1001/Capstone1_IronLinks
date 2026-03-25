@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Book Consultation | IronLinks</title>
+<title>Book ConsultationBook ConsultationBook Consultation | IronLinks</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -11,60 +12,96 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
 <!-- SUPABASE -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 #calendar {
-max-width: 900px;
-margin: 30px auto;
+max-width: 100%;
+margin: 20px auto;
 background: #fff;
 padding: 15px;
 border-radius: 12px;
+box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
+
+.fc-day.selected {
+background: #c8e6c9 !important;
+}
+
+.book-section {
+max-width: 600px;
+margin: 50px auto;
+padding: 30px 20px;
+background-color: #f9f9f9;
+border-radius: 15px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.book-form{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:10px;
+margin-top:20px;
+}
+
+.book-form textarea{
+grid-column:1/-1;
+min-height:80px;
+}
+
+.book-form button{
+grid-column:1/-1;
+padding:12px;
+background:#1e293b;
+color:white;
+border:none;
+cursor:pointer;
+border-radius:6px;
+}
+
+.status-message {
+margin-top: 16px;
+font-weight: 600;
+}
+
+.status-pending { color: #856404; }
+.status-success { color: #155724; }
+.status-error { color: #721c24; }
 
 .hidden { display:none; }
-
-.auth-box {
-max-width:400px;
-margin:20px auto;
-background:#fff;
-padding:20px;
-border-radius:12px;
-}
-
-.auth-box input{
-width:100%;
-margin-bottom:10px;
-padding:8px;
-}
-
-.auth-box button{
-width:100%;
-padding:10px;
-}
 
 .switch{
 text-align:center;
 cursor:pointer;
-color:blue;
+color:#1e293b;
 }
 
-.legend{
+.legend {
 display:flex;
 gap:16px;
 justify-content:center;
 margin-bottom:10px;
+font-size:14px;
 }
 
-.box{
+.legend span {
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.box {
 width:14px;
 height:14px;
 border-radius:3px;
 }
 
-.box-approved{ background:#dc3545;}
-.box-pending{ background:#fd7e14;}
-.box-selected{ background:#28a745;}
+.box-approved { background: #dc3545; }
+.box-pending { background: #fd7e14; }
+.box-selected { background: #28a745; }
+
 </style>
 
 </head>
@@ -73,10 +110,16 @@ border-radius:3px;
 
 <header>
 <h1>Iron <span>works</span></h1>
+<nav>
+<a href="index.html">about us</a> |
+<a href="products.html">products</a> |
+<a href="book.html">book now</a> |
+<a href="#contact">contact</a>
+</nav>
 </header>
 
-
 <!-- AUTH -->
+
 <div id="authSection" class="auth-box">
 <h3 id="authTitle">Login</h3>
 
@@ -85,12 +128,13 @@ border-radius:3px;
 <input type="password" id="authPassword" placeholder="Password">
 
 <button type="button" onclick="handleAuth()">Login</button>
+
 <p class="switch" onclick="toggleAuth()">Create account</p>
 </div>
 
-
 <!-- BOOKING -->
-<section id="bookingSection" class="hidden">
+
+<section id="bookingSection" class="book-section hidden">
 
 <h2>Book Consultation</h2>
 
@@ -104,7 +148,7 @@ border-radius:3px;
 
 <div id="calendar"></div>
 
-<form id="bookingForm">
+<form id="bookingForm" class="book-form">
 
 <input type="text" id="userName" readonly>
 <input type="email" id="userEmail" readonly>
@@ -125,33 +169,27 @@ border-radius:3px;
 <option value="16:00">04:00 PM</option>
 </select>
 
-<textarea name="request"></textarea>
+<textarea name="request" placeholder="Additional details"></textarea>
 
 <button type="submit">Submit Booking</button>
 
 </form>
 
-<div id="statusMessage"></div>
+<div id="statusMessage" class="status-message"></div>
 
 </section>
 
-
 <script>
-
-/* CONNECT SUPABASE */
 
 const supabaseUrl = "https://ntuikmoiajlqlzehqwkw.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50dWlrbW9pYWpscWx6ZWhxd2t3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NTQ2MjUsImV4cCI6MjA3OTAzMDYyNX0.Zxrk09S04mRqjbCih9MlZ43YPaw6VUV0obR9qzxQ2Fk";
 
 const { createClient } = supabase;
 const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
 let isLogin = true;
 
-
-/* SWITCH LOGIN REGISTER */
-
 function toggleAuth(){
-
 isLogin = !isLogin;
 
 document.getElementById("authTitle").textContent =
@@ -164,31 +202,20 @@ document.querySelector(".switch").textContent =
 isLogin ? "Create account" : "Already have account?";
 
 document.getElementById("authName").classList.toggle("hidden");
-
 }
-
-
-/* LOGIN / REGISTER */
 
 async function handleAuth(){
 
-const name = document.getElementById("authName").value.trim();
-const email = document.getElementById("authEmail").value.trim();
-const password = document.getElementById("authPassword").value.trim();
+const name = authName.value;
+const email = authEmail.value;
+const password = authPassword.value;
 
-
-// REGISTER
 if(!isLogin){
 
-const { data, error } = await supabaseClient
+const { data, error } =
+await supabaseClient
 .from("users")
-.insert([
-{
-name: name,
-email: email,
-password: password
-}
-])
+.insert([{name,email,password}])
 .select()
 .single();
 
@@ -197,188 +224,130 @@ alert(error.message);
 return;
 }
 
-localStorage.setItem("user", JSON.stringify(data));
+localStorage.setItem("user",JSON.stringify(data));
 loadUser();
 return;
-
 }
 
-
-// LOGIN
-const { data, error } = await supabaseClient
+const { data,error } =
+await supabaseClient
 .from("users")
 .select("*")
-.eq("email", email);
+.eq("email",email);
 
-if(error){
-alert(error.message);
-return;
-}
-
-if(!data || data.length === 0){
+if(!data.length){
 alert("User not found");
 return;
 }
 
-// Check password manually
 if(data[0].password !== password){
-alert("Incorrect password");
+alert("Wrong password");
 return;
 }
 
-localStorage.setItem("user", JSON.stringify(data[0]));
+localStorage.setItem("user",JSON.stringify(data[0]));
 loadUser();
 
 }
 
-
-/* LOAD USER */
-
 function loadUser(){
 
-const user = JSON.parse(localStorage.getItem("user"));
+const user =
+JSON.parse(localStorage.getItem("user"));
 
 if(!user) return;
 
-document.getElementById("authSection").classList.add("hidden");
-document.getElementById("bookingSection").classList.remove("hidden");
+authSection.classList.add("hidden");
+bookingSection.classList.remove("hidden");
 
-document.getElementById("userName").value = user.name;
-document.getElementById("userEmail").value = user.email;
+userName.value = user.name;
+userEmail.value = user.email;
 
 initCalendar();
 
 }
-
-
-/* LOGOUT */
 
 function logout(){
 localStorage.removeItem("user");
 location.reload();
 }
 
+async function initCalendar(){
 
-/* CALENDAR */
-
-async function initCalendar() {
-
-const dateInput = document.getElementById('dateInput');
-const statusMessage = document.getElementById('statusMessage');
-const form = document.getElementById('bookingForm');
-
-try {
-
-// 🔥 Load from Supabase instead of /bookings
-const { data: bookings, error } = await supabaseClient
+const { data:bookings } =
+await supabaseClient
 .from("bookings")
 .select("*");
 
-if(error){
-console.error(error);
-return;
-}
-
-const calendar = new FullCalendar.Calendar(
-document.getElementById('calendar'),
+const calendar =
+new FullCalendar.Calendar(
+calendarEl=document.getElementById("calendar"),
 {
-initialView: 'dayGridMonth',
-height: 'auto',
+initialView:"dayGridMonth",
+height:"auto",
 
-validRange: {
-start: new Date().toISOString().split('T')[0]
+validRange:{
+start:new Date().toISOString().split("T")[0]
 },
 
-events: bookings
-.filter(b => b.status !== "rejected")
-.map(b => ({
-title: formatTime(b.time),
-start: b.date,
-allDay: true,
-color: b.status === "approved"
-? "#dc3545"
-: "#fd7e14"
+events: bookings.map(b=>({
+title:formatTime(b.time),
+start:b.date,
+color:b.status==="approved"
+?"#dc3545"
+:"#fd7e14"
 })),
 
-dateClick(info) {
+dateClick(info){
 
-const selectedDate = new Date(info.dateStr);
-const day = selectedDate.getDay();
+document
+.querySelectorAll(".fc-day.selected")
+.forEach(d=>d.classList.remove("selected"));
 
-if (day === 0) {
-alert("We are closed on Sundays.");
-return;
-}
-
-document.querySelectorAll('.fc-day.selected')
-.forEach(d => d.classList.remove('selected'));
-
-info.dayEl.classList.add('selected');
+info.dayEl.classList.add("selected");
 dateInput.value = info.dateStr;
 
 }
 
-}
-);
+});
 
 calendar.render();
 
-} catch (err) {
-console.error("Calendar load error:", err);
-}
-
-
-form.addEventListener('submit', async (e) => {
+bookingForm.addEventListener("submit",
+async e=>{
 
 e.preventDefault();
-
-statusMessage.textContent =
-"⏳ Booking submitted. Awaiting admin approval.";
-
-statusMessage.className =
-"status-message status-pending";
 
 const user =
 JSON.parse(localStorage.getItem("user"));
 
-const booking = {
-name: user.name,
-email: user.email,
-phone: form.phone.value,
-date: form.date.value,
-time: form.time.value,
-request: form.request.value,
-status: "pending"
-};
-
-const { error } = await supabaseClient
+await supabaseClient
 .from("bookings")
-.insert([booking]);
+.insert([{
+name:user.name,
+email:user.email,
+phone:bookingForm.phone.value,
+date:dateInput.value,
+time:bookingForm.time.value,
+request:bookingForm.request.value,
+status:"pending"
+}]);
 
-if(error){
-statusMessage.textContent =
-"❌ Booking failed";
-
-return;
-}
-
-form.reset();
 location.reload();
 
 });
 
 }
 
-
-
-// 🔥 Convert 24hr → 12hr format
-function formatTime(time24) {
-const [hour, minute] = time24.split(':');
-let h = parseInt(hour);
-const ampm = h >= 12 ? 'PM' : 'AM';
-h = h % 12 || 12;
+function formatTime(time24){
+const [hour,minute] = time24.split(":");
+let h=parseInt(hour);
+const ampm = h>=12?"PM":"AM";
+h = h%12 || 12;
 return `${h}:${minute} ${ampm}`;
 }
+
+loadUser();
 
 </script>
 

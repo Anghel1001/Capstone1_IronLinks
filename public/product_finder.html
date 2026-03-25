@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Design Finder | IronLinks</title>
+
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
+
+<style>
+.product-section {
+  padding: 60px 10%;
+}
+
+.product-container {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.product-image {
+  flex: 1;
+  min-width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  background: #fafafa;
+  text-align: center;
+}
+
+.product-details {
+  flex: 1;
+  min-width: 300px;
+}
+
+.product-details label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.product-details textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 10px;
+  margin-top: 5px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.quote-btn {
+  margin-top: 20px;
+  padding: 12px 25px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.quote-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #eee;
+  border-top: 6px solid #000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 30px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.disclaimer {
+  font-size: 12px;
+  color: #777;
+  margin-top: 10px;
+}
+
+.instructions {
+  background: #f4f4f4;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.instructions h4 {
+  margin-bottom: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Iron <span>works</span></h1>
+  <nav>
+    <a href="index.html">about us</a> |
+    <a href="products.html">products</a> |
+    <a href="book.html">book now</a> |
+    <a href="#contact">contact</a>
+  </nav>
+</header>
+
+<section class="product-section">
+  <h2>Custom Ironwork Design Finder</h2>
+
+  <div class="product-nav">
+    <button onclick="location.href='products.html'">Gates</button>
+    <button onclick="location.href='product_grills.html'">Grills</button>
+    <button onclick="location.href='product_railings.html'">Railings</button>
+    <button class="active" onclick="location.href='product_finder.html'">Customize</button>
+  </div>   
+
+  <div class="instructions">
+    <h4>How It Works</h4>
+    <ol>
+      <li>Describe your preferred iron design clearly</li>
+      <li>Include style, color, and structure</li>
+      <li>Click Generate Design and wait 20–40 seconds</li>
+    </ol>
+
+    <p>
+      <strong>Example:</strong>
+      <em>
+      "Modern pink sliding gate, plain vertical bars,
+      no ornaments, minimalist design"
+      </em>
+    </p>
+  </div>
+
+  <div class="product-container">
+
+    <div class="product-image">
+      <div id="result">
+        🧩 No design generated yet
+      </div>
+    </div>
+
+    <div class="product-details">
+
+      <label>Describe your design</label>
+
+      <textarea
+        id="description"
+        placeholder="Example: Modern plain sliding gate, pink iron bars, vertical only, minimalist">
+      </textarea>
+
+      <button class="quote-btn" id="generateBtn">
+        Generate Design
+      </button>
+
+      <p class="disclaimer">
+        AI-generated images are for conceptual reference only.
+        Final fabrication design will be reviewed by IronLinks.
+      </p>
+
+    </div>
+
+  </div>
+</section>
+
+<footer id="contact">
+  <p>© 2025 IronLinks. All Rights Reserved.</p>
+</footer>
+
+<script>
+
+const generateBtn = document.getElementById("generateBtn");
+const result = document.getElementById("result");
+const description = document.getElementById("description");
+
+let generatedImage = null;
+
+generateBtn.addEventListener("click", async () => {
+
+  if (!description.value.trim()) {
+    alert("Please describe your design before generating.");
+    return;
+  }
+
+  generateBtn.disabled = true;
+
+  result.innerHTML = `
+    <div class="spinner"></div>
+    <p><strong>AI is generating your design…</strong></p>
+    <p style="font-size:12px; color:#777;">
+    This may take 20–40 seconds
+    </p>
+  `;
+
+  try {
+
+    const res = await fetch("/design-finder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        description: description.value
+      })
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      throw new Error("Generation failed");
+    }
+
+    generatedImage = data.generated_image;
+
+    result.innerHTML = `
+      <img
+      src="${generatedImage}"
+      style="width:100%; border-radius:10px;"
+      />
+
+      <br><br>
+
+      <button onclick="saveImage()" class="quote-btn">
+      💾 Save Image
+      </button>
+
+      <button onclick="proceedToBooking()" class="quote-btn">
+      Proceed to Book →
+      </button>
+
+      <p><small>✔ AI design generated successfully</small></p>
+    `;
+
+  } catch (err) {
+
+    console.error(err);
+
+    result.innerHTML = `
+    ❌ Failed to generate design.
+    Please try again.
+    `;
+  }
+
+  generateBtn.disabled = false;
+
+});
+
+
+// SAVE IMAGE
+function saveImage(){
+
+if(!generatedImage){
+alert("Generate design first");
+return;
+}
+
+fetch(generatedImage)
+.then(res => res.blob())
+.then(blob => {
+
+const url = window.URL.createObjectURL(blob);
+
+const a = document.createElement("a");
+a.href = url;
+a.download = "IronLinks-Design-" + Date.now() + ".png";
+
+document.body.appendChild(a);
+a.click();
+
+setTimeout(() => {
+document.body.removeChild(a);
+window.URL.revokeObjectURL(url);
+}, 100);
+
+});
+
+}
+
+
+// PROCEED TO BOOKING
+function proceedToBooking(){
+
+if(!generatedImage){
+alert("Generate design first");
+return;
+}
+
+// Force PNG format
+fetch(generatedImage)
+.then(res => res.blob())
+.then(blob => {
+
+const reader = new FileReader();
+
+reader.onloadend = function(){
+
+localStorage.setItem(
+"generatedDesign",
+reader.result
+);
+
+window.location.href = "book.html";
+
+};
+
+reader.readAsDataURL(blob);
+
+});
+
+}
+
+</script>
+
+</body>
+</html>

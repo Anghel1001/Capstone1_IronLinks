@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Our Products | IronLinks</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
+
+<!-- Google Model Viewer -->
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+</head>
+
+<body>
+
+<!-- Header -->
+<header>
+<h1>Iron <span>works</span></h1>
+<nav>
+<a href="index.html">about us</a> |
+<a href="products.html">products</a> |
+<a href="book.html">book now</a> |
+<a href="#contact">contact</a>
+</nav>
+</header>
+
+
+<!-- Product Section -->
+
+<section class="product-section">
+    <h2>Our Products</h2>
+    <h3 id="categoryTitle">Gates</h3>
+
+<div class="product-nav">
+
+<button class="active" data-product="gates">Gates</button>
+<button data-product="grills">Grills</button>
+<button data-product="railings">Railings</button>
+<button onclick="location.href='product_finder.html'">Customize</button>
+
+</div>
+
+
+<div class="product-container">
+
+<!-- IMAGE -->
+<div class="product-image">
+
+<img id="mainImage" src="hompage_photos/gate2_classic.webp">
+
+<model-viewer
+id="model3D"
+src="models/gate1.glb"
+ios-src="models/gate1.usdz"
+auto-rotate
+camera-controls
+ar
+style="display:none"
+></model-viewer>
+
+
+<div class="product-icons">
+<button id="view3d">3D View</button>
+<button id="viewQR">View in AR</button>
+<button id="viewScale">Photo View</button>
+</div>
+
+<p class="ar-notice">📱 Tap “View in AR” (on mobile)</p>
+
+</div>
+
+
+<!-- DETAILS -->
+<div class="product-details">
+
+<h3 id="productName">Modular Arc Gate Display</h3>
+
+<div id="productDetails"></div>
+
+<div id="variationOptions" class="options"></div>
+
+    <div class="quote-box">
+    <h4>Start Your Custom Project</h4>
+    <p>Schedule a free consultation</p>
+        <a href="book.html" class="quote-btn">
+        Request a Quote
+        </a>
+    </div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- QR MODAL -->
+
+<div id="qrModal" class="modal">
+
+<div class="modal-content">
+
+<h3>Scan to View in AR</h3>
+
+<img id="qrImage" src="qr.png">
+
+<br><br>
+
+<button id="closeQR">Close</button>
+
+</div>
+
+</div>
+
+
+
+
+<script>
+
+/* ============================
+PRODUCT DATA
+============================ */
+
+const products = {
+
+gates:{
+
+title:"Gates",
+
+name:"Modular Arc Gate Display",
+
+image:"hompage_photos/gate2_classic.webp",
+
+glb:"models/gate1.glb",
+
+usdz:"models/gate1.usdz",
+
+qr:"qr.png",
+
+photo:"image-scale.html",
+
+details:`
+
+<h4>Details</h4>
+
+<ul>
+<li><strong>Price:</strong> ₱45,000 – ₱70,000</li>
+<li>Material: Wrought Iron</li>
+<li>Finish: Powder Coated</li>
+<li>Customization Available</li>
+</ul>
+
+`,
+
+variations:{
+
+classic:{
+image:"hompage_photos/gate2_classic.webp"
+},
+
+double:{
+image:"hompage_photos/gate2_double.webp"
+},
+
+arc:{
+image:"hompage_photos/gate2_arcTop.webp"
+}
+
+}
+
+},
+
+
+
+grills:{
+
+title:"Grills",
+
+name:"Iron Window Grill Display",
+
+image:"hompage_photos/grills2.webp",
+
+glb:"models/window1.glb",
+
+usdz:"models/window1.usdz",
+
+qr:"qr_trail_ar_grills_.png",
+
+photo:"photo_view_grills.html",
+
+details:`
+
+<h4>Details</h4>
+
+<ul>
+<li><strong>Price:</strong> ₱15,000 – ₱25,000</li>
+<li>Material: Wrought Iron</li>
+<li>Powder Coated</li>
+</ul>
+
+`
+
+},
+
+
+
+railings:{
+
+title:"Railings",
+
+name:"Balcony Railing Display",
+
+image:"hompage_photos/railings2.webp",
+
+glb:"models/grill2.glb",
+
+usdz:"models/grill2.usdz",
+
+qr:"qr_trail_ar_railings.png",
+
+photo:"photo_view_railings.html",
+
+details:`
+
+<h4>Details</h4>
+
+<ul>
+<li><strong>Price:</strong> ₱12,000 – ₱22,000</li>
+<li>Material: Wrought Iron</li>
+<li>Fully Welded</li>
+</ul>
+
+`
+
+}
+
+}
+
+
+
+/* ============================
+ELEMENTS
+============================ */
+
+const title = document.getElementById("categoryTitle")
+
+const productName = document.getElementById("productName")
+
+const mainImage = document.getElementById("mainImage")
+
+const model3D = document.getElementById("model3D")
+
+const details = document.getElementById("productDetails")
+
+const variationBox = document.getElementById("variationOptions")
+
+const qrImage = document.getElementById("qrImage")
+
+
+
+/* ============================
+SWITCH PRODUCT
+============================ */
+
+function loadProduct(type){
+
+const p = products[type]
+
+title.textContent = p.title
+
+productName.textContent = p.name
+
+mainImage.src = p.image
+
+model3D.src = p.glb
+
+model3D.setAttribute("ios-src",p.usdz)
+
+details.innerHTML = p.details
+
+qrImage.src = p.qr
+
+
+variationBox.innerHTML=""
+
+if(p.variations){
+
+Object.keys(p.variations).forEach(v=>{
+
+let btn = document.createElement("button")
+
+btn.textContent = v
+
+btn.classList.add("option-btn")
+
+btn.onclick = () => {
+
+document.querySelectorAll(".option-btn")
+.forEach(b => b.classList.remove("active"))
+
+btn.classList.add("active")
+
+mainImage.src = p.variations[v].image
+
+}
+
+variationBox.appendChild(btn)
+
+})
+
+}
+
+}
+
+
+
+/* ============================
+NAV BUTTONS
+============================ */
+
+document.querySelectorAll(".product-nav button")
+
+.forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+document.querySelectorAll(".product-nav button")
+
+.forEach(b=>b.classList.remove("active"))
+
+btn.classList.add("active")
+
+loadProduct(btn.dataset.product)
+
+})
+
+})
+
+
+
+/* ============================
+3D TOGGLE
+============================ */
+
+document.getElementById("view3d")
+
+.addEventListener("click",()=>{
+
+const show=model3D.style.display==="none"
+
+model3D.style.display=show?"block":"none"
+
+mainImage.style.display=show?"none":"block"
+
+})
+
+
+
+/* ============================
+QR
+============================ */
+
+document.getElementById("viewQR")
+
+.onclick=()=>{
+
+qrModal.style.display="flex"
+
+}
+
+document.getElementById("closeQR")
+
+.onclick=()=>{
+
+qrModal.style.display="none"
+
+}
+
+
+
+/* ============================
+PHOTO VIEW
+============================ */
+
+document.getElementById("viewScale")
+
+.onclick=()=>{
+
+const active=document.querySelector(".product-nav .active")
+
+window.location.href=products[active.dataset.product].photo
+
+}
+
+
+
+</script>
+
+
+
+<footer id="contact">
+
+<div class="footer-container">
+
+<h2>Contact Us</h2>
+
+<p>📍 Address</p>
+<p>📱 Phone</p>
+<p>📧 Email</p>
+
+<div class="social-links">
+
+<a href="#">Facebook</a> |
+<a href="#">Messenger</a>
+
+</div>
+
+<p class="footer-note">
+© 2025 IronLinks
+</p>
+
+</div>
+
+</footer>
+
+
+</body>
+</html>

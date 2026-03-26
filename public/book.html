@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Book Consultation | IronLinks</title>
 
+<title>Customer Dashboard | IronLinks</title>
+
+<link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="css/global.css">
 
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
@@ -12,179 +15,163 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-
-#calendar {
-max-width: 100%;
-margin: 20px auto;
-background: #fff;
-padding: 15px;
-border-radius: 12px;
-box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-.fc-day.selected {
-background: #c8e6c9 !important;
-}
-
-.book-section {
-max-width: 600px;
-margin: 50px auto;
-padding: 30px 20px;
-background-color: #f9f9f9;
-border-radius: 15px;
-box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.book-form{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:10px;
-margin-top:20px;
-}
-
-.book-form textarea{
-grid-column:1/-1;
-min-height:80px;
-}
-
-.book-form button{
-grid-column:1/-1;
-padding:12px;
-background:#1e293b;
-color:white;
-border:none;
-cursor:pointer;
-border-radius:6px;
-}
-
-.hidden{display:none;}
-
-.generated-preview{
-margin-top:15px;
-text-align:center;
-}
-
-.generated-preview img{
-width:100%;
-max-width:350px;
-border-radius:10px;
-}
-
-.remove-ai{
-margin-top:10px;
-background:#dc3545;
-color:white;
-border:none;
-padding:8px 12px;
-border-radius:6px;
-cursor:pointer;
-}
-
-.legend {
-display:flex;
-gap:16px;
-justify-content:center;
-margin-bottom:10px;
-font-size:14px;
-}
-
-.legend span {
-display:flex;
-align-items:center;
-gap:6px;
-}
-
-.box {
-width:14px;
-height:14px;
-border-radius:3px;
-}
-
-.box-approved { background: #dc3545; }
-.box-pending { background: #fd7e14; }
-.box-selected { background: #28a745; }
-
-</style>
-
 </head>
 
 <body>
 
+<!-- HEADER -->
+
 <header>
 <h1>Iron <span>works</span></h1>
+
 <nav>
 <a href="index.html">about us</a> |
 <a href="products.html">products</a> |
-<a href="book.html">book now</a> |
-<a href="#contact">contact</a>
+<a href="#" onclick="openBooking()">book consultation</a> |
+<a href="#contact">contact</a> |
+<a href="#" onclick="logout()">logout</a>
 </nav>
+
 </header>
 
-<!-- AUTH -->
+
+
+<!-- ===============================
+AUTH LOGIN
+================================ -->
 
 <div id="authSection" class="auth-box">
+
 <h3 id="authTitle">Login</h3>
 
 <input type="text" id="authName" placeholder="Full Name" class="hidden">
 <input type="email" id="authEmail" placeholder="Email">
 <input type="password" id="authPassword" placeholder="Password">
 
-<button type="button" onclick="handleAuth()">Login</button>
+<button onclick="handleAuth()">Login</button>
 
 <p class="switch" onclick="toggleAuth()">Create account</p>
+
 </div>
 
-<!-- BOOKING -->
 
-<section id="bookingSection" class="book-section hidden">
 
-<h2>Book Consultation</h2>
+<!-- ===============================
+DASHBOARD
+================================ -->
 
-<button onclick="logout()">Logout</button>
+<section class="customer-dashboard hidden" id="dashboardSection">
 
-<div class="legend">
-<span><div class="box box-approved"></div>Unavailable</span>
-<span><div class="box box-pending"></div>Pending</span>
-<span><div class="box box-selected"></div>Selected</span>
+<h2>Consultation Booking</h2>
+
+<div class="dashboard-wrapper">
+
+<!-- LEFT -->
+
+<div class="dashboard-card">
+
+<div class="card-header">
+<h3>Personal Information</h3>
+<button class="edit-btn">Edit</button>
 </div>
+
+<div class="profile-grid">
+
+<div class="profile-item">
+<label>Full Name</label>
+<p id="userName"></p>
+</div>
+
+<div class="profile-item">
+<label>Email</label>
+<p id="userEmail"></p>
+</div>
+
+<div class="profile-item">
+<label>Phone</label>
+<p id="userPhone">Not set</p>
+</div>
+
+<div class="profile-item">
+<label>Location</label>
+<p id="userLocation">Not set</p>
+</div>
+
+</div>
+
+<br>
+<hr>
+<br>
+
+<div class="card-header">
+<h3>Consultation Appointment</h3>
+<button class="add-btn" onclick="openBooking()">+ Add</button>
+</div>
+
+<div id="pastConsultations"></div>
+
+</div>
+
+
+
+<!-- RIGHT -->
+
+<div class="dashboard-card">
+
+<h3>Calendar Schedule</h3>
 
 <div id="calendar"></div>
 
-<!-- AI Preview -->
-<div id="generatedPreview" class="generated-preview"></div>
+</div>
 
-<form id="bookingForm" class="book-form">
 
-<input type="text" id="userName" readonly>
-<input type="email" id="userEmail" readonly>
-
-<input type="tel" name="phone" placeholder="09XXXXXXXXX" required>
-
-<input type="date" id="dateInput" required readonly>
-
-<select name="time" required>
-<option value="">Select Time</option>
-<option value="08:00">08:00 AM</option>
-<option value="09:00">09:00 AM</option>
-<option value="10:00">10:00 AM</option>
-<option value="11:00">11:00 AM</option>
-<option value="13:00">01:00 PM</option>
-<option value="14:00">02:00 PM</option>
-<option value="15:00">03:00 PM</option>
-<option value="16:00">04:00 PM</option>
-</select>
-
-<textarea name="request" placeholder="Additional details"></textarea>
-
-<label>Upload Reference Image</label>
-<input type="file" id="referenceImage" accept="image/*">
-
-<button type="submit">Submit Booking</button>
-
-</form>
+</div>
 
 </section>
+
+
+
+<!-- ===============================
+BOOKING POPUP
+================================ -->
+
+<div id="bookingPopup" class="popup hidden">
+
+<div class="popup-content">
+
+<button class="close-btn" onclick="closeBooking()">✕</button>
+
+<iframe 
+src="book_popup.html" 
+width="100%" 
+height="700px" 
+style="border:none;">
+</iframe>
+
+</div>
+
+</div>
+
+
+
+<!-- FOOTER -->
+
+<footer id="contact">
+    <div class="footer-container">
+      <h2>Contact Us</h2>
+      <p>📍 Address</p>
+      <p>📱 Phone Number</p>
+      <p>📧 Email</p>
+
+      <div class="social-links">
+        <a href="#">Facebook</a> |
+        <a href="#">Messenger</a>
+      </div>
+
+      <p class="footer-note">© 2025 IronLinks. All Rights Reserved.</p>
+    </div>
+  </footer>
+
 
 
 <script>
@@ -194,6 +181,12 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const { createClient } = supabase;
 const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+
+
+/* ===============================
+AUTH SYSTEM
+================================ */
 
 let isLogin = true;
 
@@ -208,6 +201,8 @@ authName.classList.toggle("hidden");
 
 }
 
+
+
 async function handleAuth(){
 
 const name = authName.value.trim();
@@ -220,9 +215,8 @@ return;
 }
 
 
-// ===================
+
 // REGISTER
-// ===================
 
 if(!isLogin){
 
@@ -253,9 +247,8 @@ return;
 }
 
 
-// ===================
+
 // LOGIN
-// ===================
 
 const { data, error } =
 await supabaseClient
@@ -280,60 +273,99 @@ loadUser();
 
 }
 
-function logout(){
-localStorage.removeItem("user");
-location.reload();
-}
+
+
+/* ===============================
+LOAD USER
+================================ */
 
 function loadUser(){
 
-const user=
+const user =
 JSON.parse(localStorage.getItem("user"));
 
-if(!user)return;
+if(!user){
+
+authSection.classList.remove("hidden");
+dashboardSection.classList.add("hidden");
+
+return;
+
+}
 
 authSection.classList.add("hidden");
-bookingSection.classList.remove("hidden");
+dashboardSection.classList.remove("hidden");
 
-userName.value=user.name;
-userEmail.value=user.email;
+userName.textContent = user.name;
+userEmail.textContent = user.email;
 
+loadPastConsultations(user.email);
 initCalendar();
-loadGeneratedImage();
 
 }
 
-function loadGeneratedImage(){
 
-const generated=
-localStorage.getItem("generatedDesign");
 
-if(!generated)return;
+/* ===============================
+PAST CONSULTATIONS
+================================ */
 
-generatedPreview.innerHTML=`
-<img src="${generated}">
+async function loadPastConsultations(email){
+
+const { data } =
+await supabaseClient
+.from("bookings")
+.select("*")
+.eq("email", email)
+.order("date",{ascending:false});
+
+const container =
+document.getElementById("pastConsultations");
+
+if(!data || data.length===0){
+container.innerHTML="No consultations yet";
+return;
+}
+
+container.innerHTML="";
+
+data.forEach(b=>{
+
+container.innerHTML += `
+<div class="consult-item">
+
+<strong>${b.date}</strong>
 <br>
-<button class="remove-ai"
-onclick="removeAI()">
-Remove Design
-</button>
+
+${b.time}
+
+<br>
+
+<span class="status ${b.status}">
+${b.status}
+</span>
+
+</div>
 `;
 
+});
+
 }
 
-function removeAI(){
-localStorage.removeItem("generatedDesign");
-generatedPreview.innerHTML="";
-}
+
+
+/* ===============================
+CALENDAR
+================================ */
 
 async function initCalendar(){
 
-const {data:bookings}=
+const { data:bookings } =
 await supabaseClient
 .from("bookings")
 .select("*");
 
-const calendar=
+const calendar =
 new FullCalendar.Calendar(
 document.getElementById("calendar"),
 {
@@ -341,120 +373,49 @@ document.getElementById("calendar"),
 initialView:"dayGridMonth",
 
 events: bookings.map(b=>({
-title:b.status==="approved"
-?"Booked"
-:"Pending",
+
+title:b.status,
 start:b.date,
-color:b.status==="approved"
+
+color:
+b.status==="approved"
 ?"#dc3545"
 :"#fd7e14"
-})),
 
-dateClick(info){
-
-document
-.querySelectorAll(".fc-day.selected")
-.forEach(d=>d.classList.remove("selected"));
-
-info.dayEl.classList.add("selected");
-dateInput.value=info.dateStr;
-
-}
+}))
 
 });
 
 calendar.render();
 
-bookingForm.addEventListener(
-"submit",
-async e=>{
-
-e.preventDefault();
-
-const user=
-JSON.parse(localStorage.getItem("user"));
-
-let imageUrl=null;
-
-
-// Upload normal image
-const file=referenceImage.files[0];
-
-if(file){
-
-const path=
-`bookings/${Date.now()}-${file.name}`;
-
-await supabaseClient
-.storage
-.from("booking-images")
-.upload(path,file);
-
-imageUrl=
-supabaseClient
-.storage
-.from("booking-images")
-.getPublicUrl(path)
-.data.publicUrl;
-
 }
 
 
-// Upload AI image
-const generated=
-localStorage.getItem("generatedDesign");
 
-if(generated && !imageUrl){
+/* ===============================
+POPUP
+================================ */
 
-const res=await fetch(generated);
-const blob=await res.blob();
+function openBooking(){
+bookingPopup.classList.remove("hidden");
+}
 
-const aiFile=
-new File([blob],
-"ai.png",
-{type:"image/png"});
-
-const path=
-`bookings/${Date.now()}-ai.png`;
-
-await supabaseClient
-.storage
-.from("booking-images")
-.upload(path,aiFile);
-
-imageUrl=
-supabaseClient
-.storage
-.from("booking-images")
-.getPublicUrl(path)
-.data.publicUrl;
-
+function closeBooking(){
+bookingPopup.classList.add("hidden");
 }
 
 
-await supabaseClient
-.from("bookings")
-.insert([{
 
-name:user.name,
-email:user.email,
-phone:bookingForm.phone.value,
-date:dateInput.value,
-time:bookingForm.time.value,
-request:bookingForm.request.value,
-reference_image_url:imageUrl,
-status:"pending"
+/* ===============================
+LOGOUT
+================================ */
 
-}]);
-
-
-localStorage.removeItem("generatedDesign");
-
+function logout(){
+localStorage.removeItem("user");
 location.reload();
-
-});
-
 }
+
+
 
 loadUser();
 

@@ -256,7 +256,41 @@
     flex-direction:column;
     }
     
-    
+    /* ================= COST ESTIMATOR ================= */
+
+.estimate-box{
+   background:#f8f8f8;
+   padding:20px;
+   border-radius:12px;
+   margin-top:20px;
+   }
+   
+   .estimate-box select,
+   .estimate-box input{
+   width:100%;
+   padding:10px;
+   margin-top:8px;
+   margin-bottom:15px;
+   border-radius:6px;
+   border:1px solid #ddd;
+   }
+   
+   .size-inputs{
+   display:flex;
+   gap:15px;
+   }
+   
+   .size-inputs div{
+   flex:1;
+   }
+   
+   .estimate-result{
+   background:white;
+   padding:15px;
+   border-radius:10px;
+   text-align:center;
+   margin-top:10px;
+   }
     /* ========================================
        QR MODAL
     ======================================== */

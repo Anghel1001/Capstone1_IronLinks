@@ -215,3 +215,46 @@ qrModal.style.display = "none";
     
     
     });
+    /* ================= COST ESTIMATOR ================= */
+
+const widthInput = document.getElementById("width");
+const heightInput = document.getElementById("height");
+const productType = document.getElementById("productType");
+const estimatedCost = document.getElementById("estimatedCost");
+
+function calculateCost(){
+
+const width = parseFloat(widthInput?.value);
+const height = parseFloat(heightInput?.value);
+
+if(!width || !height){
+estimatedCost.textContent = "₱ 0";
+return;
+}
+
+let rate = 350;
+
+if(productType.value === "gate"){
+rate = 350;
+}
+
+if(productType.value === "grill"){
+rate = 250;
+}
+
+if(productType.value === "railing"){
+rate = 250;
+}
+
+const area = width * height;
+const cost = area * rate;
+
+estimatedCost.textContent =
+"₱ " + cost.toLocaleString();
+
+}
+
+
+widthInput?.addEventListener("input", calculateCost);
+heightInput?.addEventListener("input", calculateCost);
+productType?.addEventListener("change", calculateCost);

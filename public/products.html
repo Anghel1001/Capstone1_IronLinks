@@ -297,59 +297,109 @@ Modern
 
 <div id="customize" class="product-tab-content">
 
-<h3>Custom Ironwork Design Finder</h3>
-
-<div class="finder-instructions">
-
-<h4>How It Works</h4>
-
-<ol>
-<li>Describe your preferred iron design clearly</li>
-<li>Include style, color, and structure</li>
-<li>Click Generate Design and wait 20–40 seconds</li>
-</ol>
-
-<p class="example">
-<strong>Example:</strong>
-Modern black sliding gate, vertical bars only, minimalist design
-</p>
-
-</div>
-
-<div class="product-container">
-
-<div class="product-image">
-
-<div id="result" class="result-box">
-🧩 No design generated yet
-</div>
-
-</div>
-
-<div class="product-details">
-
-<label>Describe your design</label>
-
-<textarea
-id="description"
-placeholder="Example: Modern plain sliding gate, black iron bars, vertical only, minimalist">
-</textarea>
-
-<button id="generateBtn" class="quote-btn">
-Generate Design
-</button>
-
-<p class="disclaimer">
-AI-generated images are for conceptual reference only.
-Final fabrication design will be reviewed by IronLinks.
-</p>
-
-</div>
-
-</div>
-
-</div>
-
+    <h3>Custom Ironwork Design Finder</h3>
+    
+    <div class="finder-instructions">
+    
+    <h4>How It Works</h4>
+    
+    <ol>
+    <li>Describe your preferred iron design clearly</li>
+    <li>Enter preferred size</li>
+    <li>View estimated cost instantly</li>
+    <li>Generate AI design preview</li>
+    </ol>
+    
+    <p class="example">
+    <strong>Example:</strong>
+    Modern black sliding gate, vertical bars only, minimalist design
+    </p>
+    
+    </div>
+    
+    
+    <div class="product-container">
+    
+    <!-- LEFT SIDE -->
+    <div class="product-image">
+    
+    <div id="result" class="result-box">
+    🧩 No design generated yet
+    </div>
+    
+    </div>
+    
+    
+    <!-- RIGHT SIDE -->
+    <div class="product-details">
+    
+    <label>Describe your design</label>
+    
+    <textarea
+    id="description"
+    placeholder="Example: Modern plain sliding gate, black iron bars, vertical only, minimalist">
+    </textarea>
+    
+    
+    <!-- ================= SIZE ESTIMATOR ================= -->
+    
+    <div class="estimate-box">
+    
+    <h4>Estimate Cost</h4>
+    
+    <label>Product Type</label>
+    <select id="productType">
+    
+    <option value="gate">Gate (₱350 / sq.ft)</option>
+    <option value="grill">Grill (₱250 / sq.ft)</option>
+    <option value="railing">Railing (₱250 / sq.ft)</option>
+    
+    </select>
+    
+    
+    <div class="size-inputs">
+    
+    <div>
+    <label>Width (ft)</label>
+    <input type="number" id="width" placeholder="e.g. 12">
+    </div>
+    
+    <div>
+    <label>Height (ft)</label>
+    <input type="number" id="height" placeholder="e.g. 6">
+    </div>
+    
+    </div>
+    
+    
+    <div class="estimate-result">
+    
+    <p>Estimated Cost</p>
+    
+    <h3 id="estimatedCost">
+    ₱ 0
+    </h3>
+    
+    </div>
+    
+    </div>
+    
+    
+    <button id="generateBtn" class="quote-btn">
+    Generate Design
+    </button>
+    
+    
+    <p class="disclaimer">
+    AI-generated images are for conceptual reference only.  
+    Final fabrication design will be reviewed by IronLinks.
+    </p>
+    
+    </div>
+    
+    </div>
+    
+    </div>
 
 
 <!-- QR MODAL -->

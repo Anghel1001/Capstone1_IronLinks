@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Book Consultation | IronLinks</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+#calendar {
+max-width: 100%;
+margin: 20px auto;
+background: #fff;
+padding: 15px;
+border-radius: 12px;
+box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.fc-day.selected {
+background: #c8e6c9 !important;
+}
+
+.book-section {
+max-width: 700px;
+margin: auto;
+padding: 20px;
+}
+
+.book-form{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:10px;
+margin-top:20px;
+}
+
+.book-form textarea{
+grid-column:1/-1;
+min-height:80px;
+}
+
+.book-form button{
+grid-column:1/-1;
+padding:12px;
+background:#444;
+color:white;
+border:none;
+cursor:pointer;
+border-radius:6px;
+}
+
+.legend {
+display:flex;
+gap:16px;
+justify-content:center;
+margin-bottom:10px;
+font-size:14px;
+}
+
+.legend span {
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.box {
+width:14px;
+height:14px;
+border-radius:3px;
+}
+
+.box-approved { background: #dc3545; }
+.box-pending { background: #fd7e14; }
+.box-selected { background: #28a745; }
+
+.generated-preview{
+margin-top:15px;
+text-align:center;
+}
+
+.generated-preview img{
+width:100%;
+max-width:350px;
+border-radius:10px;
+}
+
+.remove-ai{
+margin-top:10px;
+background:#dc3545;
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<section class="book-section">
+
+<h2>Book Consultation</h2>
+
+<div class="legend">
+<span><div class="box box-approved"></div>Unavailable</span>
+<span><div class="box box-pending"></div>Pending</span>
+<span><div class="box box-selected"></div>Selected</span>
+</div>
+
+<div id="calendar"></div>
+
+<div id="generatedPreview" class="generated-preview"></div>
+
+<form id="bookingForm" class="book-form">
+
+<input type="text" id="userName" readonly>
+<input type="email" id="userEmail" readonly>
+
+<input type="tel" name="phone" placeholder="09XXXXXXXXX" required>
+
+<input type="date" id="dateInput" required readonly>
+
+<select name="time" required>
+<option value="">Select Time</option>
+<option value="08:00">08:00 AM</option>
+<option value="09:00">09:00 AM</option>
+<option value="10:00">10:00 AM</option>
+<option value="11:00">11:00 AM</option>
+<option value="13:00">01:00 PM</option>
+<option value="14:00">02:00 PM</option>
+<option value="15:00">03:00 PM</option>
+<option value="16:00">04:00 PM</option>
+</select>
+
+<textarea name="request" placeholder="Additional details"></textarea>
+
+<label>Upload Reference Image</label>
+<input type="file" id="referenceImage" accept="image/*">
+
+<button type="submit">Submit Booking</button>
+
+</form>
+
+</section>
+
+
+
+<script>
+
+const supabaseUrl = "https://ntuikmoiajlqlzehqwkw.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50dWlrbW9pYWpscWx6ZWhxd2t3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NTQ2MjUsImV4cCI6MjA3OTAzMDYyNX0.Zxrk09S04mRqjbCih9MlZ43YPaw6VUV0obR9qzxQ2Fk";
+
+const { createClient } = supabase;
+const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+
+
+function loadUser(){
+
+const user =
+JSON.parse(localStorage.getItem("user"));
+
+if(!user) return;
+
+userName.value = user.name;
+userEmail.value = user.email;
+
+initCalendar();
+loadGeneratedImage();
+
+}
+
+
+
+function loadGeneratedImage(){
+
+const generated =
+localStorage.getItem("generatedDesign");
+
+if(!generated) return;
+
+generatedPreview.innerHTML=`
+<img src="${generated}">
+<br>
+<button class="remove-ai" onclick="removeAI()">Remove Design</button>
+`;
+
+}
+
+
+
+function removeAI(){
+localStorage.removeItem("generatedDesign");
+generatedPreview.innerHTML="";
+}
+
+
+
+async function initCalendar(){
+
+const {data:bookings} =
+await supabaseClient
+.from("bookings")
+.select("*");
+
+const calendar =
+new FullCalendar.Calendar(
+document.getElementById("calendar"),
+{
+
+initialView:"dayGridMonth",
+
+events: bookings.map(b=>({
+
+title:b.status==="approved"
+?"Booked"
+:"Pending",
+
+start:b.date,
+
+color:
+b.status==="approved"
+?"#dc3545"
+:"#fd7e14"
+
+})),
+
+dateClick(info){
+
+document
+.querySelectorAll(".fc-day")
+.forEach(d=>d.classList.remove("selected"));
+
+info.dayEl.classList.add("selected");
+dateInput.value=info.dateStr;
+
+}
+
+});
+
+calendar.render();
+
+
+
+bookingForm.addEventListener(
+"submit",
+async e=>{
+
+e.preventDefault();
+
+const user =
+JSON.parse(localStorage.getItem("user"));
+
+let imageUrl=null;
+
+
+
+const file=referenceImage.files[0];
+
+if(file){
+
+const path =
+`bookings/${Date.now()}-${file.name}`;
+
+await supabaseClient
+.storage
+.from("booking-images")
+.upload(path,file);
+
+imageUrl =
+supabaseClient
+.storage
+.from("booking-images")
+.getPublicUrl(path)
+.data.publicUrl;
+
+}
+
+
+
+await supabaseClient
+.from("bookings")
+.insert([{
+
+name:user.name,
+email:user.email,
+phone:bookingForm.phone.value,
+date:dateInput.value,
+time:bookingForm.time.value,
+request:bookingForm.request.value,
+reference_image_url:imageUrl,
+status:"pending"
+
+}]);
+
+
+alert("Booking submitted!");
+
+location.reload();
+
+});
+
+}
+
+
+
+loadUser();
+
+</script>
+
+</body>
+</html>

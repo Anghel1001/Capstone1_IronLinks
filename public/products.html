@@ -1,216 +1,377 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Products | IronLinks</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
+<title>Our Products | IronLinks</title>
 
-  <!-- Google Model Viewer -->
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/products.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
+
+<script type="module"
+src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
+
 </head>
 
 <body>
 
-  <!-- Header -->
-  <header>
-    <h1>Iron <span>works</span></h1>
-    <nav>
-      <a href="index.html">about us</a> |
-      <a href="products.html">products</a> |
-      <a href="book.html">book now</a> |
-      <a href="#contact">contact</a>
-    </nav>
-  </header>
+<header>
+<h1>Iron <span>works</span></h1>
+<nav>
+<a href="index.html">About Us</a> |
+<a href="products.html">Products</a> |
+<a href="book.html">Book Now</a> |
+<a href="#contact">Contact</a>
+</nav>
+</header>
 
-  <!-- Product Section -->
-  <section class="product-section">
-    <h2>Our Products</h2>
-    <h3>Gates</h3>
 
-    <div class="product-nav">
-      <button class="active" onclick="location.href='products.html'">Gates</button>
-      <button onclick="location.href='product_grills.html'">Grills</button>
-      <button onclick="location.href='product_railings.html'">Railings</button>
-      <button onclick="location.href='product_finder.html'">Customize</button>
-    </div>
+<section class="product-section">
 
-    <div class="product-container">
+<h2>Our Products</h2>
 
-      <!-- Product Image and 3D/AR View -->
-      <div class="product-image">
+<div class="product-nav">
+<button class="product-tab active" data-tab="gates">Gates</button>
+<button class="product-tab" data-tab="grills">Grills</button>
+<button class="product-tab" data-tab="railings">Railings</button>
+<button class="product-tab" data-tab="customize">Customize</button>
+</div>
 
-        <!-- Static image -->
-        <img src="hompage_photos/gate2_classic.webp" alt="Iron Gate" id="mainImage">
 
-        <!-- 3D & AR viewer -->
-        <model-viewer
-          id="gate3D"
-          src="models/gate1.glb"
-          ios-src="models/gate1.usdz"
-          alt="Iron Gate 3D Model"
-          auto-rotate
-          camera-controls
-          ar
-          ar-modes="webxr scene-viewer quick-look"
-          style="display: none;"
-        ></model-viewer>
+<!-- ================= GATES ================= -->
 
-        <!-- ACTION BUTTONS -->
-        <div class="product-icons">
-          <button id="view3d">3D View</button>
-          <button id="viewQR">QR Code</button>
-          <button id="viewScale"> Photo View</button>
-        </div>
+<div id="gates" class="product-tab-content active">
 
-        <p class="ar-notice">📱 Tap “View in AR” (on mobile) to place it in your space!</p>
-      </div>
+<div class="product-container">
 
-      <!-- Product Details -->
-      <div class="product-details">
-        <h3>Modular Arc Gate Display (MAGD)</h3>
+<div class="product-image">
 
-        <h4>Details</h4>
-        <ul>
-          <li><strong>Price Range:</strong> ₱45,000 – ₱70,000</li>
-          <li><strong>Material:</strong> Wrought Iron</li>
-          <li><strong>Finish:</strong> Powder-Coated</li>
-          <li><strong>Welding:</strong> Fully Welded Joints</li>
-          <li><strong>Customization:</strong> Size, color, and pattern available</li>
-        </ul>
+<img src="hompage_photos/gate2_classic.webp" class="mainImage">
 
-        <h4>Design Variations</h4>
-        <div id="variationOptions" class="options">
-          <button class="option-btn active" data-variation="classic">Classic</button>
-          <button class="option-btn" data-variation="double">Double</button>
-          <button class="option-btn" data-variation="arctop">Arc Top</button>
-        </div>
+<model-viewer
+class="model3D"
+src="models/gate1.glb"
+ios-src="models/gate1.usdz"
+camera-controls
+auto-rotate
+ar
+style="display:none">
+</model-viewer>
 
-        <div class="quote-box">
-          <h4>Start Your Custom Project</h4>
-          <p>Schedule a free consultation to discuss your custom gate, grill, or railing design.</p>
-          <a href="book.html" class="quote-btn">Request a Quote</a>
-        </div>
-      </div>
-    </div>
-  </section>
+<div class="product-icons">
+<button class="view3d">3D View</button>
+<button class="viewQR" data-qr="qr/qr_gate.png">QR Code</button>
+<button class="viewScale" data-photo="photo_view.html?model=gates&from=gates">
+Photo View
+</button>
+</div>
 
-  <!-- QR Code Modal -->
-  <div id="qrModal" class="modal">
-    <div class="modal-content">
-      <h3>Scan to View in AR</h3>
-      <img src="qr.png" alt="QR Code" id="qrImage">
-      <br><br>
-      <button id="closeQR">Close</button>
-    </div>
-  </div>
+</div>
 
-  <!-- ============================
-       SCRIPTS
-       ============================ -->
-  <script>
-    /* ============================
-       3D VIEW TOGGLE
-       ============================ */
-    const view3dBtn = document.getElementById("view3d");
-    const model3D = document.getElementById("gate3D");
-    const mainImage = document.getElementById("mainImage");
 
-    view3dBtn.addEventListener("click", () => {
-      const isHidden = model3D.style.display === "none" || model3D.style.display === "";
-      model3D.style.display = isHidden ? "block" : "none";
-      mainImage.style.display = isHidden ? "none" : "block";
-      view3dBtn.textContent = isHidden ? "Image View" : "3D View";
-    });
+<div class="product-details">
 
-    /* ============================
-       QR MODAL
-       ============================ */
-    const viewQRBtn = document.getElementById("viewQR");
-    const qrModal = document.getElementById("qrModal");
-    const closeQRBtn = document.getElementById("closeQR");
+<h3 class="product-title">Classic Iron Gate</h3>
 
-    viewQRBtn.addEventListener("click", () => {
-      qrModal.style.display = "flex";
-    });
+<div class="style-options">
 
-    closeQRBtn.addEventListener("click", () => {
-      qrModal.style.display = "none";
-    });
+<button class="style-btn active"
+data-img="hompage_photos/gate2_classic.webp"
+data-model="models/gate1.glb"
+data-title="Classic Iron Gate"
+data-price="₱45,000 – ₱70,000">
+Classic
+</button>
 
-    window.addEventListener("click", (e) => {
-      if (e.target === qrModal) qrModal.style.display = "none";
-    });
+<button class="style-btn"
+data-img="hompage_photos/gate_arc.webp"
+data-model="models/gate_arc.glb"
+data-title="Arc Top Gate"
+data-price="₱50,000 – ₱75,000">
+Arc Top
+</button>
 
-    /* ============================
-       IMAGE SCALE BUTTON
-       ============================ */
-    const viewScaleBtn = document.getElementById("viewScale");
+<button class="style-btn"
+data-img="hompage_photos/gate_flat.webp"
+data-model="models/gate_flat.glb"
+data-title="Flat Top Gate"
+data-price="₱45,000 – ₱65,000">
+Flat Top
+</button>
 
-    viewScaleBtn.addEventListener("click", () => {
-      window.location.href = "image-scale.html";
-    });
+<button class="style-btn"
+data-img="hompage_photos/gate_sliding.webp"
+data-model="models/gate_sliding.glb"
+data-title="Sliding Gate"
+data-price="₱60,000 – ₱90,000">
+Sliding
+</button>
 
-    /* ============================
-       DESIGN VARIATION SWITCHER
-       ============================ */
-    const variations = {
-      classic: {
-        image: "hompage_photos/gate2_classic.webp",
-        glb: "models/gate1.glb?v=2",
-        usdz: "models/gate1.usdz?v=2"
-      },
-      double: {
-        image: "hompage_photos/gate2_double.webp",
-        glb: "models/gate1.glb",
-        usdz: "models/wall.usdz"
-      },
-      arctop: {
-        image: "hompage_photos/gate2_arcTop.webp",
-        glb: "models/gate1.glb",
-        usdz: "models/wall.usdz"
-      }
-    };
+</div>
 
-    const variationButtons = document.querySelectorAll(".option-btn");
+<ul>
+<li class="product-price">₱45,000 – ₱70,000</li>
+<li>Wrought Iron</li>
+<li>Powder Coated</li>
+</ul>
 
-    variationButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        variationButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
+<div class="quote-box">
+<a href="book.html" class="quote-btn">Request Quote</a>
+</div>
 
-        const selected = btn.dataset.variation;
-        const data = variations[selected];
+</div>
 
-        model3D.style.display = "none";
-        mainImage.style.display = "block";
-        view3dBtn.textContent = "3D View";
+</div>
 
-        mainImage.src = data.image;
-        model3D.setAttribute("src", data.glb);
-        model3D.setAttribute("ios-src", data.usdz);
-      });
-    });
-  </script>
+</div>
 
-  <!-- Footer -->
-  <footer id="contact">
-    <div class="footer-container">
-      <h2>Contact Us</h2>
-      <p>📍 Address</p>
-      <p>📱 Phone Number</p>
-      <p>📧 email</p>
 
-      <div class="social-links">
-        <a href="#">Facebook</a> |
-        <a href="#">Messenger</a>
-      </div>
 
-      <p class="footer-note">© 2025 IronLinks. All Rights Reserved.</p>
-    </div>
-  </footer>
+<!-- ================= GRILLS ================= -->
+
+<div id="grills" class="product-tab-content">
+
+<div class="product-container">
+
+<div class="product-image">
+
+<img src="hompage_photos/grills2.webp" class="mainImage">
+
+<model-viewer
+class="model3D"
+src="models/window1.glb"
+ios-src="models/window1.usdz"
+camera-controls
+auto-rotate
+ar
+style="display:none">
+</model-viewer>
+
+<div class="product-icons">
+<button class="view3d">3D View</button>
+<button class="viewQR" data-qr="qr/qr_grills.png">QR Code</button>
+<button class="viewScale" data-photo="photo_view.html?model=grills&from=grills">
+Photo View
+</button>
+</div>
+
+</div>
+
+
+<div class="product-details">
+
+<h3 class="product-title">Classic Window Grill</h3>
+
+<div class="style-options">
+
+<button class="style-btn active"
+data-img="hompage_photos/grills2.webp"
+data-model="models/window1.glb"
+data-title="Classic Grill"
+data-price="₱15,000 – ₱25,000">
+Classic
+</button>
+
+<button class="style-btn"
+data-img="hompage_photos/grills3.webp"
+data-model="models/grill2.glb"
+data-title="Modern Grill"
+data-price="₱18,000 – ₱28,000">
+Modern
+</button>
+
+<button class="style-btn"
+data-img="hompage_photos/grills4.webp"
+data-model="models/grill3.glb"
+data-title="Decorative Grill"
+data-price="₱20,000 – ₱30,000">
+Decorative
+</button>
+
+</div>
+
+<ul>
+<li class="product-price">₱15,000 – ₱25,000</li>
+<li>Wrought Iron</li>
+<li>Powder Coated</li>
+</ul>
+
+<div class="quote-box">
+<a href="book.html" class="quote-btn">Request Quote</a>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= RAILINGS ================= -->
+
+<div id="railings" class="product-tab-content">
+
+<div class="product-container">
+
+<div class="product-image">
+
+<img src="hompage_photos/railings2.webp" class="mainImage">
+
+<model-viewer
+class="model3D"
+src="models/grill2.glb"
+ios-src="models/grill2.usdz"
+camera-controls
+auto-rotate
+ar
+style="display:none">
+</model-viewer>
+
+<div class="product-icons">
+<button class="view3d">3D View</button>
+<button class="viewQR" data-qr="qr/qr_railings.png">QR Code</button>
+<button class="viewScale" data-photo="photo_view.html?model=railings&from=railings">
+Photo View
+</button>
+</div>
+
+</div>
+
+
+<div class="product-details">
+
+<h3 class="product-title">Balcony Railings</h3>
+
+<div class="style-options">
+
+<button class="style-btn active"
+data-img="hompage_photos/railings2.webp"
+data-model="models/grill2.glb"
+data-title="Balcony Railings"
+data-price="₱12,000 – ₱22,000 per meter">
+Balcony
+</button>
+
+<button class="style-btn"
+data-img="hompage_photos/railings3.webp"
+data-model="models/rail2.glb"
+data-title="Stair Railings"
+data-price="₱14,000 – ₱24,000">
+Staircase
+</button>
+
+<button class="style-btn"
+data-img="hompage_photos/railings4.webp"
+data-model="models/rail3.glb"
+data-title="Modern Railings"
+data-price="₱15,000 – ₱26,000">
+Modern
+</button>
+
+</div>
+
+<ul>
+<li class="product-price">₱12,000 – ₱22,000</li>
+<li>Wrought Iron</li>
+<li>PVD Finish</li>
+</ul>
+
+<div class="quote-box">
+<a href="book.html" class="quote-btn">Request Quote</a>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= CUSTOMIZE ================= -->
+
+<div id="customize" class="product-tab-content">
+
+<h3>Custom Ironwork Design Finder</h3>
+
+<div class="finder-instructions">
+
+<h4>How It Works</h4>
+
+<ol>
+<li>Describe your preferred iron design clearly</li>
+<li>Include style, color, and structure</li>
+<li>Click Generate Design and wait 20–40 seconds</li>
+</ol>
+
+<p class="example">
+<strong>Example:</strong>
+Modern black sliding gate, vertical bars only, minimalist design
+</p>
+
+</div>
+
+<div class="product-container">
+
+<div class="product-image">
+
+<div id="result" class="result-box">
+🧩 No design generated yet
+</div>
+
+</div>
+
+<div class="product-details">
+
+<label>Describe your design</label>
+
+<textarea
+id="description"
+placeholder="Example: Modern plain sliding gate, black iron bars, vertical only, minimalist">
+</textarea>
+
+<button id="generateBtn" class="quote-btn">
+Generate Design
+</button>
+
+<p class="disclaimer">
+AI-generated images are for conceptual reference only.
+Final fabrication design will be reviewed by IronLinks.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- QR MODAL -->
+
+<div id="qrModal" class="modal">
+<div class="modal-content">
+<h3>Scan QR</h3>
+<img src="" id="qrImage">
+<button id="closeQR">Close</button>
+</div>
+</div>
+
+
+<footer id="contact">
+<div class="footer-container">
+<h2>Contact Us</h2>
+<p>© 2025 IronLinks</p>
+</div>
+</footer>
+
+
+<script src="js/products.js"></script>
 
 </body>
 </html>

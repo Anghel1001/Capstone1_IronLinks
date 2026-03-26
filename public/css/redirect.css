@@ -1,0 +1,39 @@
+body{
+    font-family:system-ui,Arial;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    margin:0;
+    background:#111;
+    color:#eee;
+    padding:16px;
+    }
+    
+    .box{
+    max-width:720px;
+    text-align:center;
+    }
+    
+    .error{
+    color:#ff6b6b;
+    }
+    
+    .btn{
+    display:inline-block;
+    margin-top:16px;
+    padding:12px 20px;
+    background:#1976d2;
+    color:#fff;
+    border-radius:8px;
+    border:none;
+    font-size:16px;
+    cursor:pointer;
+    }
+    
+    .steps{
+    text-align:left;
+    max-width:400px;
+    margin:20px auto;
+    line-height:1.6;
+    }

@@ -60,4 +60,52 @@ function toggleProfileMenu(){
         }
 
         
-        
+      /* ===============================
+GLOBAL BOOKING POPUP
+================================ */
+
+window.openBooking = function(){
+
+    let popup = document.getElementById("globalBookingPopup")
+    
+    // create popup if not exists
+    if(!popup){
+    
+    popup = document.createElement("div")
+    popup.id = "globalBookingPopup"
+    
+    popup.innerHTML = `
+    <div class="popup-overlay">
+    
+    <div class="popup-content">
+    
+    <button class="close-btn" onclick="closeBooking()">✕</button>
+    
+    <iframe 
+    src="book_popup.html"
+    width="100%"
+    height="650px"
+    style="border:none;">
+    </iframe>
+    
+    </div>
+    
+    </div>
+    `
+    
+    document.body.appendChild(popup)
+    
+    }
+    
+    popup.style.display = "flex"
+    
+    }
+    
+    
+    window.closeBooking = function(){
+    
+    document
+    .getElementById("globalBookingPopup")
+    .style.display = "none"
+    
+    }

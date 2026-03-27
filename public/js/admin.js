@@ -1,78 +1,91 @@
-/* ================= LOAD GALLERY ================= */
-
 async function loadGallery(){
 
+    try{
+    
     const res = await fetch('/gallery');
     const data = await res.json();
     
-    ['Gate','Grill','Railing'].forEach(cat=>{
-    document.getElementById(cat).innerHTML='';
+    
+    const categories = ["Gate","Grill","Railing"];
+    
+    categories.forEach(cat => {
+    
+    const container =
+    document.getElementById(cat);
+    
+    container.innerHTML = "";
+    
+    const filtered =
+    data.filter(item => item.category === cat);
+    
+    filtered.forEach(item => {
+    
+    const div =
+    document.createElement("div");
+    
+    const img =
+    document.createElement("img");
+    
+    img.src =
+    item.image_url;
+    
+    const remove =
+    document.createElement("button");
+    
+    remove.textContent =
+    "Remove";
+    
+    remove.className =
+    "remove-btn";
+    
+    remove.onclick =
+    ()=>deleteImage(item.id);
+    
+    div.appendChild(img);
+    div.appendChild(remove);
+    
+    container.appendChild(div);
+    
     });
     
-    
-    data.forEach(item=>{
-    
-    const wrapper=document.createElement('div');
-    
-    wrapper.innerHTML=`
-    
-    <img src="${item.image_url}">
-    
-    <span class="remove-btn"
-    onclick="deleteImage(${item.id})">
-    
-    Remove
-    
-    </span>
-    
-    `;
-    
-    document
-    .getElementById(item.category)
-    .appendChild(wrapper);
-    
     });
+    
+    }catch(err){
+    console.error(err);
+    }
     
     }
     
     
     
-    /* ================= UPLOAD IMAGE ================= */
+    async function uploadImage(e,category){
     
-    async function uploadImage(event,category){
-    
-    const file=event.target.files[0];
+    const file =
+    e.target.files[0];
     
     if(!file) return;
     
-    const formData=new FormData();
+    const formData =
+    new FormData();
     
-    formData.append('category',category);
-    formData.append('image',file);
+    formData.append("image",file);
+    formData.append("category",category);
     
-    
-    await fetch('/gallery',{
-    method:'POST',
+    await fetch("/gallery",{
+    method:"POST",
     body:formData
     });
     
-    
-    event.target.value='';
-    
     loadGallery();
     
     }
     
     
     
-    /* ================= DELETE IMAGE ================= */
-    
     async function deleteImage(id){
     
-    if(!confirm('Remove this image?')) return;
-    
-    await fetch(`/gallery/${id}`,{
-    method:'DELETE'
+    await fetch("/gallery/"+id,{
+    method:"DELETE"
     });
     
     loadGallery();
@@ -80,6 +93,8 @@ async function loadGallery(){
     }
     
     
-    /* ================= INITIAL LOAD ================= */
     
-    loadGallery();
+    document.addEventListener(
+    "DOMContentLoaded",
+    loadGallery
+    );

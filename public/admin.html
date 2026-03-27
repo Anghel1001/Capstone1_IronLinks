@@ -18,8 +18,8 @@
 <header>
 <h1>Iron <span>works</span></h1>
 <nav>
-<a href="index.html">view public page</a> |
-<a href="admin.html">admin profile</a> |
+<a href="index.html">View Public Page</a> |
+<a href="admin.html">Admin Profile</a> |
 <a href="admin_booking.html">Schedules</a>
 </nav>
 </header>
@@ -28,55 +28,73 @@
 <!-- HERO -->
 <section class="hero">
 
-<img src="hompage_photos/welding.webp" alt="Welding Work">
+    <img src="hompage_photos/workbackground.jpg" alt="Welding Work">
+    
+    <span class="admin-badge">ADMIN MODE</span>
+    
+    <blockquote>
+    “We combine traditional iron craftsmanship 
+    with modern technology to bring your custom designs to life.”
+    </blockquote>
+    
+    </section>
 
-<span class="admin-badge">ADMIN MODE</span>
-
-<blockquote>
-“We combine traditional iron craftsmanship 
-with modern technology to bring your custom designs to life.”
-</blockquote>
-
-</section>
 
 
-
-<!-- GALLERY MANAGEMENT -->
-
-<section class="gallery">
-
-<h2>Gallery Management</h2>
+<section class="admin-container">
 
 <!-- GATE -->
 
-<h3>Gate</h3>
+<div class="admin-card">
+
+<div class="card-header">
+<h3>Gate Designs</h3>
+</div>
 
 <div class="gallery-grid" id="Gate"></div>
 
 <div class="upload-box">
+<label>Upload Gate Image</label>
 <input type="file" accept="image/*" onchange="uploadImage(event, 'Gate')">
+</div>
+
 </div>
 
 
 <!-- GRILL -->
 
-<h3>Grill</h3>
+<div class="admin-card">
+
+<div class="card-header">
+<h3>Grill Designs</h3>
+</div>
 
 <div class="gallery-grid" id="Grill"></div>
 
 <div class="upload-box">
+<label>Upload Grill Image</label>
 <input type="file" accept="image/*" onchange="uploadImage(event, 'Grill')">
 </div>
+
+</div>
+
 
 
 <!-- RAILING -->
 
-<h3>Railing</h3>
+<div class="admin-card">
+
+<div class="card-header">
+<h3>Railing Designs</h3>
+</div>
 
 <div class="gallery-grid" id="Railing"></div>
 
 <div class="upload-box">
+<label>Upload Railing Image</label>
 <input type="file" accept="image/*" onchange="uploadImage(event, 'Railing')">
+</div>
+
 </div>
 
 </section>
@@ -84,9 +102,11 @@ with modern technology to bring your custom designs to life.”
 
 
 <footer>
+
 <p class="footer-note">
 ADMIN MODE — changes affect live site
 </p>
+
 </footer>
 
 

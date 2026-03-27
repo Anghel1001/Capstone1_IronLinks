@@ -1,0 +1,220 @@
+/* ===============================
+BOOK SECTION (COMPACT)
+=============================== */
+
+.book-section{
+    max-width:720px;
+    margin:auto;
+    padding:15px;
+    position:relative;
+    }
+    
+    
+    
+    /* ===============================
+    CLOSE BUTTON
+    =============================== */
+    
+    .close-popup-btn{
+    position:absolute;
+    top:8px;
+    right:8px;
+    background:black;
+    color:white;
+    border:none;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:16px;
+    z-index:10;
+    }
+    
+    .close-popup-btn:hover{
+    background:#333;
+    }
+    
+    
+    
+    /* ===============================
+    CALENDAR (COMPACT)
+    =============================== */
+    
+    #calendar{
+    margin-top:10px;
+    background:white;
+    padding:10px;
+    border-radius:8px;
+    font-size:13px;
+    }
+    
+    
+    
+    /* ===============================
+    SELECTED DAY
+    =============================== */
+    
+    .fc-daygrid-day.selected{
+    background:#eef3ff !important;
+    border:2px solid black !important;
+    }
+    
+    
+    
+    /* ===============================
+    PAST DAYS
+    =============================== */
+    
+    .fc-day-past{
+    background:#f3f3f3 !important;
+    opacity:0.5;
+    pointer-events:none;
+    }
+    
+    
+    
+    /* ===============================
+    SUNDAY
+    =============================== */
+    
+    .fc-day-sun{
+    background:#f8f8f8 !important;
+    opacity:0.5;
+    pointer-events:none;
+    }
+    
+    
+    
+    /* ===============================
+    FORM (COMPACT GRID)
+    =============================== */
+    
+    .book-form{
+    display:grid;
+    grid-template-columns:
+    repeat(2,1fr);
+    gap:8px;
+    margin-top:10px;
+    }
+    
+    
+    
+    .book-form input,
+    .book-form select,
+    .book-form textarea{
+    padding:8px;
+    font-size:13px;
+    border-radius:6px;
+    border:1px solid #ddd;
+    }
+    
+    
+    
+    /* TEXTAREA FULL WIDTH */
+    
+    .book-form textarea{
+    grid-column:1/-1;
+    min-height:60px;
+    }
+    
+    
+    
+    /* BUTTON */
+    
+    .book-form button{
+    grid-column:1/-1;
+    padding:10px;
+    background:black;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:14px;
+    }
+    
+    
+    
+    /* ===============================
+    LEGEND (SMALLER)
+    =============================== */
+    
+    .legend{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin-bottom:5px;
+    font-size:12px;
+    }
+    
+    
+    
+    .legend span{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    }
+    
+    
+    
+    .box{
+    width:12px;
+    height:12px;
+    border-radius:3px;
+    }
+    
+    
+    
+    .box-approved{background:#dc3545}
+    .box-pending{background:#fd7e14}
+    .box-selected{background:#28a745}
+    
+    
+    
+    /* ===============================
+    AI PREVIEW (SMALLER)
+    =============================== */
+    
+    .generated-preview{
+    margin-top:8px;
+    text-align:center;
+    }
+    
+    
+    
+    .generated-preview img{
+    width:100%;
+    max-width:250px;
+    border-radius:8px;
+    }
+    
+    
+    
+    .remove-ai{
+    margin-top:6px;
+    background:#dc3545;
+    color:white;
+    border:none;
+    padding:6px 10px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:12px;
+    }
+    
+    
+    
+    /* ===============================
+    CALENDAR HEIGHT CONTROL
+    =============================== */
+    
+    .fc .fc-toolbar-title{
+    font-size:16px;
+    }
+    
+    .fc .fc-button{
+    padding:4px 8px;
+    font-size:12px;
+    }
+    
+    .fc-daygrid-day-frame{
+    min-height:40px !important;
+    }

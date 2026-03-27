@@ -1,226 +1,392 @@
-/* ===============================
-   HEADER-FOOTER
-================================ */
 /* =================================
    GLOBAL RESET
 ================================= */
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    }
-    
-    body{
-    font-family:'Open Sans',sans-serif;
-    background:#f7f7f7;
-    color:#333;
-    line-height:1.6;
-    }
-    
-    img{
-    max-width:100%;
-    display:block;
-    }
-    
-    
-    /* =================================
-       TYPOGRAPHY
-    ================================= */
-    
-    h1,h2,h3{
-    font-family:'Playfair Display', serif;
-    }
-    
-    a{
-    text-decoration:none;
-    color:inherit;
-    }
-    
-    
-    /* =================================
-       HEADER
-    ================================= */
-    
-    header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:18px 40px;
-    background:white;
-    border-bottom:1px solid #ddd;
-    flex-wrap:wrap;
-    }
-    
-    header h1{
-    letter-spacing:2px;
-    font-size:22px;
-    }
-    
-    header span{
-    font-weight:300;
-    }
-    
-    header nav{
-    display:flex;
-    gap:15px;
-    flex-wrap:wrap;
-    }
-    
-    header nav a{
-    font-size:14px;
-    color:#333;
-    }
-    
-    header nav a:hover{
-    text-decoration:underline;
-    }
-    
-    
-    /* =================================
-       FOOTER
-    ================================= */
-    
-    footer{
-    background:#222;
-    color:white;
-    padding:40px 20px;
-    text-align:center;
-    margin-top:60px;
-    }
-    
-    .footer-container h2{
-    margin-bottom:10px;
-    }
-    
-    .footer-container p{
-    margin:6px 0;
-    font-size:14px;
-    }
-    
-    .social-links{
-    margin:15px 0;
-    }
-    
-    .social-links a{
-    color:#ddd;
-    margin:0 8px;
-    }
-    
-    .social-links a:hover{
-    color:white;
-    }
-    
-    .footer-note{
-    font-size:12px;
-    margin-top:15px;
-    color:#aaa;
-    }
-    
-    
-    /* =================================
-       BUTTONS (GLOBAL)
-    ================================= */
-    
-    .btn{
-    padding:10px 20px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-    font-weight:600;
-    }
-    
-    .btn-primary{
-    background:black;
-    color:white;
-    }
-    
-    .btn-primary:hover{
-    background:#333;
-    }
-    
-    .btn-light{
-    background:#eee;
-    }
-    
-    .btn-light:hover{
-    background:#ddd;
-    }
-    
-    
-    /* =================================
-       CONTAINERS
-    ================================= */
-    
-    .section{
-    padding:60px 8%;
-    max-width:1200px;
-    margin:auto;
-    }
-    
-    
-    /* =================================
-       GRID / FLEX UTILITIES
-    ================================= */
-    
-    .flex{
-    display:flex;
-    gap:20px;
-    flex-wrap:wrap;
-    }
-    
-    .center{
-    text-align:center;
-    }
-    
-    
-    /* =================================
-       MODAL GLOBAL
-    ================================= */
-    
-    .modal{
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,.6);
-    justify-content:center;
-    align-items:center;
-    z-index:1000;
-    }
-    
-    .modal-content{
-    background:white;
-    padding:30px;
-    border-radius:12px;
-    text-align:center;
-    }
-    
-    
-    /* =================================
-       RESPONSIVE
-    ================================= */
-    
-    @media(max-width:900px){
-    
-    header{
-    flex-direction:column;
-    text-align:center;
-    gap:10px;
-    }
-    
-    .section{
-    padding:40px 20px;
-    }
-    
-    }
-    
-    @media(max-width:600px){
-    
-    header nav{
-    justify-content:center;
-    }
-    
-    }
+   margin:0;
+   padding:0;
+   box-sizing:border-box;
+   }
+   
+   html{
+   scroll-behavior:smooth;
+   }
+   
+   body{
+   font-family:'Open Sans', sans-serif;
+   background:#f7f7f7;
+   color:#333;
+   line-height:1.6;
+   -webkit-font-smoothing:antialiased;
+   }
+   
+   img{
+   max-width:100%;
+   display:block;
+   }
+   
+   
+   /* =================================
+      TYPOGRAPHY
+   ================================= */
+   
+   h1,h2,h3,h4{
+   font-family:'Playfair Display', serif;
+   color:#111;
+   }
+   
+   h1{
+   font-size:36px;
+   }
+   
+   h2{
+   font-size:28px;
+   }
+   
+   h3{
+   font-size:22px;
+   }
+   
+   p{
+   color:#555;
+   }
+   
+   a{
+   text-decoration:none;
+   color:inherit;
+   transition:.2s;
+   }
+   
+   a:hover{
+   opacity:.8;
+   }
+   
+   
+   /* =================================
+      CONTAINER SYSTEM
+   ================================= */
+   
+   .container{
+   max-width:1200px;
+   margin:auto;
+   padding:0 20px;
+   }
+   
+   .section{
+   padding:70px 0;
+   }
+   
+   
+   /* =================================
+      HEADER
+   ================================= */
+   
+   header{
+   display:flex;
+   justify-content:space-between;
+   align-items:center;
+   padding:20px 40px;
+   background:white;
+   border-bottom:1px solid #eee;
+   position:sticky;
+   top:0;
+   z-index:100;
+   }
+   
+   header h1{
+   letter-spacing:2px;
+   font-size:22px;
+   font-weight:600;
+   }
+   
+   header span{
+   font-weight:300;
+   }
+   
+   header nav{
+   display:flex;
+   gap:25px;
+   align-items:center;
+   }
+   
+   header nav a{
+   font-size:14px;
+   color:#333;
+   font-weight:500;
+   }
+   
+   header nav a:hover{
+   color:black;
+   }
+   
+   
+   /* =================================
+      FOOTER
+   ================================= */
+   
+   footer{
+   background:#111;
+   color:white;
+   padding:50px 20px;
+   margin-top:80px;
+   }
+   
+   .footer-container{
+   max-width:1100px;
+   margin:auto;
+   text-align:center;
+   }
+   
+   .footer-container h2{
+   margin-bottom:10px;
+   font-size:22px;
+   }
+   
+   .footer-container p{
+   margin:6px 0;
+   font-size:14px;
+   color:#ccc;
+   }
+   
+   .social-links{
+   margin:18px 0;
+   }
+   
+   .social-links a{
+   color:#ccc;
+   margin:0 10px;
+   font-size:14px;
+   }
+   
+   .social-links a:hover{
+   color:white;
+   }
+   
+   .footer-note{
+   font-size:12px;
+   margin-top:15px;
+   color:#888;
+   }
+   
+   
+   /* =================================
+      BUTTONS (GLOBAL)
+   ================================= */
+   
+   .btn{
+   padding:12px 22px;
+   border:none;
+   border-radius:8px;
+   cursor:pointer;
+   font-weight:600;
+   font-size:14px;
+   transition:.2s;
+   }
+   
+   .btn-primary{
+   background:black;
+   color:white;
+   }
+   
+   .btn-primary:hover{
+   background:#333;
+   }
+   
+   .btn-light{
+   background:#eee;
+   }
+   
+   .btn-light:hover{
+   background:#ddd;
+   }
+   
+   .btn-outline{
+   border:1px solid #ddd;
+   background:white;
+   }
+   
+   .btn-outline:hover{
+   background:#f5f5f5;
+   }
+   
+   
+   /* =================================
+      FLEX UTILITIES
+   ================================= */
+   
+   .flex{
+   display:flex;
+   gap:20px;
+   flex-wrap:wrap;
+   }
+   
+   .center{
+   text-align:center;
+   }
+   
+   .space-between{
+   display:flex;
+   justify-content:space-between;
+   align-items:center;
+   }
+   
+   
+   /* =================================
+      CARD UI (GLOBAL)
+   ================================= */
+   
+   .card{
+   background:white;
+   border-radius:14px;
+   padding:25px;
+   box-shadow:0 8px 20px rgba(0,0,0,.05);
+   }
+   
+   
+   /* =================================
+      FORM UI (GLOBAL)
+   ================================= */
+   
+   input,
+   select,
+   textarea{
+   width:100%;
+   padding:11px;
+   border-radius:8px;
+   border:1px solid #ddd;
+   margin-top:5px;
+   font-family:inherit;
+   }
+   
+   label{
+   font-size:13px;
+   font-weight:600;
+   display:block;
+   margin-top:15px;
+   }
+   
+   
+   /* =================================
+      MODAL GLOBAL
+   ================================= */
+   
+   .modal{
+   display:none;
+   position:fixed;
+   top:0;
+   left:0;
+   width:100%;
+   height:100%;
+   background:rgba(0,0,0,.6);
+   justify-content:center;
+   align-items:center;
+   z-index:1000;
+   padding:20px;
+   }
+   
+   .modal-content{
+   background:white;
+   padding:30px;
+   border-radius:14px;
+   max-width:500px;
+   width:100%;
+   }
+   
+   
+   /* =================================
+      RESPONSIVE
+   ================================= */
+   
+   @media(max-width:900px){
+   
+   header{
+   flex-direction:column;
+   gap:12px;
+   text-align:center;
+   }
+   
+   header nav{
+   flex-wrap:wrap;
+   justify-content:center;
+   }
+   
+   .section{
+   padding:50px 0;
+   }
+   
+   }
+   
+   @media(max-width:600px){
+   
+   h1{
+   font-size:28px;
+   }
+   
+   h2{
+   font-size:24px;
+   }
+   
+   header{
+   padding:18px 20px;
+   }
+   
+   .btn{
+   width:100%;
+   text-align:center;
+   }
+   
+   }
+   /* Profile Dropdown */
+
+.profile-dropdown{
+   display:inline-block;
+   position:relative;
+   margin-left:10px;
+   }
+   
+   .profile-circle{
+   width:36px;
+   height:36px;
+   border-radius:50%;
+   background:#333;
+   color:white;
+   display:inline-flex;
+   align-items:center;
+   justify-content:center;
+   cursor:pointer;
+   font-weight:600;
+   overflow:hidden;
+   }
+   
+   .profile-circle img{
+   width:100%;
+   height:100%;
+   object-fit:cover;
+   border-radius:50%;
+   }
+   
+   .profile-menu{
+   position:absolute;
+   right:0;
+   top:45px;
+   background:white;
+   box-shadow:0 4px 10px rgba(0,0,0,0.15);
+   border-radius:8px;
+   min-width:140px;
+   z-index:1000;
+   }
+   
+   .profile-menu a{
+   display:block;
+   padding:10px;
+   text-decoration:none;
+   color:#333;
+   }
+   
+   .profile-menu a:hover{
+   background:#f5f5f5;
+   }
+   
+   .hidden{
+   display:none;
+   }

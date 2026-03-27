@@ -3,326 +3,289 @@
 ======================================== */
 
 .product-section{
-    padding:60px 8%;
-    max-width:1200px;
-    margin:auto;
-    }
-    
-    
-    /* ========================================
-       PRODUCT NAVIGATION
-    ======================================== */
-    
-    .product-nav{
-    display:flex;
-    gap:15px;
-    margin:30px 0;
-    flex-wrap:wrap;
-    justify-content:center;
-    }
-    
-    .product-tab{
-    padding:12px 22px;
-    border:1px solid #ddd;
-    background:white;
-    cursor:pointer;
-    font-weight:600;
-    border-radius:6px;
-    transition:.3s;
-    }
-    
-    .product-tab:hover{
-    background:#f5f5f5;
-    }
-    
-    .product-tab.active{
-    background:black;
-    color:white;
-    border-color:black;
-    }
-    
-    
-    /* ========================================
-       TAB CONTENT
-    ======================================== */
-    
-    .product-tab-content{
-    display:none;
-    animation:fade .4s ease;
-    }
-    
-    .product-tab-content.active{
-    display:block;
-    }
-    
-    @keyframes fade{
-    from{opacity:0}
-    to{opacity:1}
-    }
-    
-    
-    /* ========================================
-       PRODUCT CONTAINER
-    ======================================== */
-    
-    .product-container{
-    display:flex;
-    gap:40px;
-    flex-wrap:wrap;
-    align-items:flex-start;
-    }
-    
-    
-    /* ========================================
-       PRODUCT IMAGE
-    ======================================== */
-    
-    .product-image{
-    flex:1;
-    min-width:320px;
-    text-align:center;
-    }
-    
-    .product-image img,
-    model-viewer{
-    width:100%;
-    border-radius:12px;
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-    }
-    
-    
-    /* ========================================
-       STYLE OPTIONS
-    ======================================== */
-    
-    .style-options{
-    margin-top:20px;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    justify-content:center;
-    }
-    
-    .style-btn{
-    padding:8px 14px;
-    border:1px solid #ddd;
-    background:white;
-    cursor:pointer;
-    border-radius:6px;
-    font-size:13px;
-    transition:.2s;
-    }
-    
-    .style-btn:hover{
-    background:#f5f5f5;
-    }
-    
-    .style-btn.active{
-    background:black;
-    color:white;
-    border-color:black;
-    }
-
-    /* ========================================
-   STYLE BUTTON POSITION
-======================================== */
-
-.style-options{
-    margin:15px 0 20px 0;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    }
-    
-    .style-btn{
-    padding:8px 14px;
-    border:1px solid #ddd;
-    background:white;
-    cursor:pointer;
-    border-radius:6px;
-    font-size:13px;
-    transition:.2s;
-    }
-    
-    .style-btn:hover{
-    background:#f5f5f5;
-    }
-    
-    .style-btn.active{
-    background:black;
-    color:white;
-    border-color:black;
-    }
-    
-    
-    /* ========================================
-       PRODUCT ICONS
-    ======================================== */
-    
-    .product-icons{
-    margin-top:20px;
-    display:flex;
-    gap:10px;
-    justify-content:center;
-    flex-wrap:wrap;
-    }
-    
-    .product-icons button{
-    padding:10px 18px;
-    border:none;
-    background:black;
-    color:white;
-    cursor:pointer;
-    border-radius:6px;
-    }
-    
-    
-    /* ========================================
-       PRODUCT DETAILS
-    ======================================== */
-    
-    .product-details{
-    flex:1;
-    min-width:320px;
-    }
-    
-    .product-title{
-    margin-bottom:10px;
-    }
-    
-    .product-price{
-    font-weight:bold;
-    }
-    
-    
-    /* ========================================
-       QUOTE BOX
-    ======================================== */
-    
-    .quote-box{
-    margin-top:25px;
-    padding:20px;
-    border-radius:12px;
-    background:#f8f8f8;
-    }
-    
-    .quote-btn{
-    display:inline-block;
-    margin-top:10px;
-    padding:12px 20px;
-    background:black;
-    color:white;
-    text-decoration:none;
-    border-radius:6px;
-    cursor:pointer;
-    }
-    
-    
-    /* ========================================
-       TEXTAREA
-    ======================================== */
-    
-    textarea{
-    width:100%;
-    min-height:120px;
-    padding:12px;
-    margin-top:15px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    }
-    
-    
-    /* ========================================
-       PRODUCT FINDER
-    ======================================== */
-    
-    .finder-instructions{
-    background:#f7f7f7;
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:30px;
-    }
-    
-    .result-box{
-    border:2px dashed #ddd;
-    border-radius:12px;
-    padding:40px 20px;
-    text-align:center;
-    background:#fafafa;
-    min-height:300px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    }
-    
-    /* ================= COST ESTIMATOR ================= */
-
-.estimate-box{
-   background:#f8f8f8;
-   padding:20px;
-   border-radius:12px;
-   margin-top:20px;
-   }
-   
-   .estimate-box select,
-   .estimate-box input{
-   width:100%;
-   padding:10px;
-   margin-top:8px;
-   margin-bottom:15px;
-   border-radius:6px;
-   border:1px solid #ddd;
-   }
-   
-   .size-inputs{
+   height:calc(100vh - 100px);
+   max-width:1200px;
+   margin:auto;
+   padding:15px 25px;
    display:flex;
-   gap:15px;
+   flex-direction:column;
    }
    
-   .size-inputs div{
+   
+   /* ========================================
+      HEADER AREA
+   ======================================== */
+   
+   .product-section h2{
+   margin-bottom:3px;
+   }
+   
+   .product-section h3{
+   margin-bottom:8px;
+   color:#555;
+   }
+   
+   
+   /* ========================================
+      PRODUCT NAV
+   ======================================== */
+   
+   .product-nav{
+   display:flex;
+   gap:8px;
+   margin-bottom:12px;
+   }
+   
+   .product-tab{
+   padding:6px 14px;
+   border:1px solid #ddd;
+   background:white;
+   border-radius:6px;
+   cursor:pointer;
+   font-size:13px;
+   }
+   
+   .product-tab.active{
+   background:black;
+   color:white;
+   }
+   
+   
+   /* ========================================
+      TAB CONTENT
+   ======================================== */
+   
+   .product-tab-content{
+   display:none;
    flex:1;
    }
    
-   .estimate-result{
-   background:white;
-   padding:15px;
-   border-radius:10px;
-   text-align:center;
-   margin-top:10px;
+   .product-tab-content.active{
+   display:flex;
+   flex-direction:column;
    }
-    /* ========================================
-       QR MODAL
-    ======================================== */
-    
-    .modal{
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,.6);
-    justify-content:center;
-    align-items:center;
-    }
-    
-    .modal-content{
-    background:white;
-    padding:30px;
-    border-radius:12px;
-    text-align:center;
-    }
-    
-    
-    /* ========================================
-       RESPONSIVE
-    ======================================== */
-    
-    @media (max-width:768px){
-    
-    .product-container{
-    flex-direction:column;
-    }
-    
-    }
+   
+   
+   /* ========================================
+      PRODUCT CONTAINER
+   ======================================== */
+   
+   .product-container{
+   flex:1;
+   display:grid;
+   grid-template-columns:420px 1fr;
+   gap:25px;
+   align-items:center;
+   }
+   
+   
+   /* ========================================
+      PRODUCT IMAGE
+   ======================================== */
+   
+   .product-image{
+   display:flex;
+   flex-direction:column;
+   justify-content:center;
+   }
+   
+   .product-image img,
+   .product-image model-viewer{
+   width:100%;
+   height:260px;
+   object-fit:contain;
+   background:white;
+   border-radius:8px;
+   border:1px solid #eee;
+   }
+   
+   
+   /* ========================================
+      BUTTONS
+   ======================================== */
+   
+   .product-icons{
+   display:flex;
+   gap:8px;
+   margin-top:8px;
+   }
+   
+   .product-icons button{
+   padding:6px 10px;
+   font-size:12px;
+   background:black;
+   color:white;
+   border:none;
+   border-radius:5px;
+   cursor:pointer;
+   }
+   
+   .ar-notice{
+   font-size:11px;
+   margin-top:5px;
+   }
+   
+   
+   /* ========================================
+      PRODUCT DETAILS
+   ======================================== */
+   
+   .product-details{
+   display:flex;
+   flex-direction:column;
+   justify-content:center;
+   }
+   
+   .product-title{
+   font-size:20px;
+   margin-bottom:8px;
+   }
+   
+   
+   /* ========================================
+      STYLE BUTTONS
+   ======================================== */
+   
+   .style-options{
+   display:flex;
+   gap:6px;
+   margin-bottom:10px;
+   }
+   
+   .style-btn{
+   padding:5px 10px;
+   border:1px solid #ddd;
+   background:white;
+   border-radius:5px;
+   font-size:12px;
+   cursor:pointer;
+   }
+   
+   .style-btn.active{
+   background:black;
+   color:white;
+   }
+   
+   
+   /* ========================================
+      DETAILS
+   ======================================== */
+   
+   .product-details ul{
+   padding-left:18px;
+   margin-bottom:10px;
+   }
+   
+   .product-details li{
+   font-size:13px;
+   margin-bottom:4px;
+   }
+   
+   
+   /* ========================================
+      QUOTE BOX
+   ======================================== */
+   
+   .quote-box{
+   background:#f7f7f7;
+   padding:10px;
+   border-radius:8px;
+   }
+   
+   .quote-btn{
+   padding:6px 12px;
+   background:black;
+   color:white;
+   border-radius:5px;
+   display:inline-block;
+   margin-top:5px;
+   font-size:12px;
+   }
+   
+   
+/* ========================================
+   CUSTOMIZE LAYOUT
+======================================== */
+
+#customize .product-container{
+   display:grid;
+   grid-template-columns:380px 1fr;
+   gap:25px;
+   align-items:start;
+   }
+   
+   .result-box{
+   height:250px;
+   display:flex;
+   align-items:center;
+   justify-content:center;
+   border:2px dashed #ddd;
+   border-radius:8px;
+   background:#fafafa;
+   }
+   
+   .custom-actions{
+   display:flex;
+   gap:8px;
+   margin-top:8px;
+   }
+   
+   .custom-actions button,
+   .custom-actions a{
+   padding:7px 12px;
+   background:black;
+   color:white;
+   border:none;
+   border-radius:5px;
+   font-size:12px;
+   text-decoration:none;
+   }
+   
+   .finder-instructions{
+   background:#f7f7f7;
+   padding:10px;
+   border-radius:8px;
+   font-size:13px;
+   }
+   
+   @media(max-width:900px){
+   
+   #customize .product-container{
+   grid-template-columns:1fr;
+   }
+   
+   }
+   
+   
+   /* ========================================
+      RESPONSIVE
+   ======================================== */
+   
+   @media(max-width:900px){
+   
+   .product-section{
+   height:auto;
+   }
+   
+   .product-container{
+   grid-template-columns:1fr;
+   }
+   
+   }
+
+   .booking-modal{
+      width:90%;
+      max-width:900px;
+      padding:20px;
+      position:relative;
+      }
+      
+      .close-booking{
+      position:absolute;
+      top:10px;
+      right:15px;
+      border:none;
+      background:none;
+      font-size:20px;
+      cursor:pointer;
+      }

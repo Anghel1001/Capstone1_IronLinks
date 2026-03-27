@@ -120,7 +120,9 @@ Sliding
 </ul>
 
 <div class="quote-box">
-<a href="book.html" class="quote-btn">Request Quote</a>
+    <button class="quote-btn openBooking">
+        Request Quote
+        </button>
 </div>
 
 </div>
@@ -201,7 +203,9 @@ Decorative
 </ul>
 
 <div class="quote-box">
-<a href="book.html" class="quote-btn">Request Quote</a>
+    <button class="quote-btn openBooking">
+        Request Quote
+        </button>
 </div>
 
 </div>
@@ -282,7 +286,9 @@ Modern
 </ul>
 
 <div class="quote-box">
-<a href="book.html" class="quote-btn">Request Quote</a>
+    <button class="quote-btn openBooking">
+        Request Quote
+        </button>
 </div>
 
 </div>
@@ -327,8 +333,19 @@ Modern
     🧩 No design generated yet
     </div>
     
+    <div class="custom-actions">
+    
+    <button id="saveDesign" class="btn-primary">
+    Save Design
+    </button>
+    
+    <button id="proceedBooking" class="btn-primary proceed-btn">
+        Proceed to Booking
+        </button>
+    
     </div>
     
+    </div>
     
     <!-- RIGHT SIDE -->
     <div class="product-details">
@@ -339,6 +356,10 @@ Modern
     id="description"
     placeholder="Example: Modern plain sliding gate, black iron bars, vertical only, minimalist">
     </textarea>
+    
+    <button id="generateBtn" class="quote-btn">
+    Generate Design
+    </button>
     
     
     <!-- ================= SIZE ESTIMATOR ================= -->
@@ -385,11 +406,6 @@ Modern
     </div>
     
     
-    <button id="generateBtn" class="quote-btn">
-    Generate Design
-    </button>
-    
-    
     <p class="disclaimer">
     AI-generated images are for conceptual reference only.  
     Final fabrication design will be reviewed by IronLinks.
@@ -401,6 +417,29 @@ Modern
     
     </div>
 
+    <!-- BOOKING POPUP -->
+
+<div id="bookingPopup" class="modal">
+
+    <div class="modal-content booking-modal">
+    
+    <button id="closeBooking" class="close-booking">
+    ✕
+    </button>
+    
+    <iframe 
+    src="book_popup.html"
+    style="
+    width:100%;
+    height:650px;
+    border:none;
+    border-radius:10px;
+    ">
+    </iframe>
+    
+    </div>
+    
+    </div>
 
 <!-- QR MODAL -->
 

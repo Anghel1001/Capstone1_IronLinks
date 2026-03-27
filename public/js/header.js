@@ -59,20 +59,45 @@ function toggleProfileMenu(){
         
         }
 
-        
-      /* ===============================
+        /* ===============================
 GLOBAL BOOKING POPUP
 ================================ */
 
-window.openBooking = function(){
+function isLoggedIn(){
 
-    let popup = document.getElementById("globalBookingPopup")
+    const user =
+    localStorage.getItem("user")
+    
+    return user !== null
+    
+    }
+    
+    
+    window.openBooking = function(){
+    
+    // LOGIN CHECK
+    if(!isLoggedIn()){
+    
+    // redirect to login
+    window.location.href =
+    "book.html"
+    
+    return
+    
+    }
+    
+    
+    let popup =
+    document.getElementById("globalBookingPopup")
     
     // create popup if not exists
     if(!popup){
     
-    popup = document.createElement("div")
-    popup.id = "globalBookingPopup"
+    popup =
+    document.createElement("div")
+    
+    popup.id =
+    "globalBookingPopup"
     
     popup.innerHTML = `
     <div class="popup-overlay">

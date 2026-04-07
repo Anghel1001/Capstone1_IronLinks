@@ -43,22 +43,29 @@ function loadGeneratedImage(){
 const generated =
 localStorage.getItem("generatedDesign");
 
-if(!generated) return;
+const estimatedCost =
+localStorage.getItem("estimatedCost");
 
-document.getElementById("generatedPreview")
-.innerHTML = `
-<img src="${generated}" 
-style="width:100%;border-radius:10px">
+const preview =
+document.getElementById("bookingPreview");
 
-<br>
+const costPreview =
+document.getElementById("estimatedCostPreview");
 
-<button onclick="removeAI()" 
-class="remove-ai">
-Remove Design
-</button>
-`;
+if(generated){
+
+preview.src = generated;
+preview.style.display = "block";
 
 }
+
+if(estimatedCost){
+
+costPreview.textContent = estimatedCost;
+
+}
+
+}   
 
 
 function removeAI(){
@@ -69,7 +76,6 @@ document.getElementById("generatedPreview")
 .innerHTML="";
 
 }
-
 
 
 /* ===============================

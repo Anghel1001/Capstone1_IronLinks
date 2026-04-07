@@ -25,7 +25,19 @@ document
 
 }
 
+document
+.getElementById("authForm")
+?.addEventListener("submit", function(e){
 
+e.preventDefault();
+handleAuth();
+
+});
+
+
+/* ===============================
+USEr auth
+================================ */
 
 async function handleAuth(){
 
@@ -299,95 +311,4 @@ calendar.render();
 
 }
 
-
-
-/* ===============================
-POPUP
-================================ */
-
-function openBooking(){
-document
-.getElementById("bookingPopup")
-.classList.remove("hidden");
-}
-
-function closeBooking(){
-document
-.getElementById("bookingPopup")
-.classList.add("hidden");
-}
-
-
-
-/* ===============================
-LOGOUT
-================================ */
-
-function logout(){
-localStorage.removeItem("user");
-location.reload();
-}
-
-
 loadUser();
-
-
-function toggleProfileMenu(){
-    document.getElementById("profileMenu").classList.toggle("hidden")
-    }
-    
-    
-    // Close dropdown if clicked outside
-    
-    window.addEventListener("click", function(e){
-    
-    const dropdown = document.querySelector(".profile-dropdown")
-    
-    if(!dropdown.contains(e.target)){
-    document.getElementById("profileMenu").classList.add("hidden")
-    }
-    
-    })
-
-
-    function toggleProfileMenu(){
-document.getElementById("profileMenu").classList.toggle("hidden")
-}
-
-
-// Close dropdown if clicked outside
-
-window.addEventListener("click", function(e){
-
-const dropdown = document.querySelector(".profile-dropdown")
-
-if(!dropdown.contains(e.target)){
-document.getElementById("profileMenu").classList.add("hidden")
-}
-
-})
-
-function loadProfileCircle(){
-
-const user = JSON.parse(localStorage.getItem("user"))
-
-if(!user) return
-
-const initial = document.getElementById("profileInitial")
-const image = document.getElementById("profileImage")
-
-if(user.profileImage){
-
-image.src = user.profileImage
-image.classList.remove("hidden")
-initial.classList.add("hidden")
-
-}else{
-
-initial.textContent = user.name.charAt(0).toUpperCase()
-
-}
-
-}
-
-window.addEventListener("DOMContentLoaded", loadProfileCircle)

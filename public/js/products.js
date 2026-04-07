@@ -237,8 +237,13 @@ document.addEventListener("DOMContentLoaded", function () {
   
   const cost = w*h*rate;
   
-  resultCost.textContent =
-  "₱ "+cost.toLocaleString();
+const formattedCost =
+"₱ " + cost.toLocaleString();
+
+resultCost.textContent = formattedCost;
+
+// SAVE COST
+localStorage.setItem("estimatedCost", formattedCost);
   
   }
   
@@ -246,7 +251,23 @@ document.addEventListener("DOMContentLoaded", function () {
   width?.addEventListener("input",calculate);
   height?.addEventListener("input",calculate);
   type?.addEventListener("change",calculate);
-  
+
+  /* ========================================
+PROCEED BOOKING
+======================================== */
+
+document
+.getElementById("proceedBooking")
+?.addEventListener("click",()=>{
+
+const cost =
+document.getElementById("estimatedCost")?.textContent;
+
+localStorage.setItem("estimatedCost", cost);
+
+openBooking();
+
+});
   
   /* ========================================
 PHOTO VIEW
@@ -266,3 +287,5 @@ window.open(photoUrl, "_blank")
 
 })
   });
+
+  

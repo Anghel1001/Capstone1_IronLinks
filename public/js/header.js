@@ -82,6 +82,18 @@ function isLoggedIn(){
 return localStorage.getItem("user") !== null
 }
 
+/* ===============================
+LOGOUT (GLOBAL)
+================================ */
+
+window.logout = function(){
+
+localStorage.removeItem("user")
+
+// redirect to home page (optional)
+window.location.href = "index.html"
+
+}
 
 /* ===============================
 GLOBAL BOOKING POPUP

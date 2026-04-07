@@ -33,12 +33,12 @@ const from = params.get("from");
 
 
 /* ========================================
-   BACK BUTTON (RETURN TO SAME TAB)
+   BACK BUTTON
 ======================================== */
 
 if(backBtn){
 
-backBtn.addEventListener("click", ()=>{
+backBtn.addEventListener("click",()=>{
 
 if(from){
 window.location.href = "products.html#" + from;
@@ -59,22 +59,39 @@ let modelPath = "models/gate1.glb";
 
 if(modelType === "grills"){
 modelPath = "models/window1.glb";
+
+if(title){
 title.textContent = "IronLinks Grill Preview";
+}
+
+if(subtitle){
 subtitle.textContent = "Preview iron grills in your space";
+}
 }
 
 if(modelType === "railings"){
 modelPath = "models/grill2.glb";
+
+if(title){
 title.textContent = "IronLinks Railing Preview";
+}
+
+if(subtitle){
 subtitle.textContent = "Preview railings in your space";
+}
 }
 
 if(modelType === "gates"){
 modelPath = "models/gate1.glb";
+
+if(title){
 title.textContent = "IronLinks Gate Preview";
-subtitle.textContent = "Preview iron gates in your space";
 }
 
+if(subtitle){
+subtitle.textContent = "Preview iron gates in your space";
+}
+}
 
 
 /* ========================================
@@ -91,16 +108,16 @@ img.src = URL.createObjectURL(file);
 
 img.onload = () => {
 
-const containerWidth =
-document.querySelector(".container").clientWidth;
+const container = document.querySelector(".right");
+const maxWidth = container.clientWidth - 10;
 
 let width = img.width;
 let height = img.height;
 
-if (width > containerWidth) {
+if (width > maxWidth) {
 
-const ratio = containerWidth / width;
-width = containerWidth;
+const ratio = maxWidth / width;
+width = width * ratio;
 height = height * ratio;
 
 }
@@ -108,12 +125,12 @@ height = height * ratio;
 canvas.width = width;
 canvas.height = height;
 
-ctx.clearRect(0, 0, width, height);
-ctx.drawImage(img, 0, 0, width, height);
+ctx.clearRect(0,0,width,height);
+ctx.drawImage(img,0,0,width,height);
 
 corners = [];
 
-if (viewer) {
+if(viewer){
 viewer.remove();
 viewer = null;
 }
@@ -123,15 +140,14 @@ viewer = null;
 });
 
 
-
 /* ========================================
-   CANVAS CLICK (SELECT CORNERS)
+   SELECT CORNERS
 ======================================== */
 
-canvas.addEventListener("click", (e) => {
+canvas.addEventListener("click", (e)=>{
 
-if (!img) return;
-if (corners.length >= 4) return;
+if(!img) return;
+if(corners.length >= 4) return;
 
 const rect = canvas.getBoundingClientRect();
 
@@ -141,29 +157,28 @@ const scaleY = canvas.height / rect.height;
 const x = (e.clientX - rect.left) * scaleX;
 const y = (e.clientY - rect.top) * scaleY;
 
-corners.push({ x, y });
+corners.push({x,y});
 
 redraw();
 
 });
 
 
-
 /* ========================================
-   DRAW CORNER POINTS
+   REDRAW
 ======================================== */
 
-function redraw() {
+function redraw(){
 
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.drawImage(img,0,0,canvas.width,canvas.height);
 
-ctx.fillStyle = "#3b82f6";
+ctx.fillStyle="#3b82f6";
 
-corners.forEach(p => {
+corners.forEach(p=>{
 
 ctx.beginPath();
-ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+ctx.arc(p.x,p.y,7,0,Math.PI*2);
 ctx.fill();
 
 });
@@ -171,61 +186,68 @@ ctx.fill();
 }
 
 
-
 /* ========================================
-   PLACE 3D MODEL
+   PLACE MODEL
 ======================================== */
 
-placeBtn.addEventListener("click", () => {
+placeBtn.addEventListener("click",()=>{
 
-if (corners.length !== 4) {
-alert("Select 4 points first.");
+if(corners.length !== 4){
+alert("Select 4 points first");
 return;
 }
 
-const xs = corners.map(p => p.x);
-const ys = corners.map(p => p.y);
+const xs = corners.map(p=>p.x);
+const ys = corners.map(p=>p.y);
 
 const minX = Math.min(...xs);
 const maxX = Math.max(...xs);
 const minY = Math.min(...ys);
 const maxY = Math.max(...ys);
 
-if (viewer) viewer.remove();
+if(viewer) viewer.remove();
 
 viewer = document.createElement("model-viewer");
 
 viewer.src = modelPath;
 
-viewer.setAttribute("camera-controls", "");
-viewer.setAttribute("auto-rotate", "");
+viewer.setAttribute("camera-controls","");
+viewer.setAttribute("auto-rotate","");
+viewer.setAttribute("shadow-intensity","1");
 
 viewer.style.position = "absolute";
-viewer.style.left = canvas.offsetLeft + minX + "px";
-viewer.style.top = canvas.offsetTop + minY + "px";
+
+const canvasWrapper = canvas.parentElement;
+canvasWrapper.style.position = "relative";
+
+viewer.style.left = minX + "px";
+viewer.style.top = minY + "px";
 
 viewer.style.width = (maxX - minX) + "px";
 viewer.style.height = (maxY - minY) + "px";
 
-document.body.appendChild(viewer);
+viewer.style.zIndex = "5";
+
+canvasWrapper.appendChild(viewer);
 
 });
-
 
 
 /* ========================================
    RESET
 ======================================== */
 
-resetBtn.addEventListener("click", () => {
+resetBtn.addEventListener("click",()=>{
 
-corners = [];
+corners=[];
 
-if (viewer) {
+if(viewer){
 viewer.remove();
-viewer = null;
+viewer=null;
 }
 
-redraw();
+if(img){
+ctx.drawImage(img,0,0,canvas.width,canvas.height);
+}
 
 });

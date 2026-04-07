@@ -1,177 +1,167 @@
-/* ========================================
-   GLOBAL PAGE STYLING
-======================================== */
 body{
-    margin:0;
-    font-family:'Open Sans', Arial, sans-serif;
-    background:#f5f5f5;
-    color:#333;
-    } 
-    /* ========================================
-       MAIN PAGE SECTION
-    ======================================== */
-    .photo-section{
-    padding:60px 8%;
-    max-width:1200px;
-    margin:auto;
-    }
-    /* ========================================
-       BACK BUTTON
-    ======================================== */
-    .back-btn-container{
-    margin-bottom:20px;
-    }
-    
-    .back-btn{
-    padding:10px 20px;
-    background:#f5f5f5;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-    font-weight:600;
-    transition:0.2s;
-    }
-    
-    .back-btn:hover{
-    background:#e5e5e5;
-    }
-    /* ========================================
-       MAIN CONTENT CONTAINER
-    ======================================== */ 
-    .container{
-    background:white;
-    padding:30px;
-    border-radius:12px;
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-    }
-    /* ========================================
-       HEADER TEXT
-    ======================================== */ 
-    h1{
-    margin-top:0;
-    font-size:28px;
-    font-family:'Playfair Display', serif;
-    }
-    
-    .subtitle{
-    color:#666;
-    margin-bottom:20px;
-    }
-    /* ========================================
-       STEP INDICATOR
-    ======================================== */
-    
-    .steps{
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-    flex-wrap:wrap;
-    }
-    
-    .step{
-    flex:1;
-    background:#f7f7f7;
-    padding:12px;
-    border-radius:8px;
-    font-size:13px;
-    color:#666;
-    text-align:center;
-    }
-    /* ========================================
-       INSTRUCTIONS BOX
-    ======================================== */
-    
-    .instructions{
-    background:#f8f8f8;
-    padding:18px;
-    border-radius:10px;
-    margin-bottom:20px;
-    font-size:14px;
-    line-height:1.6;
-    }
-    /* ========================================
-       FILE INPUT
-    ======================================== */
-    
-    input[type="file"]{
-    width:100%;
-    padding:10px;
-    border-radius:6px;
-    border:1px solid #ddd;
-    margin-bottom:15px;
-    background:white;
-    } 
-    /* ========================================
-       CANVAS AREA
-    ======================================== */
-    
-    canvas{
-    width:100%;
-    margin-top:10px;
-    border-radius:10px;
-    background:#fafafa;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
-    cursor:crosshair;
-    }
-    /* ========================================
-       BUTTON CONTAINER
-    ======================================== */
-    
-    .buttons{
-    margin-top:20px;
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    }
-    /* ========================================
-       GENERAL BUTTON STYLE
-    ======================================== */
-    
-    button{
-    flex:1;
-    border:none;
-    padding:12px;
-    border-radius:6px;
-    font-weight:600;
-    cursor:pointer;
-    transition:0.2s;
-    }
-    /* ========================================
-       PLACE MODEL BUTTON
-    ======================================== */
-    
-    .place{
-    background:black;
-    color:white;
-    }
-    
-    .place:hover{
-    background:#222;
-    }
-    /* ========================================
-       RESET BUTTON
-    ======================================== */
-    
-    .reset{
-    background:#e5e5e5;
-    color:#333;
-    }
-    
-    .reset:hover{
-    background:#d6d6d6;
-    }
-    /* ========================================
-       RESPONSIVE DESIGN
-    ======================================== */
-    
-    @media (max-width:768px){
-    
-    .steps{
-    flex-direction:column;
-    }
-    
-    .buttons{
-    flex-direction:column;
-    }
-    
-    }
+   margin:0;
+   font-family:'Open Sans', Arial, sans-serif;
+   }
+   
+   /* Background */
+   
+   .photo-section{
+   
+   min-height:calc(100vh - 80px);
+   
+   background-image:url("../hompage_photos/workbackground.jpg");
+   background-size:cover;
+   background-position:center;
+   
+   display:flex;
+   flex-direction:column;
+   align-items:center;
+   justify-content:center;
+   
+   padding:20px;
+   }
+   
+   .photo-section::before{
+   content:"";
+   position:absolute;
+   top:0;
+   left:0;
+   width:100%;
+   height:100%;
+   background:rgba(0,0,0,0.55);
+   z-index:0;
+   }
+   
+   .photo-section > *{
+   position:relative;
+   z-index:2;
+   }
+   
+   /* Title */
+   
+   .page-title{
+   font-family:'Playfair Display';
+   font-size:36px;
+   color:white;
+   margin-bottom:5px;
+   }
+   
+   .page-subtitle{
+   color:#ddd;
+   margin-bottom:20px;
+   }
+   
+   
+   /* Card */
+
+   .card{
+   background:white;
+   border-radius:10px;
+   box-shadow:0 15px 35px rgba(0,0,0,.3);
+   
+   width:900px;
+   max-width:95%;
+   }
+   
+   /* Steps */
+   
+   .steps{
+   display:flex;
+   background:#f3f3f3;
+   border-radius:10px 10px 0 0;
+   overflow:hidden;
+   }
+   
+   .step{
+   flex:1;
+   padding:14px;
+   text-align:center;
+   font-size:14px;
+   color:#777;
+   }
+   
+   .step.active{
+   background:#e8e8e8;
+   font-weight:600;
+   color:#333;
+   }
+   
+   
+   /* Body */
+   
+   .card-body{
+   display:flex;
+   gap:20px;
+   padding:25px;
+   }
+   
+   /* Left */
+   
+   .left{
+   flex:1;
+   }
+   
+   .left h3{
+   margin-top:0;
+   }
+   
+   .left ul{
+   padding-left:18px;
+   margin-bottom:20px;
+   }
+   
+   /* Right */
+   
+   .right{
+   flex:1;
+   display:flex;
+   justify-content:center;
+   align-items:center;
+   }
+   
+   
+   /* Canvas */
+   
+   canvas{
+   width:100%;
+   max-height:260px;
+   border-radius:10px;
+   background:#f5f5f5;
+   }
+   
+   
+   /* Buttons */
+   
+   .buttons{
+   display:flex;
+   gap:10px;
+   margin-top:10px;
+   }
+   
+   button{
+   padding:12px;
+   border:none;
+   border-radius:6px;
+   cursor:pointer;
+   flex:1;
+   }
+   
+   .place{
+   background:black;
+   color:white;
+   }
+   
+   .reset{
+   background:#e5e5e5;
+   }
+   
+   
+   /* Responsive */
+   
+   @media(max-width:768px){
+   
+   .card-body{
+   flex-direction:column;
+   }
+   
+   }

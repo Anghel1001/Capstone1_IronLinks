@@ -20,55 +20,42 @@ src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
 
 <body>
 
-<!-- HEADER -->
-<header>
-<h1>Iron <span>works</span></h1>
-<nav>
-<a href="index.html">About Us</a> |
-<a href="products.html">Products</a> |
-<a href="book.html">Book Now</a> |
-<a href="#contact">Contact</a>
-</nav>
-</header>
+
+    <div id="header"></div>
+
 
 
 <section class="photo-section">
 
-<div class="back-btn-container">
-<button id="backBtn" class="back-btn">
-← Back to Products
-</button>
-</div>
+<h1 class="page-title">Photo Placement</h1>
+<p class="page-subtitle">
+Place Iron Gates, Grills, or Railings in your space
+</p>
 
-<div class="container">
 
-<h1 id="title">IronLinks Preview</h1>
-<div class="subtitle" id="subtitle">
-Place iron design in your space
-</div>
+<div class="card">
 
 <div class="steps">
-<div class="step">1 Upload Photo</div>
+<div class="step active">1 Upload Photo</div>
 <div class="step">2 Select Corners</div>
 <div class="step">3 Preview Model</div>
 </div>
 
-<div class="instructions">
 
-<b>How it works:</b>
+<div class="card-body">
 
-<ol>
+<div class="left">
+
+<h3>How it works:</h3>
+
+<ul>
 <li>Upload or capture a photo of your space.</li>
-<li>Tap four corners where the iron structure should be placed.</li>
-<li>Click <b>Place Model</b> to preview the design.</li>
-<li>Rotate or zoom the model to inspect it.</li>
-</ol>
-
-</div>
+<li>Select four corners where structure should be placed.</li>
+<li>Click Place Model.</li>
+<li>Adjust model size and position.</li>
+</ul>
 
 <input type="file" id="imageInput" accept="image/*">
-
-<canvas id="canvas"></canvas>
 
 <div class="buttons">
 <button class="place" id="placeBtn">Place Model</button>
@@ -77,9 +64,20 @@ Place iron design in your space
 
 </div>
 
+
+<div class="right">
+<canvas id="canvas"></canvas>
+</div>
+
+
+</div>
+
+</div>
+
 </section>
 
 <script src="js/photo_view.js"></script>
+<script src="js/header.js"></script>
 
 </body>
 </html>

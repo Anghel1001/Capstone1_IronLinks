@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Image Placement Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script type="module"
+  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+canvas {
+  border: 1px solid black;
+  display: block;
+}
+
+#viewer {
+  position: absolute;
+  display: none;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<h2>Image Placement</h2>
+
+<input type="file" id="imageInput" accept="image/*">
+<br><br>
+
+<div id="wrapper" style="position:relative; display:inline-block;">
+  <canvas id="canvas"></canvas>
+
+  <model-viewer
+    id="viewer"
+    src="models/wall.glb"
+    camera-controls
+    exposure="1"
+    shadow-intensity="1"
+    style="background:transparent;">
+  </model-viewer>
+</div>
+
+<br><br>
+
+<button id="placeBtn">Place Model</button>
+<button id="resetBtn">Reset Corners</button>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const imageInput = document.getElementById("imageInput");
+const viewer = document.getElementById("viewer");
+
+let img = new Image();
+let corners = [];
+
+/* IMAGE LOAD */
+imageInput.addEventListener("change", function(e) {
+  img.src = URL.createObjectURL(e.target.files[0]);
+
+  img.onload = function() {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    corners = [];
+    viewer.style.display = "none";
+    viewer.style.pointerEvents = "none";
+  };
+});
+
+/* CORNER SELECTION */
+canvas.addEventListener("click", function(e) {
+
+  if (corners.length >= 4) return;
+
+  corners.push({ x: e.offsetX, y: e.offsetY });
+
+  ctx.fillStyle = "red";
+  ctx.beginPath();
+  ctx.arc(e.offsetX, e.offsetY, 5, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (corners.length === 4) {
+    ctx.strokeStyle = "red";
+    ctx.beginPath();
+    ctx.moveTo(corners[0].x, corners[0].y);
+    ctx.lineTo(corners[1].x, corners[1].y);
+    ctx.lineTo(corners[2].x, corners[2].y);
+    ctx.lineTo(corners[3].x, corners[3].y);
+    ctx.closePath();
+    ctx.stroke();
+  }
+});
+
+/* PLACE MODEL */
+document.getElementById("placeBtn").addEventListener("click", function() {
+
+  if (corners.length !== 4) {
+    alert("Select 4 corners first.");
+    return;
+  }
+
+  const xs = corners.map(p => p.x);
+  const ys = corners.map(p => p.y);
+
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+
+  viewer.style.display = "block";
+  viewer.style.left = minX + "px";
+  viewer.style.top = minY + "px";
+  viewer.style.width = (maxX - minX) + "px";
+  viewer.style.height = (maxY - minY) + "px";
+
+  viewer.style.pointerEvents = "auto";
+});
+
+/* RESET */
+document.getElementById("resetBtn").addEventListener("click", function() {
+  corners = [];
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+  viewer.style.display = "none";
+  viewer.style.pointerEvents = "none";
+});
+</script>
+
+</body>
+</html>

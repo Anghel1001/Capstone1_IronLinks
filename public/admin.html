@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<title>Admin Profile | IronLinks</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/admin.css">
+
+</head>
+
+<body>
+
+<header>
+<h1>Iron <span>works</span></h1>
+<nav>
+<a href="index.html">View Public Page</a> |
+<a href="admin.html">Admin Profile</a> |
+<a href="admin_booking.html">Schedules</a>
+</nav>
+</header>
+
+
+<!-- HERO -->
+<section class="hero">
+
+    <img src="hompage_photos/workbackground.jpg" alt="Welding Work">
+    
+    <span class="admin-badge">ADMIN MODE</span>
+    
+    <blockquote>
+    “We combine traditional iron craftsmanship 
+    with modern technology to bring your custom designs to life.”
+    </blockquote>
+    
+    </section>
+
+
+
+<section class="admin-container">
+
+<!-- GATE -->
+
+<div class="admin-card">
+
+<div class="card-header">
+<h3>Gate Designs</h3>
+</div>
+
+<div class="gallery-grid" id="Gate"></div>
+
+<div class="upload-box">
+<label>Upload Gate Image</label>
+<input type="file" accept="image/*" onchange="uploadImage(event, 'Gate')">
+</div>
+
+</div>
+
+
+<!-- GRILL -->
+
+<div class="admin-card">
+
+<div class="card-header">
+<h3>Grill Designs</h3>
+</div>
+
+<div class="gallery-grid" id="Grill"></div>
+
+<div class="upload-box">
+<label>Upload Grill Image</label>
+<input type="file" accept="image/*" onchange="uploadImage(event, 'Grill')">
+</div>
+
+</div>
+
+
+
+<!-- RAILING -->
+
+<div class="admin-card">
+
+<div class="card-header">
+<h3>Railing Designs</h3>
+</div>
+
+<div class="gallery-grid" id="Railing"></div>
+
+<div class="upload-box">
+<label>Upload Railing Image</label>
+<input type="file" accept="image/*" onchange="uploadImage(event, 'Railing')">
+</div>
+
+</div>
+
+</section>
+
+
+
+<footer>
+
+<p class="footer-note">
+ADMIN MODE — changes affect live site
+</p>
+
+</footer>
+
+
+<script src="js/admin.js"></script>
+
+</body>
+</html>

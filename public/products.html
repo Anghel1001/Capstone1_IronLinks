@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -20,7 +21,7 @@ src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
 <body>
 
 
-    <div id="header"></div>
+<div id="header"></div>
 
 
 
@@ -411,55 +412,7 @@ Modern
     
     </div>
 
-    <!-- BOOKING POPUP -->
-
-<div id="bookingPopup" class="modal">
-
-    <div class="modal-content booking-modal">
     
-    <button id="closeBooking" class="close-booking">
-    ✕
-    </button>
-    
-    <iframe 
-    src="book_popup.html"
-    style="
-    width:100%;
-    height:650px;
-    border:none;
-    border-radius:10px;
-    ">
-    </iframe>
-    
-    </div>
-    
-    </div>
-
-    <!-- LOGIN POPUP -->
-
-<div id="loginPopup" class="modal">
-
-    <div class="modal-content">
-    
-    <h3>Login Required</h3>
-    
-    <p>Please login to continue booking</p>
-    
-    <a href="book.html" class="btn-primary">
-    Go to Login
-    </a>
-    
-    <br><br>
-    
-    <button onclick="
-    document.getElementById('loginPopup').style.display='none'
-    ">
-    Close
-    </button>
-    
-    </div>
-    
-    </div>
 <!-- QR MODAL -->
 
 <div id="qrModal" class="modal">
@@ -478,10 +431,8 @@ Modern
 </div>
 </footer>
 
-
-<script src="js/products.js"></script>
 <script src="js/header.js"></script>
-<script src="js/index.js"></script>
+<script src="js/products.js"></script>
 
 </body>
 </html>

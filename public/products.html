@@ -297,22 +297,25 @@ Staircase
 
 
 
-<!-- ================= CUSTOMIZE ================= -->
-
 <div id="customize" class="product-tab-content">
 
-    <h3>Custom Ironwork Design Finder</h3>
+    <div class="product-container customize-card">
+    
+    <!-- LEFT SIDE -->
+    <div class="left">
+    
+    <h3 class="custom-title">Custom Ironwork Design Finder</h3>
     
     <div class="finder-instructions">
     
     <h4>How It Works</h4>
     
-    <ol>
+    <ul>
     <li>Describe your preferred iron design clearly</li>
     <li>Enter preferred size</li>
     <li>View estimated cost instantly</li>
     <li>Generate AI design preview</li>
-    </ol>
+    </ul>
     
     <p class="example">
     <strong>Example:</strong>
@@ -321,38 +324,25 @@ Staircase
     
     </div>
     
-    
-    <div class="product-container">
-    
-    <!-- LEFT SIDE -->
-    <div class="product-image">
-    
     <div id="result" class="result-box">
     🧩 No design generated yet
     </div>
     
     <div class="custom-actions">
-    
-    <button id="saveDesign" class="btn-primary">
-    Save Design
-    </button>
-    
-    <button id="proceedBooking" class="btn-primary proceed-btn">
-        Proceed to Booking
-        </button>
-    
+    <button id="saveDesign">Save Design</button>
+    <button id="proceedBooking">Proceed to Booking</button>
     </div>
     
     </div>
+    
     
     <!-- RIGHT SIDE -->
-    <div class="product-details">
+    <div class="right">
     
     <label>Describe your design</label>
     
-    <textarea
-    id="description"
-    placeholder="Example: Modern plain sliding gate, black iron bars, vertical only, minimalist">
+    <textarea id="description"
+    placeholder="Example: Modern plain sliding gate, black iron bars">
     </textarea>
     
     <button id="generateBtn" class="quote-btn">
@@ -360,21 +350,16 @@ Staircase
     </button>
     
     
-    <!-- ================= SIZE ESTIMATOR ================= -->
-    
     <div class="estimate-box">
     
     <h4>Estimate Cost</h4>
     
     <label>Product Type</label>
     <select id="productType">
-    
     <option value="gate">Gate (₱350 / sq.ft)</option>
     <option value="grill">Grill (₱250 / sq.ft)</option>
     <option value="railing">Railing (₱250 / sq.ft)</option>
-    
     </select>
-    
     
     <div class="size-inputs">
     
@@ -390,23 +375,15 @@ Staircase
     
     </div>
     
-    
     <div class="estimate-result">
-    
     <p>Estimated Cost</p>
-    
-    <h3 id="estimatedCost">
-    ₱ 0
-    </h3>
-    
+    <h3 id="estimatedCost">₱ 0</h3>
     </div>
     
     </div>
-    
     
     <p class="disclaimer">
-    AI-generated images are for conceptual reference only.  
-    Final fabrication design will be reviewed by IronLinks.
+    AI-generated images are for conceptual reference only.
     </p>
     
     </div>

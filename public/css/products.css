@@ -9,7 +9,7 @@ body{
    
    
    /* ========================================
-      PRODUCT SECTION (PHOTO VIEW STYLE)
+      PRODUCT SECTION
    ======================================== */
    
    .product-section{
@@ -23,9 +23,11 @@ body{
    display:flex;
    flex-direction:column;
    align-items:center;
-   justify-content:center;
    
-   padding:20px;
+   /* IMPORTANT: prevents shrinking */
+   justify-content:flex-start;
+   
+   padding:40px 20px;
    position:relative;
    
    }
@@ -53,7 +55,7 @@ body{
    
    .product-section h2{
    font-family:'Playfair Display';
-   font-size:36px;
+   font-size:38px;
    color:white;
    margin-bottom:10px;
    text-align:center;
@@ -67,7 +69,7 @@ body{
    .product-nav{
    display:flex;
    gap:10px;
-   margin-bottom:20px;
+   margin-bottom:25px;
    justify-content:center;
    flex-wrap:wrap;
    }
@@ -94,7 +96,7 @@ body{
    
    .product-tab-content{
    display:none;
-   flex:1;
+   width:100%;
    }
    
    .product-tab-content.active{
@@ -105,24 +107,27 @@ body{
    
    
    /* ========================================
-      PRODUCT CARD
+      LARGE PRODUCT CARD (CONSISTENT SIZE)
    ======================================== */
-
-.product-container{
-
-   background:white;
-   border-radius:10px;
-   box-shadow:0 15px 35px rgba(0,0,0,.3);
    
-   width:100%;
-   max-width:1000px;
+   .product-container{
+   
+   background:white;
+   border-radius:14px;
+   box-shadow:0 20px 45px rgba(0,0,0,.35);
+   
+   width:95%;
+   max-width:1150px;
    
    display:grid;
-   grid-template-columns:1fr 1fr;
-   gap:20px;
-   align-items:center;
+   grid-template-columns:1.1fr 1fr;
    
-   padding:20px;
+   gap:35px;
+   padding:35px;
+   
+   margin:30px auto;
+   
+   min-height:600px; /* Large consistent size */
    
    }
    
@@ -139,41 +144,15 @@ body{
    
    .product-image img,
    .product-image model-viewer{
+   
    width:100%;
-   height:260px;
+   height:400px;
+   
    object-fit:contain;
+   
    border-radius:10px;
    background:#f5f5f5;
-   }
    
-   
-   /* ========================================
-      BUTTONS
-   ======================================== */
-   
-   .product-icons{
-   display:flex;
-   gap:8px;
-   margin-top:8px;
-   }
-   
-   .product-icons button{
-   padding:6px 10px;
-   font-size:12px;
-   background:black;
-   color:white;
-   border:none;
-   border-radius:5px;
-   cursor:pointer;
-   }
-   
-   .product-icons button:hover{
-   background:#333;
-   }
-   
-   .ar-notice{
-   font-size:11px;
-   margin-top:5px;
    }
    
    
@@ -184,13 +163,23 @@ body{
    .product-details{
    display:flex;
    flex-direction:column;
-   justify-content:center;
+   justify-content:space-between;
    color:#333;
    }
    
    .product-title{
-   font-size:22px;
+   font-size:26px;
    margin-bottom:10px;
+   }
+   
+   .product-details ul{
+   padding-left:18px;
+   margin-bottom:10px;
+   }
+   
+   .product-details li{
+   font-size:15px;
+   margin-bottom:5px;
    }
    
    
@@ -200,19 +189,18 @@ body{
    
    .style-options{
    display:flex;
-   gap:6px;
-   margin-bottom:10px;
+   gap:8px;
+   margin-bottom:15px;
    flex-wrap:wrap;
    }
    
    .style-btn{
-   padding:5px 10px;
+   padding:7px 14px;
    border:1px solid #ddd;
    background:#f5f5f5;
-   border-radius:5px;
-   font-size:12px;
+   border-radius:6px;
+   font-size:13px;
    cursor:pointer;
-   color:#333;
    }
    
    .style-btn.active{
@@ -222,18 +210,26 @@ body{
    
    
    /* ========================================
-      DETAILS
+      BUTTON ICONS
    ======================================== */
    
-   .product-details ul{
-   padding-left:18px;
-   margin-bottom:10px;
+   .product-icons{
+   display:flex;
+   gap:12px;
+   margin-top:15px;
    }
    
-   .product-details li{
-   font-size:13px;
-   margin-bottom:4px;
-   color:#444;
+   .product-icons button{
+   padding:10px 16px;
+   background:black;
+   color:white;
+   border:none;
+   border-radius:6px;
+   cursor:pointer;
+   }
+   
+   .product-icons button:hover{
+   background:#333;
    }
    
    
@@ -243,18 +239,17 @@ body{
    
    .quote-box{
    background:#f5f5f5;
-   padding:12px;
-   border-radius:8px;
+   padding:15px;
+   border-radius:10px;
    }
    
    .quote-btn{
-   padding:6px 12px;
    background:black;
    color:white;
-   border-radius:5px;
+   padding:10px 16px;
+   border-radius:6px;
    display:inline-block;
-   margin-top:5px;
-   font-size:12px;
+   margin-top:10px;
    }
    
    .quote-btn:hover{
@@ -263,75 +258,36 @@ body{
    
    
    /* ========================================
-   CUSTOMIZE FIXED LAYOUT
-======================================== */
-
-.customize-card{
+      CUSTOMIZE
+   ======================================== */
+   
+   .customize-card{
    display:grid;
    grid-template-columns:1fr 1fr;
-   gap:25px;
-   align-items:start;
-   }
-   
-   
-   /* LEFT SIDE */
-   
-   .custom-title{
-   margin-bottom:10px;
-   font-size:20px;
+   gap:30px;
+   min-height:520px;
    }
    
    .finder-instructions{
    background:#f5f5f5;
-   padding:15px;
-   border-radius:8px;
-   font-size:13px;
-   margin-bottom:15px;
+   padding:18px;
+   border-radius:10px;
    }
-   
-   .finder-instructions ul{
-   padding-left:18px;
-   margin:0;
-   }
-   
-   .example{
-   margin-top:10px;
-   font-size:12px;
-   color:#555;
-   }
-   
-   
-   /* RESULT BOX */
    
    .result-box{
-   height:200px;
-   border-radius:8px;
+   height:300px;
    background:#f5f5f5;
+   border-radius:10px;
    border:2px dashed #ddd;
    
    display:flex;
    align-items:center;
    justify-content:center;
-   
-   margin-top:10px;
    }
-   
-   
-   /* RIGHT SIDE */
-   
-   .right textarea{
-   width:100%;
-   min-height:80px;
-   margin-bottom:10px;
-   }
-   
-   
-   /* SIZE INPUTS */
    
    .size-inputs{
    display:flex;
-   gap:10px;
-   margin-top:10px;
+   gap:12px;
    }
    
    .size-inputs div{
@@ -339,34 +295,14 @@ body{
    }
    
    
-   /* ESTIMATE BOX */
-   
-   .estimate-box{
-   margin-top:15px;
-   }
-   
-   
-   /* RESPONSIVE (PHOTO VIEW STYLE) */
-   
-   @media(max-width:768px){
-   
-   .customize-card{
-   grid-template-columns:1fr;
-   }
-   
-   .size-inputs{
-   flex-direction:column;
-   }
-   
-   }
    /* ========================================
-   CUSTOM ACTION BUTTONS
-======================================== */
-
-.custom-actions{
+      CUSTOM BUTTONS
+   ======================================== */
+   
+   .custom-actions{
    display:flex;
-   gap:10px;
-   margin-top:12px;
+   gap:15px;
+   margin-top:15px;
    }
    
    #saveDesign,
@@ -374,149 +310,56 @@ body{
    
    background:black;
    color:white;
-   border:none;
-   padding:10px 16px;
-   border-radius:6px;
-   font-size:13px;
-   cursor:pointer;
-   transition:0.2s;
    
-   box-shadow:0 4px 10px rgba(0,0,0,0.15);
+   border:none;
+   padding:12px 20px;
+   border-radius:6px;
+   
+   cursor:pointer;
    
    }
    
    #saveDesign:hover,
    #proceedBooking:hover{
-   background:#222;
-   transform:translateY(-1px);
-   }
-   
-   
-   /* Make Proceed button secondary */
-   
-   #saveDesign{
-   background:black;
-   }
-   
-   #proceedBooking{
-   background:black;
-   }
-   
-   #proceedBooking:hover{
    background:#333;
    }
-   /* ========================================
-   AUTO FIT SCREEN (DESKTOP)
-======================================== */
-
-#customize .product-container{
-
-   display:grid;
-   grid-template-columns:1fr 1fr;
-   gap:20px;
-   
-   max-width:1000px;
-   width:95%;
-   
-   }
-   
-   
-   /* LEFT */
-   
-   #customize .left{
-   display:flex;
-   flex-direction:column;
-   gap:12px;
-   }
-   
-   
-   /* RIGHT */
-   
-   #customize .right{
-   display:flex;
-   flex-direction:column;
-   gap:10px;
-   }
-   
-   
-   /* RESULT BOX */
-   
-   .result-box{
-   height:200px;
-   }
-   
-   
-   /* TEXTAREA */
-   
-   #description{
-   min-height:80px;
-   resize:none;
-   }
-   
-   
-   /* SIZE INPUTS */
-   
-   .size-inputs{
-   display:flex;
-   gap:10px;
-   }
-   
-   .size-inputs div{
-   flex:1;
-   }
-   
-   
-   /* BUTTONS */
-   
-   .custom-actions{
-   display:flex;
-   gap:10px;
-   flex-wrap:wrap;
-   }
    
    
    /* ========================================
-      RESPONSIVE (TABLET)
+      RESPONSIVE
    ======================================== */
    
-   @media(max-width:1024px){
+   @media(max-width:1100px){
    
-   #customize .product-container{
+   .product-container{
+   grid-template-columns:1fr;
+   min-height:auto;
+   }
+   
+   .product-image img,
+   .product-image model-viewer{
+   height:300px;
+   }
+   
+   .customize-card{
    grid-template-columns:1fr;
    }
    
-   .result-box{
-   height:180px;
    }
    
-   }
-   
-   
-   /* ========================================
-      RESPONSIVE (MOBILE)
-   ======================================== */
    
    @media(max-width:768px){
    
    .product-section{
-   padding:15px;
+   padding:20px;
    }
    
-   #customize .product-container{
-   grid-template-columns:1fr;
-   gap:15px;
+   .product-container{
+   padding:20px;
    }
    
    .size-inputs{
    flex-direction:column;
-   }
-   
-   .result-box{
-   height:160px;
-   }
-   
-   #description{
-   min-height:70px;
    }
    
    .custom-actions{
@@ -528,127 +371,68 @@ body{
    width:100%;
    }
    
-   }/* ========================================
-   AUTO FIT SCREEN (DESKTOP)
-======================================== */
-
-#customize .product-container{
-
-   display:grid;
-   grid-template-columns:1fr 1fr;
-   gap:20px;
-   
-   max-width:1000px;
-   width:95%;
-   
-   }
-   
-   
-   /* LEFT */
-   
-   #customize .left{
-   display:flex;
-   flex-direction:column;
-   gap:12px;
-   }
-   
-   
-   /* RIGHT */
-   
-   #customize .right{
-   display:flex;
-   flex-direction:column;
-   gap:10px;
-   }
-   
-   
-   /* RESULT BOX */
-   
-   .result-box{
-   height:200px;
-   }
-   
-   
-   /* TEXTAREA */
-   
-   #description{
-   min-height:80px;
-   resize:none;
-   }
-   
-   
-   /* SIZE INPUTS */
-   
-   .size-inputs{
-   display:flex;
-   gap:10px;
-   }
-   
-   .size-inputs div{
-   flex:1;
-   }
-   
-   
-   /* BUTTONS */
-   
-   .custom-actions{
-   display:flex;
-   gap:10px;
-   flex-wrap:wrap;
    }
    
    
    /* ========================================
-      RESPONSIVE (TABLET)
+      QR MODAL
    ======================================== */
    
-   @media(max-width:1024px){
+   .modal{
+   display:none;
    
-   #customize .product-container{
-   grid-template-columns:1fr;
-   }
+   position:fixed;
+   top:0;
+   left:0;
    
-   .result-box{
-   height:180px;
-   }
-   
-   }
-   
-   
-   /* ========================================
-      RESPONSIVE (MOBILE)
-   ======================================== */
-   
-   @media(max-width:768px){
-   
-   .product-section{
-   padding:15px;
-   }
-   
-   #customize .product-container{
-   grid-template-columns:1fr;
-   gap:15px;
-   }
-   
-   .size-inputs{
-   flex-direction:column;
-   }
-   
-   .result-box{
-   height:160px;
-   }
-   
-   #description{
-   min-height:70px;
-   }
-   
-   .custom-actions{
-   flex-direction:column;
-   }
-   
-   #saveDesign,
-   #proceedBooking{
    width:100%;
+   height:100%;
+   
+   background:rgba(0,0,0,0.6);
+   
+   justify-content:center;
+   align-items:center;
+   
+   z-index:9999;
    }
    
+   .modal.active{
+   display:flex;
+   }
+   
+   .modal-content{
+   
+   background:white;
+   padding:20px;
+   border-radius:10px;
+   text-align:center;
+   
+   max-width:320px;
+   width:90%;
+   
+   }
+   
+   #qrImage{
+   width:100%;
+   max-width:240px;
+   margin:10px auto;
+   display:block;
+   }
+   
+   #closeQR{
+   
+   margin-top:10px;
+   
+   background:black;
+   color:white;
+   
+   border:none;
+   padding:8px 14px;
+   border-radius:5px;
+   
+   cursor:pointer;
+   }
+   
+   #closeQR:hover{
+   background:#333;
    }

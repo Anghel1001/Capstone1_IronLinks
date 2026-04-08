@@ -93,19 +93,39 @@ document.addEventListener("DOMContentLoaded", function () {
   const qrModal = document.getElementById("qrModal");
   const qrImage = document.getElementById("qrImage");
   
-  document.querySelectorAll(".viewQR")
-  .forEach(button => {
-  
-  button.addEventListener("click", () => {
-  
-  qrImage.src =
-  button.getAttribute("data-qr");
-  
-  qrModal.style.display = "flex";
-  
-  });
-  
-  });
+document.querySelectorAll(".viewQR")
+.forEach(button => {
+
+button.addEventListener("click", () => {
+
+const container =
+button.closest(".product-container");
+
+const activeStyle =
+container.querySelector(".style-btn.active");
+
+const modelPath =
+activeStyle.dataset.model;
+
+// convert model path to key
+const model =
+modelPath
+.replace("models/","")
+.replace(".glb","");
+
+const link =
+location.origin +
+"/redirect.html?model=" +
+model;
+
+qrImage.src =
+"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
++ encodeURIComponent(link);
+
+qrModal.style.display = "flex";
+
+});
+});
   
   
   document.getElementById("closeQR")

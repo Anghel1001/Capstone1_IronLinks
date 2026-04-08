@@ -1,32 +1,52 @@
 (function(){
 
     const params = new URLSearchParams(window.location.search);
-    const modelType = params.get("model") || "gates";
+    const modelType = params.get("model") || "gate1";
     
     const title = document.getElementById("title");
     
     
-    const MODELS = {
+
     
-    gates:{
-    title:"Preview Your Gate in AR",
-    glb:"/models/gate1.glb",
-    usdz:"/models/gate1.usdz?v=2"
-    },
-    
-    grills:{
-    title:"Preview Your Grill in AR",
-    glb:"/models/window1.glb",
-    usdz:"/models/window1.usdz"
-    },
-    
-    railings:{
-    title:"Preview Your Railing in AR",
-    glb:"/models/grill2.glb",
-    usdz:"/models/grill2.usdz"
-    }
-    
-    };
+const MODELS = {
+
+gate1:{
+title:"Preview Classic Gate in AR",
+glb:"/models/gate1.glb",
+usdz:"/models/gate1.usdz"
+},
+
+gate_arc:{
+title:"Preview Arc Gate in AR",
+glb:"/models/gate2.glb",
+usdz:"/models/gate1.usdz"
+},
+
+gate_flat:{
+title:"Preview Flat Gate in AR",
+glb:"/models/gate1",
+usdz:"/models/gate2"
+},
+
+window1:{
+title:"Preview Classic Grill in AR",
+glb:"/models/window1.glb",
+usdz:"/models/window1.usdz"
+},
+
+grill2:{
+title:"Preview Modern Grill in AR",
+glb:"/models/grill2.glb",
+usdz:"/models/grill2.usdz"
+},
+
+rail2:{
+title:"Preview Railings in AR",
+glb:"/models/wall.glb",
+usdz:"/models/wall.usdz"
+}
+
+};
     
     
     const model = MODELS[modelType];

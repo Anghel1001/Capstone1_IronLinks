@@ -298,14 +298,16 @@ document.querySelectorAll(".viewScale")
 
 button.addEventListener("click", () => {
 
+const model =
+button.getAttribute("data-model")
+
 const photoUrl =
-button.getAttribute("data-photo")
+button.getAttribute("data-photo") +
+"&model=" + encodeURIComponent(model)
 
 window.open(photoUrl, "_blank")
 
 })
-
 })
-  });
 
-  
+});

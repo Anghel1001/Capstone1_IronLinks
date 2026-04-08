@@ -9,6 +9,7 @@ fetch("header.html")
 document.getElementById("header").innerHTML = data
 
 loadProfileCircle?.()
+loadAuthMenu?.()
 
 })
 
@@ -82,6 +83,40 @@ function isLoggedIn(){
 return localStorage.getItem("user") !== null
 }
 
+
+/* ===============================
+AUTH MENU (LOGIN / LOGOUT)
+================================ */
+
+function loadAuthMenu(){
+
+const auth =
+document.getElementById("authLinks")
+
+if(!auth) return
+
+if(isLoggedIn()){
+
+auth.innerHTML = `
+<a href="book.html">Profile</a>
+<a href="#" id="logoutBtn">Logout</a>
+`
+
+document
+.getElementById("logoutBtn")
+.addEventListener("click", logout)
+
+}else{
+
+auth.innerHTML = `
+<a href="book.html">Login</a>
+`
+
+}
+
+}
+
+
 /* ===============================
 LOGOUT (GLOBAL)
 ================================ */
@@ -90,10 +125,10 @@ window.logout = function(){
 
 localStorage.removeItem("user")
 
-// redirect to home page (optional)
 window.location.href = "index.html"
 
 }
+
 
 /* ===============================
 GLOBAL BOOKING POPUP
@@ -101,7 +136,6 @@ GLOBAL BOOKING POPUP
 
 window.openBooking = function(){
 
-// NOT LOGGED IN
 if(!isLoggedIn()){
 
 window.location.href = "book.html"
@@ -112,7 +146,6 @@ return
 let popup =
 document.getElementById("globalBookingPopup")
 
-// CREATE POPUP
 if(!popup){
 
 popup = document.createElement("div")
@@ -167,4 +200,4 @@ if(e.target.classList.contains("openBooking")){
 openBooking()
 }
 
-})
+})  

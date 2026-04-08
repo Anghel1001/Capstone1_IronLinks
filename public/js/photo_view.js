@@ -8,11 +8,6 @@ const imageInput = document.getElementById("imageInput");
 const placeBtn = document.getElementById("placeBtn");
 const resetBtn = document.getElementById("resetBtn");
 
-const title = document.getElementById("title");
-const subtitle = document.getElementById("subtitle");
-const backBtn = document.getElementById("backBtn");
-
-
 /* ========================================
    VARIABLES
 ======================================== */
@@ -32,66 +27,12 @@ const modelType = params.get("model");
 const from = params.get("from");
 
 
-/* ========================================
-   BACK BUTTON
-======================================== */
-
-if(backBtn){
-
-backBtn.addEventListener("click",()=>{
-
-if(from){
-window.location.href = "products.html#" + from;
-}else{
-window.location.href = "products.html";
-}
-
-});
-
-}
-
 
 /* ========================================
    MODEL SWITCH
 ======================================== */
 
-let modelPath = "models/gate1.glb";
-
-if(modelType === "grills"){
-modelPath = "models/window1.glb";
-
-if(title){
-title.textContent = "IronLinks Grill Preview";
-}
-
-if(subtitle){
-subtitle.textContent = "Preview iron grills in your space";
-}
-}
-
-if(modelType === "railings"){
-modelPath = "models/grill2.glb";
-
-if(title){
-title.textContent = "IronLinks Railing Preview";
-}
-
-if(subtitle){
-subtitle.textContent = "Preview railings in your space";
-}
-}
-
-if(modelType === "gates"){
-modelPath = "models/gate1.glb";
-
-if(title){
-title.textContent = "IronLinks Gate Preview";
-}
-
-if(subtitle){
-subtitle.textContent = "Preview iron gates in your space";
-}
-}
+const modelPath = params.get("model");
 
 
 /* ========================================
@@ -109,12 +50,13 @@ img.src = URL.createObjectURL(file);
 img.onload = () => {
 
 const container = document.querySelector(".right");
+
 const maxWidth = container.clientWidth - 10;
 
 let width = img.width;
 let height = img.height;
 
-if (width > maxWidth) {
+if(width > maxWidth){
 
 const ratio = maxWidth / width;
 width = width * ratio;
@@ -125,8 +67,13 @@ height = height * ratio;
 canvas.width = width;
 canvas.height = height;
 
+canvas.style.width = width + "px";
+canvas.style.height = height + "px";
+
 ctx.clearRect(0,0,width,height);
 ctx.drawImage(img,0,0,width,height);
+
+canvas.style.display = "block";   // important
 
 corners = [];
 
@@ -187,7 +134,7 @@ ctx.fill();
 
 
 /* ========================================
-   PLACE MODEL
+PLACE MODEL
 ======================================== */
 
 placeBtn.addEventListener("click",()=>{
@@ -205,6 +152,12 @@ const maxX = Math.max(...xs);
 const minY = Math.min(...ys);
 const maxY = Math.max(...ys);
 
+const width = maxX - minX;
+const height = maxY - minY;
+
+const centerX = minX + width / 2;
+const centerY = minY + height / 2;
+
 if(viewer) viewer.remove();
 
 viewer = document.createElement("model-viewer");
@@ -220,11 +173,17 @@ viewer.style.position = "absolute";
 const canvasWrapper = canvas.parentElement;
 canvasWrapper.style.position = "relative";
 
-viewer.style.left = minX + "px";
-viewer.style.top = minY + "px";
+viewer.style.left = centerX + "px";
+viewer.style.top = centerY + "px";
 
-viewer.style.width = (maxX - minX) + "px";
-viewer.style.height = (maxY - minY) + "px";
+viewer.style.width = width + "px";
+viewer.style.height = height + "px";
+
+viewer.style.transform = "translate(-50%, -50%)";
+
+viewer.style.display = "flex";
+viewer.style.alignItems = "center";
+viewer.style.justifyContent = "center";
 
 viewer.style.zIndex = "5";
 

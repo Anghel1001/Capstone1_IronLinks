@@ -1,69 +1,67 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Preview in AR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body{
-      font-family:system-ui,Arial;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      height:100vh;
-      margin:0;
-      background:#111;
-      color:#eee;
-      padding:16px
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    .box{
-      max-width:720px;
-      text-align:center
-    }
+<title>Preview in AR</title>
 
-    .error{color:#ff6b6b}
+<style>
 
-    .btn{
-      display:inline-block;
-      margin-top:16px;
-      padding:12px 20px;
-      background:#1976d2;
-      color:#fff;
-      border-radius:8px;
-      border:none;
-      font-size:16px;
-      cursor:pointer;
-      z-index:20;
-      position:relative;
-    }
+body{
+font-family:system-ui,Arial;
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
+margin:0;
+background:#111;
+color:#fff;
+text-align:center;
+padding:20px;
+}
 
-    .steps{
-      text-align:left;
-      max-width:400px;
-      margin:20px auto;
-      line-height:1.6;
-    }
-  </style>
+.box{
+max-width:500px;
+}
+
+.btn{
+margin-top:20px;
+padding:14px 24px;
+border:none;
+background:#1976d2;
+color:white;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+}
+
+.error{
+color:#ff6b6b;
+}
+
+</style>
+
 </head>
 
 <body>
 
-  <div class="box" id="box">
-    <h2>Preview Your Gate in AR</h2>
+<div class="box" id="box">
 
-    <div class="steps">
-      <p>• Move your phone slowly</p>
-      <p>• Point at a flat ground surface</p>
-      <p>• Tap to place the gate</p>
-      <p>• Drag to move the gate</p>
-      <p>• Pinch to resize and rotate</p>
-    </div>
+<h2 id="title">Preview in AR</h2>
 
-    <button type="button" class="btn" onclick="launchAR()">Start AR</button>
-  </div>
+<p>Move phone slowly</p>
+<p>Point at flat surface</p>
+<p>Tap to place model</p>
+
+<button class="btn" onclick="launchAR()">
+Start AR
+</button>
+
+</div>
 
 <script src="js/redirect.js"></script>
+
 </body>
 </html>

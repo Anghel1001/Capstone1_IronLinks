@@ -107,7 +107,7 @@ container.querySelector(".style-btn.active");
 const modelPath =
 activeStyle.dataset.model;
 
-// convert model path to key
+// remove models/ and .glb
 const model =
 modelPath
 .replace("models/","")
@@ -116,7 +116,7 @@ modelPath
 const link =
 location.origin +
 "/redirect.html?model=" +
-model;
+encodeURIComponent(model);
 
 qrImage.src =
 "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="

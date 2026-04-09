@@ -144,19 +144,15 @@ alert("Select 4 points first");
 return;
 }
 
-const xs = corners.map(p=>p.x);
-const ys = corners.map(p=>p.y);
+const xs = corners.map(p => p.x);
+const ys = corners.map(p => p.y);
 
-const minX = Math.min(...xs);
-const maxX = Math.max(...xs);
-const minY = Math.min(...ys);
-const maxY = Math.max(...ys);
+const width = Math.max(...xs) - Math.min(...xs);
+const height = Math.max(...ys) - Math.min(...ys);
 
-const width = maxX - minX;
-const height = maxY - minY;
-
-const centerX = minX + width / 2;
-const centerY = minY + height / 2;
+// TRUE CENTER of 4 points
+const centerX = xs.reduce((a,b)=>a+b,0) / 4;
+const centerY = ys.reduce((a,b)=>a+b,0) / 4;
 
 if(viewer) viewer.remove();
 
@@ -167,17 +163,27 @@ viewer.src = modelPath;
 viewer.setAttribute("camera-controls","");
 viewer.setAttribute("auto-rotate","");
 viewer.setAttribute("shadow-intensity","1");
+/*------------------------------------------------ */
+viewer.setAttribute("camera-orbit", "0deg 75deg auto");
+viewer.setAttribute("field-of-view", "20deg");
+viewer.setAttribute("min-camera-orbit", "auto auto auto");
+viewer.setAttribute("max-camera-orbit", "auto auto auto");
+viewer.setAttribute("camera-controls", "");
+viewer.setAttribute("interaction-prompt", "none");
+viewer.setAttribute("camera-target", "0m 0m 0m");
+viewer.setAttribute("scale", "1 1 1");
+/*------------------------------------------------ */
 
 viewer.style.position = "absolute";
 
 const canvasWrapper = canvas.parentElement;
 canvasWrapper.style.position = "relative";
 
-viewer.style.left = centerX + "px";
-viewer.style.top = centerY + "px";
+viewer.style.left = (centerX / canvas.width * 100) + "%";
+viewer.style.top = (centerY / canvas.height * 100) + "%";
 
-viewer.style.width = width + "px";
-viewer.style.height = height + "px";
+viewer.style.width = (width / canvas.width * 100) + "%";
+viewer.style.height = (height / canvas.height * 100) + "%";
 
 viewer.style.transform = "translate(-50%, -50%)";
 

@@ -77,56 +77,6 @@ document.getElementById("generatedPreview")
 
 }
 
-function generateDateDots(){
-
-const user =
-JSON.parse(localStorage.getItem("user"));
-
-const dateMap = {};
-
-allBookings.forEach(b => {
-
-if(!dateMap[b.date]){
-dateMap[b.date] = {
-approved:false,
-pending:false,
-userPending:false
-};
-}
-
-if(b.status === "approved"){
-dateMap[b.date].approved = true;
-}
-
-if(b.status === "pending"){
-dateMap[b.date].pending = true;
-
-if(user && b.email === user.email){
-dateMap[b.date].userPending = true;
-}
-}
-
-});
-
-return Object.keys(dateMap).map(date => {
-
-let color = "#28a745"; // available
-
-if(dateMap[date].approved){
-color = "#dc3545";
-}else if(dateMap[date].pending){
-color = "#fd7e14";
-}
-
-return {
-title:"●",
-start: date,
-color: color
-};
-
-});
-
-}
 
 /* ===============================
 CALENDAR
@@ -153,6 +103,7 @@ console.error("Fetch error", err);
 
 }
 
+
 const calendar =
 new FullCalendar.Calendar(calendarEl, {
 
@@ -160,22 +111,47 @@ initialView: "dayGridMonth",
 
 height:"auto",
 
-events: generateDateDots(),
+events: allBookings.map(b => ({
+
+title:
+b.status === "approved"
+? "Unavailable"
+: "Pending",
+
+start: b.date,
+
+color:
+b.status === "approved"
+? "#dc3545"
+: "#fd7e14"
+
+})),
 
 dateClick: function(info){
 
 const selectedDate = info.dateStr;
 
+
+// ======================
 // BLOCK SUNDAY
+// ======================
+
 const day =
 new Date(selectedDate).getDay();
 
 if(day === 0){
+
 alert("Closed on Sundays");
+
 return;
+
 }
 
-// Highlight Selected
+
+// ======================
+// HIGHLIGHT SELECTED
+// ======================
+
 document
 .querySelectorAll(".fc-daygrid-day")
 .forEach(day=>{
@@ -188,7 +164,12 @@ document
 .getElementById("dateInput")
 .value = selectedDate;
 
-openTimePopup(selectedDate);
+
+// ======================
+// BLOCK BOOKED TIMES
+// ======================
+
+updateTimeSlots(selectedDate);
 
 }
 
@@ -395,79 +376,3 @@ localStorage.removeItem("generatedDesign");
 location.reload();
 
 });
-
-function openTimePopup(date){
-
-const popup =
-document.getElementById("timePopup");
-
-const container =
-document.getElementById("timeSlots");
-
-container.innerHTML = "";
-
-const times = [
-"08:00",
-"09:00",
-"10:00",
-"11:00",
-"13:00",
-"14:00",
-"15:00",
-"16:00"
-];
-
-times.forEach(time => {
-
-const booking =
-allBookings.find(b =>
-b.date === date &&
-b.time === time
-);
-
-const div =
-document.createElement("div");
-
-div.classList.add("time-slot");
-
-if(booking){
-
-if(booking.status === "approved"){
-div.classList.add("slot-unavailable");
-div.textContent = time + " Unavailable";
-}
-else{
-div.classList.add("slot-pending");
-div.textContent = time + " Pending";
-}
-
-}else{
-
-div.classList.add("slot-available");
-div.textContent = time;
-
-div.onclick = () => {
-
-document.querySelector(
-"select[name='time']"
-).value = time;
-
-closeTimePopup();
-
-};
-
-}
-
-container.appendChild(div);
-
-});
-
-popup.classList.remove("hidden");
-
-}
-
-function closeTimePopup(){
-document
-.getElementById("timePopup")
-.classList.add("hidden");
-}

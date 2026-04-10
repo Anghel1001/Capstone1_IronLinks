@@ -266,10 +266,53 @@ CALENDAR
 
 async function initCalendar(){
 
-const { data:bookings } =
+const { data: bookings } =
 await supabaseClient
 .from("bookings")
 .select("*");
+
+const dateMap = {};
+
+bookings.forEach(b => {
+
+if(!dateMap[b.date]){
+dateMap[b.date] = {
+approved:false,
+pending:false
+};
+}
+
+if(b.status === "approved"){
+dateMap[b.date].approved = true;
+}
+
+if(b.status === "pending"){
+dateMap[b.date].pending = true;
+}
+
+});
+
+
+const events =
+Object.keys(dateMap).map(date => {
+
+let color = "#28a745";
+
+if(dateMap[date].approved){
+color = "#dc3545";
+}
+else if(dateMap[date].pending){
+color = "#fd7e14";
+}
+
+return {
+title:"●",
+start: date,
+color: color
+};
+
+});
+
 
 const calendar =
 new FullCalendar.Calendar(
@@ -278,20 +321,9 @@ document.getElementById("calendar"),
 
 initialView:"dayGridMonth",
 
-events: bookings.map(b=>({
+height:"auto",
 
-title:b.status==="approved"
-?"Booked"
-:"Pending",
-
-start:b.date,
-
-color:
-b.status==="approved"
-?"#dc3545"
-:"#fd7e14"
-
-})),
+events: events,
 
 dateClick:function(info){
 
@@ -301,6 +333,7 @@ document
 
 info.dayEl.classList.add("selected");
 
+// OPEN BOOK POPUP
 openBooking();
 
 }
@@ -310,5 +343,3 @@ openBooking();
 calendar.render();
 
 }
-
-loadUser();

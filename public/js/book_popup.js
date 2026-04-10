@@ -23,7 +23,15 @@ function loadUser(){
 const user =
 JSON.parse(localStorage.getItem("user"));
 
-if(!user) return;
+if(!user){
+
+alert("Please login first");
+
+window.location.href = "book.html";
+
+return;
+
+}
 
 document.getElementById("userName").value =
 user.name;
@@ -438,13 +446,13 @@ div.textContent = time + " Unavailable";
 }
 else{
 div.classList.add("slot-pending");
-div.textContent = time + " Pending";
+div.textContent = formatTime(time) + " Pending";
 }
 
 }else{
 
 div.classList.add("slot-available");
-div.textContent = time;
+div.textContent = formatTime(time) + " Available";
 
 div.onclick = () => {
 
@@ -464,10 +472,20 @@ container.appendChild(div);
 
 popup.classList.remove("hidden");
 
+document
+.getElementById("popupOverlay")
+.classList.remove("hidden");
+
 }
 
 function closeTimePopup(){
+
 document
 .getElementById("timePopup")
 .classList.add("hidden");
+
+document
+.getElementById("popupOverlay")
+.classList.add("hidden");
+
 }

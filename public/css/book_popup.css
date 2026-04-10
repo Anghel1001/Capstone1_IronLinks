@@ -222,34 +222,62 @@ display:block;
     min-height:40px !important;
     }
 
+
+        /* ===============================
+    CALENDAR time selection
+    =============================== */
     .time-popup{
 position:fixed;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
 background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 0 15px rgba(0,0,0,0.2);
-z-index:1000;
+padding:25px 20px;
+border-radius:14px;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
+z-index:9999;
+width:260px;
+text-align:center;
 }
 
-.hidden{
-display:none;
+.time-popup h3{
+margin-bottom:15px;
+font-size:20px;
+font-weight:600;
+}
+
+#timeSlots{
+display:flex;
+flex-direction:column;
+gap:10px;
 }
 
 .time-slot{
-padding:8px;
-margin:5px;
-border-radius:6px;
+padding:12px;
+border-radius:8px;
+font-weight:600;
 cursor:pointer;
-text-align:center;
+transition:0.2s ease;
 }
+
+.time-slot:hover{
+transform:translateY(-1px);
+}
+
+
+/* Available */
 
 .slot-available{
 background:#28a745;
 color:white;
 }
+
+.slot-available:hover{
+background:#23913c;
+}
+
+
+/* Pending */
 
 .slot-pending{
 background:#fd7e14;
@@ -257,8 +285,28 @@ color:white;
 cursor:not-allowed;
 }
 
+
+/* Unavailable */
+
 .slot-unavailable{
 background:#dc3545;
 color:white;
 cursor:not-allowed;
+}
+
+
+/* Close Button */
+
+.time-popup button{
+margin-top:15px;
+padding:8px 14px;
+border:none;
+background:#333;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+.time-popup button:hover{
+background:black;
 }

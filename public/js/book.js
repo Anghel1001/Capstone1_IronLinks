@@ -343,3 +343,5 @@ openBooking();
 calendar.render();
 
 }
+
+document.addEventListener("DOMContentLoaded", loadUser);

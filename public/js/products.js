@@ -150,48 +150,51 @@ qrModal.style.display = "flex";
   
   const description =
   document.getElementById("description");
+
+  const referenceImage =
+document.getElementById("referenceImage");
   
-  
-  generateBtn?.addEventListener("click", async () => {
-  
-  if (!description.value.trim()) {
-  alert("Please describe your design");
+generateBtn?.addEventListener("click", async () => {
+
+  if (!description.value.trim() && !referenceImage?.files[0]) {
+  alert("Add description or upload image");
   return;
   }
   
-  result.innerHTML = "Generating...";
+  document.getElementById("placeholder").style.display = "none";
+  document.getElementById("generatedResult").style.display = "none";
+  document.getElementById("loadingDesign").style.display = "block";
+  
+  const formData = new FormData();
+  
+  formData.append(
+  "description",
+  description.value
+  );
+  
+  if(referenceImage?.files[0]){
+  formData.append(
+  "reference_image",
+  referenceImage.files[0]
+  );
+  }
   
   const res = await fetch("/design-finder", {
   
   method: "POST",
-  
-  headers: {
-  "Content-Type": "application/json"
-  },
-  
-  body: JSON.stringify({
-  description: description.value
-  })
+  body: formData
   
   });
   
   const data = await res.json();
   
-  generatedImage =
-  data.generated_image;
+  generatedImage = data.generated_image;
   
+  document.getElementById("loadingDesign").style.display = "none";
+  document.getElementById("generatedResult").style.display = "block";
   
-  /* SAVE IMAGE */
-  
-  localStorage.setItem(
-  "generatedDesign",
-  generatedImage
-  );
-  
-  
-  result.innerHTML =
-  `<img src="${generatedImage}"
-  class="generated-image">`;
+  document.getElementById("generatedResult").innerHTML =
+  `<img src="${generatedImage}" class="generated-image">`;
   
   });
   
@@ -209,15 +212,19 @@ qrModal.style.display = "flex";
   return;
   }
   
-  localStorage.setItem(
-  "generatedDesign",
-  generatedImage
-  );
+  // create download link
+  const link = document.createElement("a");
   
-  alert("Design saved");
+  link.href = generatedImage;
+  link.download = "ironlinks-custom-design.png";
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  alert("Design saved to device");
   
   });
-  
   
   
   /* ========================================

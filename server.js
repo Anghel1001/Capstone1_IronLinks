@@ -277,44 +277,94 @@ app.delete("/gallery/:id", async (req, res) => {
 });
 
 // =================================================
-// OPENAI DESIGN FINDER (UNCHANGED)
+// OPENAI DESIGN FINDER (IMAGE + TEXT)
 // =================================================
 app.post("/design-finder", upload.single("reference_image"), async (req, res) => {
   try {
-    const { description } = req.body;
-
-    if (!description) {
-      return res.json({ success: false });
-    }
-
-    const prompt = `
-A professional, realistic wrought iron design
-${description}.
-Front view.
-White background.
-High detail.
-Concept design only.
-`;
-
-    const image = await openai.images.generate({
-      model: "gpt-image-1",
-      prompt,
-      size: "1024x1024"
-    });
-
-    const base64Image = image.data[0].b64_json;
-
-    res.json({
-      success: true,
-      generated_image: `data:image/png;base64,${base64Image}`
-    });
-
-  } catch (err) {
-    console.error("❌ OpenAI generation error:", err);
-    res.status(500).json({ success: false });
+  
+  const { description } = req.body;
+  
+  const prompt = `
+  You are editing the uploaded ironwork sketch.
+  
+  This may be:
+  - Gate
+  - Grill
+  - Railing
+  - Fence
+  - Any ironwork design
+  
+  STRICT COPY MODE:
+  
+  - Keep exact structure
+  - Keep exact layout
+  - Keep shapes
+  - Keep bars and patterns
+  - Keep proportions
+  
+  DO NOT:
+  - Add decorative curls unless requested
+  - Add flowers unless requested
+  - Redesign structure
+  - Change layout
+  
+  Only convert sketch into realistic ironwork.
+  
+  User request:
+  ${description || "Copy exactly"}
+  `;
+  let image;
+  
+  if(req.file){
+  
+  // IMAGE EDIT MODE
+  image = await openai.images.edit({
+  
+  model:"gpt-image-1",
+  
+  image: req.file.buffer,
+  
+  prompt,
+  
+  size:"1024x1024"
+  
+  });
+  
+  }else{
+  
+  // GENERATE FROM SCRATCH
+  image = await openai.images.generate({
+  
+  model:"gpt-image-1",
+  
+  prompt,
+  
+  size:"1024x1024"
+  
+  });
+  
   }
-});
-
+  
+  const base64 =
+  image.data[0].b64_json;
+  
+  res.json({
+  success:true,
+  generated_image:
+  `data:image/png;base64,${base64}`
+  });
+  
+  }catch(err){
+  
+  console.error(err);
+  
+  res.status(500).json({
+  success:false
+  });
+  
+  }
+  
+  });
 // ============================
 // SERVER RUN
 // ============================

@@ -331,8 +331,19 @@ Staircase
     </div>
     
     <div id="result" class="result-box">
-    🧩 No design generated yet
-    </div>
+
+        <div id="placeholder">
+        🧩 No design generated yet
+        </div>
+        
+        <div id="loadingDesign" class="loading-design">
+        <div class="spinner"></div>
+        <p>Generating Design...</p>
+        </div>
+        
+        <div id="generatedResult"></div>
+        
+        </div>
     
     <div class="custom-actions">
     <button id="saveDesign">Save Design</button>
@@ -345,15 +356,25 @@ Staircase
     <!-- RIGHT SIDE -->
     <div class="right">
     
-    <label>Describe your design</label>
-    
-    <textarea id="description"
-    placeholder="Example: Modern plain sliding gate, black iron bars">
-    </textarea>
-    
-    <button id="generateBtn" class="quote-btn">
-    Generate Design
-    </button>
+        <label>Describe your design</label>
+
+        <textarea id="description"
+        placeholder="Example: Modern plain sliding gate, black iron bars">
+        </textarea>
+        
+        
+        <label>Upload Reference Image (Optional)</label>
+        
+        <input 
+        type="file"
+        id="referenceImage"
+        accept="image/*"
+        >
+        
+        
+        <button id="generateBtn" class="quote-btn">
+        Generate Design
+        </button>
     
     
     <div class="estimate-box">

@@ -119,6 +119,23 @@
    color:black;
    }
    
+   .nav-link {
+text-decoration: none;
+color: inherit;
+padding: 4px 8px;
+border-radius: 6px;
+transition: 0.2s ease;
+}
+
+.nav-link:hover {
+background: rgba(0,0,0,0.05);
+}
+
+.nav-link.active {
+color: #c0392b; 
+font-weight: 600;
+border-bottom: 2px solid #c0392b;
+}
    
    
 /* ================= FOOTER ================= */
@@ -540,3 +557,10 @@ height:600px;
       font-size:20px;
       cursor:pointer;
       }
+
+.page-home .nav-link[href="index.html"],
+.page-products .nav-link[href="products.html"]{
+color:#c0392b;
+font-weight:600;
+border-bottom:2px solid #c0392b;
+}

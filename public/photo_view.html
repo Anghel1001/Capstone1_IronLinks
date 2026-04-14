@@ -21,7 +21,7 @@ src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
 <body>
 
 
-    <div id="header"></div>
+<div id="header"></div>
 
 
 
@@ -35,10 +35,12 @@ Place Iron Gates, Grills, or Railings in your space
 
 <div class="card">
 
+
+
 <div class="steps">
-<div class="step active">1 Upload Photo</div>
-<div class="step">2 Select Corners</div>
-<div class="step">3 Preview Model</div>
+<div class="step active" id="step1">1 Upload Photo</div>
+<div class="step" id="step2">2 Select Corners</div>
+<div class="step" id="step3">3 Preview Model</div>
 </div>
 
 
@@ -60,6 +62,12 @@ Place Iron Gates, Grills, or Railings in your space
 <div class="buttons">
 <button class="place" id="placeBtn">Place Model</button>
 <button class="reset" id="resetBtn">Reset</button>
+</div>
+
+<div class="back-bottom">
+<button onclick="goBack()" class="back-btn">
+← Back to Products
+</button>
 </div>
 
 </div>

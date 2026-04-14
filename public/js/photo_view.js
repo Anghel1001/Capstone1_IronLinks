@@ -26,6 +26,18 @@ const params = new URLSearchParams(window.location.search);
 const modelType = params.get("model");
 const from = params.get("from");
 
+/* ========================================
+   UI steps
+======================================== */
+function setStep(step){
+
+document.querySelectorAll(".step")
+.forEach(s => s.classList.remove("active"));
+
+document.getElementById("step" + step)
+.classList.add("active");
+
+}
 
 
 /* ========================================
@@ -81,6 +93,8 @@ if(viewer){
 viewer.remove();
 viewer = null;
 }
+
+setStep(2);
 
 };
 
@@ -195,6 +209,8 @@ viewer.style.zIndex = "5";
 
 canvasWrapper.appendChild(viewer);
 
+setStep(3);
+
 });
 
 
@@ -216,3 +232,20 @@ ctx.drawImage(img,0,0,canvas.width,canvas.height);
 }
 
 });
+
+
+/* ========================================
+   Simple memory back button
+======================================== */
+
+function goBack(){
+
+const from = new URLSearchParams(window.location.search).get("from");
+
+if(from){
+window.location.href = "products.html?tab=" + from;
+}else{
+history.back();
+}
+
+}

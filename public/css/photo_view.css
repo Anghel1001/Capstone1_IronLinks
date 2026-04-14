@@ -70,7 +70,25 @@ body{
    width:900px;
    max-width:95%;
    }
-   
+
+/* Back button*/
+.back-bottom{
+margin-top:30px;
+}
+
+.back-btn{
+background:none;
+border:none;
+color:#666;
+font-size:13px;
+cursor:pointer;
+padding:4px 0;
+}
+
+.back-btn:hover{
+color:#000;
+}
+
    /* Steps */
    
    .steps{

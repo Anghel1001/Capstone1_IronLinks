@@ -1,29 +1,51 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+/* ========================================
+RESTORE TAB FROM URL
+======================================== */
 
-  /* ========================================
-  TAB SWITCHING
-  ======================================== */
-  
-  const tabs = document.querySelectorAll(".product-tab");
-  const sections = document.querySelectorAll(".product-tab-content");
-  
-  tabs.forEach(tab => {
-  
-  tab.addEventListener("click", () => {
-  
-  tabs.forEach(t => t.classList.remove("active"));
-  sections.forEach(s => s.classList.remove("active"));
-  
-  tab.classList.add("active");
-  
-  const target = tab.getAttribute("data-tab");
-  document.getElementById(target).classList.add("active");
-  
-  });
-  
-  });
-  
+const params = new URLSearchParams(window.location.search);
+const tab = params.get("tab");
+
+if(tab){
+
+document.querySelectorAll(".product-tab")
+.forEach(t=>t.classList.remove("active"));
+
+document.querySelectorAll(".product-tab-content")
+.forEach(s=>s.classList.remove("active"));
+
+document.querySelector(`[data-tab="${tab}"]`)
+?.classList.add("active");
+
+document.getElementById(tab)
+?.classList.add("active");
+
+}
+
+
+/* ========================================
+TAB SWITCHING
+======================================== */
+
+const tabs = document.querySelectorAll(".product-tab");
+const sections = document.querySelectorAll(".product-tab-content");
+
+tabs.forEach(tab => {
+
+tab.addEventListener("click", () => {
+
+tabs.forEach(t => t.classList.remove("active"));
+sections.forEach(s => s.classList.remove("active"));
+
+tab.classList.add("active");
+
+const target = tab.getAttribute("data-tab");
+document.getElementById(target).classList.add("active");
+
+});
+
+});
   
   /* ========================================
   STYLE SWITCHING
@@ -79,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
   image.style.display = isHidden ? "none" : "block";
   
   button.textContent =
-  isHidden ? "Image View" : "3D View";
+  isHidden ? "View Image" : "View in 3D";
   
   });
   

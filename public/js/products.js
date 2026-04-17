@@ -309,10 +309,16 @@ document
 .getElementById("proceedBooking")
 ?.addEventListener("click",()=>{
 
-const cost =
-document.getElementById("estimatedCost")?.textContent;
+const storedCost = localStorage.getItem("estimatedCost");
 
-localStorage.setItem("estimatedCost", cost);
+if(storedCost){
+    localStorage.setItem("estimatedCost", storedCost);
+}
+
+// ✅ SAVE GENERATED IMAGE
+if(generatedImage){
+    localStorage.setItem("generatedDesign", generatedImage);
+}
 
 openBooking();
 
@@ -338,5 +344,10 @@ window.open(photoUrl, "_blank")
 
 })
 })
+
+
+window.addEventListener("beforeunload", () => {
+    localStorage.removeItem("generatedDesign");
+});
 
 });

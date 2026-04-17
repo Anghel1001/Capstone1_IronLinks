@@ -1,127 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard | IronLinks</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/book.css">
 
-<title>Customer Dashboard | IronLinks</title>
-
-<link rel="stylesheet" href="css/global.css">
-<link rel="stylesheet" href="css/book.css">
-
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
 <body>
 
     <div id="header"></div>
 
+    <div id="authSection" class="auth-box">
+        <h3 id="authTitle">Login</h3>
+        <form id="authForm">
+            <input type="text" id="authName" placeholder="Full Name" class="hidden">
+            <input type="text" id="authPhone" placeholder="Phone Number" class="hidden">
+            
+            <input type="email" id="authEmail" placeholder="Email" required>
+            <input type="password" id="authPassword" placeholder="Password" required>
 
+            <button type="submit" id="authBtn">Login</button>
+        </form>
+        <p class="switch" id="toggleLink" onclick="toggleAuth()">Create account</p>
+    </div>
 
-<!-- AUTH -->
+    <section class="customer-dashboard hidden" id="dashboardSection">
+        <h2>Consultation Booking</h2>
+        <div class="dashboard-wrapper">
+            
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3>Personal Information</h3>
+                    <button class="edit-btn" onclick="toggleEdit()">Edit</button>
+                </div>
 
-<div id="authSection" class="auth-box">
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <label>Full Name</label>
+                        <p id="userName"></p>
+                    </div>
+                    <div class="profile-item">
+                        <label>Email</label>
+                        <p id="userEmail"></p>
+                    </div>
+                    <div class="profile-item">
+                        <label>Phone</label>
+                        <p id="userPhone">Not set</p>
+                    </div>
+                    <div class="profile-item">
+                        <label>Address</label>
+                        <p id="userLocation">Not set</p>
+                    </div>
+                </div>
 
-<h3 id="authTitle">Login</h3>
+                <br><hr><br>
 
-<form id="authForm">
+                <div class="card-header">
+                    <h3>Consultation Appointment</h3>
+                    <button class="add-btn" onclick="openBooking()">+ Add</button>
+                </div>
+                <div id="pastConsultations"></div>
+            </div>
 
-<input type="text" id="authName" placeholder="Full Name" class="hidden">
-<input type="email" id="authEmail" placeholder="Email">
-<input type="password" id="authPassword" placeholder="Password">
+            <div class="dashboard-card">
+                <h3>Calendar Schedule</h3>
+                <div id="calendar"></div>
+            </div>
 
-<button type="submit">Login</button>
+        </div>
+    </section>
 
-</form>
+    <div id="footer"></div>
 
-<p class="switch" onclick="toggleAuth()">Create account</p>
-
-</div>
-
-
-
-<!-- DASHBOARD -->
-
-<section class="customer-dashboard hidden" id="dashboardSection">
-
-<h2>Consultation Booking</h2>
-
-<div class="dashboard-wrapper">
-
-<!-- LEFT -->
-
-<div class="dashboard-card">
-
-<div class="card-header">
-<h3>Personal Information</h3>
-<button class="edit-btn" onclick="toggleEdit()">Edit</button>
-</div>
-
-<div class="profile-grid">
-
-<div class="profile-item">
-<label>Full Name</label>
-<p id="userName"></p>
-</div>
-
-<div class="profile-item">
-<label>Email</label>
-<p id="userEmail"></p>
-</div>
-
-<div class="profile-item">
-<label>Phone</label>
-<p id="userPhone">Not set</p>
-</div>
-
-<div class="profile-item">
-<label>Location</label>
-<p id="userLocation">Not set</p>
-</div>
-
-</div>
-
-<br><hr><br>
-
-<div class="card-header">
-<h3>Consultation Appointment</h3>
-<button class="add-btn" onclick="openBooking()">+ Add</button>
-</div>
-
-<div id="pastConsultations"></div>
-
-</div>
-
-
-
-<!-- RIGHT -->
-
-<div class="dashboard-card">
-
-<h3>Calendar Schedule</h3>
-
-<div id="calendar"></div>
-
-</div>
-
-</div>
-
-</section>
-
-
-
-
-<div id="footer"></div>
-
-
-<script src="js/book.js"></script>
-<script src="js/header.js"></script>
-<script src="js/footer.js"></script>
+    <script src="js/book.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/footer.js"></script>
 
 </body>
 </html>

@@ -1,491 +1,304 @@
+const supabaseUrl = "https://ntuikmoiajlqlzehqwkw.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50dWlrbW9pYWpscWx6ZWhxd2t3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0NTQ2MjUsImV4cCI6MjA3OTAzMDYyNX0.Zxrk09S04mRqjbCih9MlZ43YPaw6VUV0obR9qzxQ2Fk";
+
+const { createClient } = supabase;
+const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
 document.addEventListener("DOMContentLoaded", initPage);
 
 let allBookings = [];
 
-
 /* ===============================
-INIT
+   INIT
 =============================== */
-
-function initPage(){
-loadUser();
-loadGeneratedImage();
-initCalendar();
+async function initPage(){
+    loadUser();
+    loadGeneratedImage();
+    await loadBookings();
+    initCalendar();
 }
 
-
 /* ===============================
-LOAD USER
+   LOAD USER
 =============================== */
-
 function loadUser(){
+    const user = JSON.parse(localStorage.getItem("user"));
 
-const user =
-JSON.parse(localStorage.getItem("user"));
+    if(!user){
+        alert("Login required");
+        window.location.href = "book.html";
+        return;
+    }
 
-if(!user){
-
-alert("Please login first");
-
-window.location.href = "book.html";
-
-return;
-
+    document.getElementById("userName").textContent = user.name || "-";
+    document.getElementById("userEmail").textContent = user.email || "-";
+    document.getElementById("userPhone").textContent = user.phone || "-";
+    document.getElementById("userLocation").textContent = user.location || "-";
 }
-
-document.getElementById("userName").value =
-user.name;
-
-document.getElementById("userEmail").value =
-user.email;
-
-}
-
 
 /* ===============================
-GENERATED IMAGE
+   LOAD BOOKINGS
 =============================== */
+async function loadBookings(){
+    const { data, error } = await supabaseClient
+        .from("bookings")
+        .select("*");
 
+    if(error){
+        console.error(error);
+        return;
+    }
+
+    allBookings = data || [];
+}
+
+/* ===============================
+   PREVIEW
+=============================== */
 function loadGeneratedImage(){
+    const generated = localStorage.getItem("generatedDesign");
+    const cost = localStorage.getItem("estimatedCost");
 
-const generated =
-localStorage.getItem("generatedDesign");
+    if(generated){
+        const preview = document.getElementById("bookingPreview");
+        preview.src = generated;
+        preview.style.display = "block";
+    }
 
-const estimatedCost =
-localStorage.getItem("estimatedCost");
-
-const preview =
-document.getElementById("bookingPreview");
-
-const costPreview =
-document.getElementById("estimatedCostPreview");
-
-if(generated){
-
-preview.src = generated;
-preview.style.display = "block";
-
+    document.getElementById("estimatedCostPreview").textContent = cost || "₱ 0";
 }
 
-if(estimatedCost){
+/* ===============================
+   CALENDAR (FIXED)
+=============================== */
+function initCalendar(){
+    
+    const dateMap = {};
+    const user = JSON.parse(localStorage.getItem("user"));
 
-costPreview.textContent = estimatedCost;
+    allBookings.forEach(b => {
 
+        const dbDate = b.date;
+
+        if(!dateMap[dbDate]){
+            dateMap[dbDate] = { approved:false, pending:false };
+        }
+
+        // 🔴 approved always visible
+        if(b.status === "approved"){
+            dateMap[dbDate].approved = true;
+        }
+
+        // 🟠 only YOUR pending
+        else if(
+            b.status === "pending" &&
+            b.email === user.email
+        ){
+            dateMap[dbDate].pending = true;
+        }
+    });
+
+    // 🔥 FIXED EVENTS (no default green)
+    const events = Object.keys(dateMap)
+    .map(date => {
+
+        let color = null;
+
+        if(dateMap[date].approved) color = "#dc3545";
+        else if(dateMap[date].pending) color = "#fd7e14";
+
+        if(!color) return null;
+
+        return { start: date, title: "●", color };
+    })
+    .filter(e => e !== null);
+
+    const calendar = new FullCalendar.Calendar(
+        document.getElementById("calendar"),
+        {
+            initialView:"dayGridMonth",
+            height:"auto",
+            events: events,
+
+            validRange:{
+                start: new Date().toISOString().split('T')[0]
+            },
+
+            dateClick(info){
+
+                const today = new Date();
+                today.setHours(0,0,0,0);
+
+                const clicked = new Date(info.dateStr);
+                
+                // 🔒 CLOSED SUNDAYS
+                if(clicked.getDay() === 0){
+                     alert("Closed on Sundays");
+                    return;
+                }
+
+                if(clicked < today){
+                    alert("Cannot select past date");
+                    return;
+                }
+
+                document.querySelectorAll(".fc-daygrid-day")
+                    .forEach(d => d.classList.remove("selected"));
+
+                info.dayEl.classList.add("selected");
+
+                openTimeModal(info.dateStr);
+            }
+        }
+    );
+
+    
+    calendar.render();
 }
 
-}   
+/* ===============================
+   TIME MODAL
+=============================== */
+function openTimeModal(date){
 
+    const user = JSON.parse(localStorage.getItem("user"));
 
-function removeAI(){
+    document.getElementById("timeModal").classList.remove("hidden");
+    document.getElementById("selectedDateDisplay").textContent = "Date: " + date;
 
-localStorage.removeItem("generatedDesign");
+    const container = document.getElementById("timeSlots");
+    container.innerHTML = "";
 
-document.getElementById("generatedPreview")
-.innerHTML="";
+    const times = ["08:00","09:00","10:00","11:00","13:00","14:00","15:00","16:00"];
 
-}
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
 
-function generateDateDots(){
+    times.forEach(time => {
 
-const user =
-JSON.parse(localStorage.getItem("user"));
+        const slotTime = new Date(date + "T" + time);
 
-const dateMap = {};
+        const bookings = allBookings.filter(b =>
+            b.date === date && b.time === time
+        );
 
-allBookings.forEach(b => {
+        const approvedBooking = bookings.find(b => b.status === "approved");
 
-if(!dateMap[b.date]){
-dateMap[b.date] = {
-approved:false,
-pending:false,
-userPending:false
+        const userPending = bookings.find(b =>
+            b.status === "pending" && b.email === user.email
+        );
+
+        const div = document.createElement("div");
+        div.classList.add("time-slot");
+
+        // 🔴 approved
+        if(approvedBooking){
+            div.classList.add("slot-unavailable");
+            div.textContent = formatTime(time) + " (Unavailable)";
+            div.style.pointerEvents = "none";
+        }
+
+        // 🟠 your pending
+        else if(userPending){
+            div.classList.add("slot-pending");
+            div.textContent = formatTime(time) + " (Your Pending)";
+            div.style.pointerEvents = "none";
+        }
+
+        // ⛔ past
+        else if(date === todayStr && slotTime < now){
+            div.classList.add("slot-unavailable");
+            div.textContent = formatTime(time) + " (Passed)";
+            div.style.pointerEvents = "none";
+        }
+
+        // 🟢 available
+        else{
+            div.classList.add("slot-available");
+            div.textContent = formatTime(time);
+
+            div.onclick = () => {
+
+    // ✅ set values (for backend)
+    document.querySelector("select[name='time']").value = time;
+    document.getElementById("dateInput").value = date;
+
+    // 🔥 UPDATE UI DISPLAY (THIS IS WHAT YOU WERE MISSING)
+    const dateDisplay = document.getElementById("appointmentDateDisplay");
+    const timeDisplay = document.getElementById("appointmentTimeDisplay");
+
+    if(dateDisplay && timeDisplay){
+        dateDisplay.textContent = date;
+        timeDisplay.textContent = formatTime(time);
+
+        // optional highlight (looks nice)
+        dateDisplay.style.color = "var(--success)";
+        timeDisplay.style.color = "var(--success)";
+    }
+
+    closeTimeModal();
 };
-}
+        }
 
-if(b.status === "approved"){
-dateMap[b.date].approved = true;
-}
-
-if(b.status === "pending"){
-dateMap[b.date].pending = true;
-
-if(user && b.email === user.email){
-dateMap[b.date].userPending = true;
-}
-}
-
-});
-
-return Object.keys(dateMap).map(date => {
-
-let color = "#28a745"; // available
-
-if(dateMap[date].approved){
-color = "#dc3545";
-}else if(dateMap[date].pending){
-color = "#fd7e14";
-}
-
-return {
-title:"●",
-start: date,
-color: color
-};
-
-});
-
+        container.appendChild(div);
+    });
 }
 
 /* ===============================
-CALENDAR
+   CLOSE MODAL
 =============================== */
-
-async function initCalendar(){
-
-const calendarEl =
-document.getElementById("calendar");
-
-if(!calendarEl) return;
-
-try{
-
-const res =
-await fetch("/bookings");
-
-allBookings =
-await res.json();
-
-}catch(err){
-
-console.error("Fetch error", err);
-
+function closeTimeModal(){
+    document.getElementById("timeModal").classList.add("hidden");
 }
-
-const calendar =
-new FullCalendar.Calendar(calendarEl, {
-
-initialView: "dayGridMonth",
-
-height:"auto",
-
-events: generateDateDots(),
-
-dateClick: function(info){
-
-const selectedDate = info.dateStr;
-
-// BLOCK SUNDAY
-const day =
-new Date(selectedDate).getDay();
-
-if(day === 0){
-alert("Closed on Sundays");
-return;
-}
-
-// Highlight Selected
-document
-.querySelectorAll(".fc-daygrid-day")
-.forEach(day=>{
-day.classList.remove("selected");
-});
-
-info.dayEl.classList.add("selected");
-
-document
-.getElementById("dateInput")
-.value = selectedDate;
-
-openTimePopup(selectedDate);
-
-}
-
-});
-
-calendar.render();
-
-}
-
-
 
 /* ===============================
-TIME SLOT BLOCKER
+   FORMAT TIME
 =============================== */
-
-function updateTimeSlots(date){
-
-const bookedTimes =
-allBookings
-.filter(b => b.date === date)
-.map(b => b.time);
-
-
-const select =
-document.querySelector(
-"select[name='time']"
-);
-
-[...select.options].forEach(option => {
-
-if(!option.value) return;
-
-if(bookedTimes.includes(option.value)){
-
-option.disabled = true;
-option.text =
-option.value + " (Booked)";
-
-}else{
-
-option.disabled = false;
-option.text =
-formatTime(option.value);
-
-}
-
-});
-
-}
-
-
-
-/* ===============================
-FORMAT TIME
-=============================== */
-
 function formatTime(time){
-
-const [hour, minute] =
-time.split(":");
-
-const h =
-parseInt(hour);
-
-const suffix =
-h >= 12 ? "PM" : "AM";
-
-const hour12 =
-((h + 11) % 12 + 1);
-
-return `${hour12}:${minute} ${suffix}`;
-
+    const [h,m] = time.split(":");
+    const hour = parseInt(h);
+    const suffix = hour >= 12 ? "PM" : "AM";
+    const hour12 = ((hour + 11) % 12 + 1);
+    return `${hour12}:${m} ${suffix}`;
 }
-
-
 
 /* ===============================
-BASE64 TO FILE
+   SUBMIT
 =============================== */
+document.getElementById("bookingForm")
+.addEventListener("submit", async function(e){
 
-function base64ToFile(base64, filename){
+    e.preventDefault();
 
-const arr = base64.split(",");
+    const user = JSON.parse(localStorage.getItem("user"));
 
-const mime =
-arr[0].match(/:(.*?);/)[1];
+    const formData = new FormData();
 
-const bstr =
-atob(arr[1]);
+    formData.append("name", user.name);
+    formData.append("email", user.email);
+    formData.append("phone", user.phone);
+    formData.append("date", document.getElementById("dateInput").value);
+    formData.append("time", e.target.time.value);
+    formData.append("request", e.target.request.value);
 
-let n = bstr.length;
+    await fetch("/book", {
+        method: "POST",
+        body: formData
+    });
 
-const u8arr =
-new Uint8Array(n);
+    alert("Booking submitted successfully!");
 
-while(n--){
-u8arr[n] =
-bstr.charCodeAt(n);
-}
-
-return new File(
-[u8arr],
-filename,
-{ type: mime }
-);
-
-}
-
-
-
-/* ===============================
-SUBMIT BOOKING
-=============================== */
-
-document
-.getElementById("bookingForm")
-.addEventListener(
-"submit",
-async function(e){
-
-e.preventDefault();
-
-const user =
-JSON.parse(localStorage.getItem("user"));
-
-const file =
-document
-.getElementById("referenceImage")
-.files[0];
-
-const formData =
-new FormData();
-
-formData.append("name", user.name);
-formData.append("email", user.email);
-formData.append(
-"phone",
-bookingForm.phone.value
-);
-
-formData.append(
-"date",
-document
-.getElementById("dateInput")
-.value
-);
-
-formData.append(
-"time",
-bookingForm.time.value
-);
-
-formData.append(
-"request",
-bookingForm.request.value
-);
-
-
-/* ===============================
-GENERATED IMAGE
-=============================== */
-
-const generated =
-localStorage.getItem("generatedDesign");
-
-if(generated){
-
-const generatedFile =
-base64ToFile(
-generated,
-"generated-design.png"
-);
-
-formData.append(
-"reference_image",
-generatedFile
-);
-
-}
-
-
-/* ===============================
-MANUAL IMAGE
-=============================== */
-
-if(file){
-formData.append(
-"reference_image",
-file
-);
-}
-
-
-await fetch("/book", {
-method:"POST",
-body:formData
-});
-
-
-alert("Booking submitted!");
-
+// 🧹 optional cleanup (prevents old data showing again)
 localStorage.removeItem("generatedDesign");
+localStorage.removeItem("estimatedCost");
 
-location.reload();
+const btn = document.querySelector(".btn-submit");
+btn.textContent = "Booking Confirmed ✓";
+btn.disabled = true;
+btn.style.background = "#27ae60";
 
-});
-
-function openTimePopup(date){
-
-const popup =
-document.getElementById("timePopup");
-
-const container =
-document.getElementById("timeSlots");
-
-container.innerHTML = "";
-
-const times = [
-"08:00",
-"09:00",
-"10:00",
-"11:00",
-"13:00",
-"14:00",
-"15:00",
-"16:00"
-];
-
-times.forEach(time => {
-
-const booking =
-allBookings.find(b =>
-b.date === date &&
-b.time === time
-);
-
-const div =
-document.createElement("div");
-
-div.classList.add("time-slot");
-
-if(booking){
-
-if(booking.status === "approved"){
-div.classList.add("slot-unavailable");
-div.textContent = time + " Unavailable";
-}
-else{
-div.classList.add("slot-pending");
-div.textContent = formatTime(time) + " Pending";
-}
-
-}else{
-
-div.classList.add("slot-available");
-div.textContent = formatTime(time) + " Available";
-
-div.onclick = () => {
-
-document.querySelector(
-"select[name='time']"
-).value = time;
-
-closeTimePopup();
-
-};
-
-}
-
-container.appendChild(div);
+setTimeout(() => {
+    window.close();
+}, 500);
 
 });
-
-popup.classList.remove("hidden");
-
-document
-.getElementById("popupOverlay")
-.classList.remove("hidden");
-
-}
-
-function closeTimePopup(){
-
-document
-.getElementById("timePopup")
-.classList.add("hidden");
-
-document
-.getElementById("popupOverlay")
-.classList.add("hidden");
-
-}

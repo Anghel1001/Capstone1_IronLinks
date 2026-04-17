@@ -1,312 +1,337 @@
 /* ===============================
-BOOK SECTION (COMPACT)
+   VARIABLES
 =============================== */
-
-.book-section{
-    max-width:720px;
-    margin:auto;
-    padding:15px;
-    position:relative;
-    }
-    
-    
-    
-    /* ===============================
-    CLOSE BUTTON
-    =============================== */
-    
-    .close-popup-btn{
-    position:absolute;
-    top:8px;
-    right:8px;
-    background:black;
-    color:white;
-    border:none;
-    width:30px;
-    height:30px;
-    border-radius:50%;
-    cursor:pointer;
-    font-size:16px;
-    z-index:10;
-    }
-    
-    .close-popup-btn:hover{
-    background:#333;
-    }
-    
-    
-    
-    /* ===============================
-    CALENDAR (COMPACT)
-    =============================== */
-    
-    #calendar{
-    margin-top:10px;
-    background:white;
-    padding:10px;
-    border-radius:8px;
-    font-size:13px;
-    }
-    
-    
-    
-    /* ===============================
-    SELECTED DAY
-    =============================== */
-    
-    .fc-daygrid-day.selected{
-    background:#eef3ff !important;
-    border:2px solid black !important;
-    }
-    
-    
-    
-    /* ===============================
-    PAST DAYS
-    =============================== */
-    
-    .fc-day-past{
-    background:#f3f3f3 !important;
-    opacity:0.5;
-    pointer-events:none;
-    }
-    
-    
-    
-    /* ===============================
-    SUNDAY
-    =============================== */
-    
-    .fc-day-sun{
-    background:#f8f8f8 !important;
-    opacity:0.5;
-    pointer-events:none;
-    }
-    
-    
-    
-    /* ===============================
-    FORM (COMPACT GRID)
-    =============================== */
-    
-    .book-form{
-    display:grid;
-    grid-template-columns:
-    repeat(2,1fr);
-    gap:8px;
-    margin-top:10px;
-    }
-    
-    
-    
-    .book-form input,
-    .book-form select,
-    .book-form textarea{
-    padding:8px;
-    font-size:13px;
-    border-radius:6px;
-    border:1px solid #ddd;
-    }
-    
-    
-    
-    /* TEXTAREA FULL WIDTH */
-    
-    .book-form textarea{
-    grid-column:1/-1;
-    min-height:60px;
-    }
-    
-    
-    
-    /* BUTTON */
-    
-    .book-form button{
-    grid-column:1/-1;
-    padding:10px;
-    background:black;
-    color:white;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-    font-size:14px;
-    }
-    
-    
-    
-    /* ===============================
-    LEGEND (SMALLER)
-    =============================== */
-    
-    .legend{
-    display:flex;
-    gap:12px;
-    justify-content:center;
-    margin-bottom:5px;
-    font-size:12px;
-    }
-    
-    
-    
-    .legend span{
-    display:flex;
-    align-items:center;
-    gap:5px;
-    }
-    
-    
-    
-    .box{
-    width:12px;
-    height:12px;
-    border-radius:3px;
-    }
-    
-    
-    
-    .box-approved{background:#dc3545}
-    .box-pending{background:#fd7e14}
-    .box-selected{background:#28a745}
-    
-    
-    
-    /* ===============================
-    AI PREVIEW (SMALLER)
-    =============================== */
-    
-.generated-preview{
-margin-top:12px;
-text-align:center;
-display:flex;
-flex-direction:column;
-align-items:center;
+:root {
+    --iron: #1a1a1a;
+    --border-color: #dddddd;
+    --success: #27ae60;
+    --danger: #c0392b;
+    --pending: #f39c12;
 }
 
-.generated-preview img{
-width:100%;
-max-width:260px;
-border-radius:8px;
-margin:10px auto;
-display:block;
-}
-    
-    
-    
-    .remove-ai{
-    margin-top:6px;
-    background:#dc3545;
-    color:white;
-    border:none;
-    padding:6px 10px;
-    border-radius:6px;
-    cursor:pointer;
-    font-size:12px;
-    }
-    
-    
-    
-    /* ===============================
-    CALENDAR HEIGHT CONTROL
-    =============================== */
-    
-    .fc .fc-toolbar-title{
-    font-size:16px;
-    }
-    
-    .fc .fc-button{
-    padding:4px 8px;
-    font-size:12px;
-    }
-    
-    .fc-daygrid-day-frame{
-    min-height:40px !important;
-    }
-
-
-        /* ===============================
-    CALENDAR time selection
-    =============================== */
-    .time-popup{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:white;
-padding:25px 20px;
-border-radius:14px;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
-z-index:9999;
-width:260px;
-text-align:center;
+/* ===============================
+   LEGEND
+=============================== */
+.legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin: 20px 0;
+    font-size: 14px;
 }
 
-.time-popup h3{
-margin-bottom:15px;
-font-size:20px;
-font-weight:600;
+.legend span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
 }
 
-#timeSlots{
-display:flex;
-flex-direction:column;
-gap:10px;
+.box {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
 }
 
-.time-slot{
-padding:12px;
-border-radius:8px;
-font-weight:600;
-cursor:pointer;
-transition:0.2s ease;
+.box-approved { background: #dc3545; }
+.box-pending { background: #fd7e14; }
+.box-selected { background: #28a745; }
+
+/* ===============================
+   LAYOUT
+=============================== */
+.book-section {
+    max-width: 900px;
+    margin: 20px auto;
+    background: #fff;
+    border: 2px solid var(--iron);
+    padding: 20px;
 }
 
-.time-slot:hover{
-transform:translateY(-1px);
+h2 {
+    font-family: 'Playfair Display', serif;
+    border-bottom: 3px solid var(--iron);
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+/* ===============================
+   CALENDAR
+=============================== */
+#calendar {
+    background: #fafafa;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.fc-daygrid-day-frame {
+    min-height: 50px !important;
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.1rem !important;
+}
+
+.fc .fc-button {
+    padding: 2px 6px !important;
+    font-size: 0.75rem !important;
+}
+
+.fc .fc-button-primary {
+    background: var(--iron) !important;
+    border: none !important;
+    text-transform: uppercase;
+    border-radius: 0;
+}
+
+.fc-daygrid-day.selected {
+    background: #27ae60 !important;
+    color: #fff !important;
+}
+
+.time-slot.slot-available:hover {
+    background: var(--iron);
+    color: #fff;
+    transform: scale(1.02);
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+}
+
+.slot-unavailable {
+    border-left: 5px solid #c0392b;
+    color: #bbb;
+    background: #fdfdfd;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.slot-pending {
+    border-left: 5px solid #f39c12;
+    color: #888;
+    background: #fff9f0;
+}
+
+/* ===============================
+   TIME SLOTS
+=============================== */
+#timeSlots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.time-slot {
+    padding: 14px;
+    border: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: bold;
+    background: #fff;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.time-slot:hover:not(.slot-unavailable) {
+    background: var(--iron);
+    color: #fff;
+}
+
+.slot-available { border-left: 5px solid var(--success); }
+.slot-pending {
+    border-left: 5px solid var(--pending);
+    color: #888;
+    cursor: not-allowed;
+}
+.slot-unavailable {
+    border-left: 5px solid var(--danger);
+    color: #ccc;
+    background: #f9f9f9;
+    cursor: not-allowed;
+}
+
+/* ===============================
+   MODAL
+=============================== */
+.time-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.time-modal-content {
+    background: #fff;
+    width: 280px;
+    padding: 20px;
+    border: 2px solid var(--iron);
+    box-shadow: 10px 10px 0 rgba(0,0,0,.2);
+}
+
+.time-list-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+/* ===============================
+   FORM
+=============================== */
+.book-form {
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.form-group label {
+    font-size: 11px;
+    margin-bottom: 3px;
+    display: block;
+}
+
+.form-group p,
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    font-size: 13px;
+}
+
+/* ===============================
+   BUTTON
+=============================== */
+.btn-submit {
+    width: 100%;
+    background: var(--iron);
+    color: #fff;
+    padding: 15px;
+    margin-top: 25px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-submit:hover {
+    background: #333;
+}
+
+/* ===============================
+   MODAL HEADER
+=============================== */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--iron);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.close-modal {
+    background: var(--iron);
+    color: #fff;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    background: #444;
+}
+
+/* ===============================
+   IMAGE PREVIEW
+=============================== */
+#generatedPreview {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+}
+
+#bookingPreview {
+    display: none;
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+}
+
+/* ===============================
+   UTIL
+=============================== */
+.hidden {
+    display: none !important;
+}
+
+.booking-summary-box {
+    background: #f4f4f4;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--iron); 
+}
+
+.profile-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 Columns */
+    gap: 15px 20px; /* Spacing for the 3 rows */
+}
+
+.summary-item label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #666;
+    font-weight: 800;
+    margin-bottom: 3px;
+}
+
+.summary-item p {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    color: #1a1a1a;
 }
 
 
-/* Available */
-
-.slot-available{
-background:#28a745;
-color:white;
+.booking-summary-box .form-group label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--iron);
 }
 
-.slot-available:hover{
-background:#23913c;
+.booking-summary-box .form-group p {
+    margin: 0;
+    font-size: 14px;
 }
 
-
-/* Pending */
-
-.slot-pending{
-background:#fd7e14;
-color:white;
-cursor:not-allowed;
+.reference-upload-field label {
+    display: block;
+    margin-bottom: 5px;
 }
 
-
-/* Unavailable */
-
-.slot-unavailable{
-background:#dc3545;
-color:white;
-cursor:not-allowed;
-}
-
-
-/* Close Button */
-
-.time-popup button{
-margin-top:15px;
-padding:8px 14px;
-border:none;
-background:#333;
-color:white;
-border-radius:6px;
-cursor:pointer;
-}
-
-.time-popup button:hover{
-background:black;
-}
+.reference-upload-field label span.ux-helper {
+    display: block;
+    font-size: 11px;
+    font-weight: 400; /* Lighter than main label */
+    color: #666;
+    text-transform: none; /* Not uppercase */

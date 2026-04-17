@@ -12,7 +12,6 @@
 
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 </head>
@@ -24,115 +23,112 @@
 <h2>Book Appointment Consultation</h2>
 
 <div class="legend">
-<span><div class="box box-approved"></div>Unavailable</span>
-<span><div class="box box-pending"></div>Pending</span>
-<span><div class="box box-selected"></div>Selected</span>
+    <span><div class="box box-approved"></div>Unavailable</span>
+    <span><div class="box box-pending"></div>Pending</span>
+    <span><div class="box box-selected"></div>Selected</span>
 </div>
 
 <div id="calendar"></div>
-<div id="popupOverlay" class="popup-overlay hidden"></div>
 
-<div id="timePopup" class="time-popup hidden">
-<h3>Select Time</h3>
-<div id="timeSlots"></div>
-<button onclick="closeTimePopup()">Close</button>
+<!-- ✅ SINGLE MODAL -->
+<div id="timeModal" class="time-modal-overlay hidden">
+    <div class="time-modal-content">
+        <div class="modal-header">
+            <h3>Select Time</h3>
+            <button type="button" class="close-modal" onclick="closeTimeModal()">×</button>
+        </div>
+
+        <p id="selectedDateDisplay"></p>
+        <div id="timeSlots" class="time-list-vertical"></div>
+    </div>
 </div>
 
-<!-- =========================
-GENERATED IMAGE PREVIEW
-========================= -->
-
+<!-- ✅ PREVIEW -->
 <div id="generatedPreview" class="generated-preview">
 
 <h3>Selected Design</h3>
 
-<img 
-id="bookingPreview"
-style="
-display:none;
-width:100%;
-max-height:250px;
-object-fit:contain;
-border-radius:10px;
-margin-top:10px;
-">
+<img id="bookingPreview" style="display:none; width:100%; max-height:250px; object-fit:contain;">
 
 <h4>Estimated Cost</h4>
-
-<div id="estimatedCostPreview" class="cost-preview">
-₱ 0
-</div>
+<div id="estimatedCostPreview">₱ 0</div>
 
 </div>
-
-
 
 <form id="bookingForm" class="book-form">
+<h3>Booking Details</h3>
 
-<div class="form-group">
-<label>Name</label>
-<input type="text" id="userName" readonly>
-</div>
+<!-- 🔹 CLIENT PROFILE -->
+<div class="booking-summary-box" style="background:#f4f4f4; padding:15px; margin-bottom:20px; border-left:4px solid var(--iron);">
 
-<div class="form-group">
-<label>Email</label>
-<input type="email" id="userEmail" readonly>
-</div>
+<h4>Client Profile</h4>
+    <div class="profile-summary-grid">
+        <div class="summary-item">
+            <label>Name</label>
+            <p id="userName">-</p>
+        </div>
+        <div class="summary-item">
+            <label>Email</label>
+            <p id="userEmail">-</p>
+        </div>
 
-<div class="form-group">
-<label>Phone Number</label>
-<input type="tel" name="phone" placeholder="09XXXXXXXXX" required>
-</div>
+        <div class="summary-item">
+            <label>Phone</label>
+            <p id="userPhone">-</p>
+        </div>
+        <div class="summary-item">
+            <label>Location</label>
+            <p id="userLocation">-</p>
+        </div>
 
-<div class="form-group">
-<label>Date</label>
-<input type="date" id="dateInput" required readonly>
+        <div class="summary-item">
+            <label>Appointment Date</label>
+            <p id="appointmentDateDisplay">Not selected</p>
+        </div>
+        <div class="summary-item">
+            <label>Appointment Time</label>
+            <p id="appointmentTimeDisplay">Not selected</p>
+        </div>
+    </div>
+
+    <input type="hidden" id="dateInput" name="date">
+    <select name="time" class="hidden" required>
+        <option value="">Select Time</option>
+        <option value="08:00">08:00 AM</option>
+        <option value="09:00">09:00 AM</option>
+        <option value="10:00">10:00 AM</option>
+        <option value="11:00">11:00 AM</option>
+        <option value="13:00">01:00 PM</option>
+        <option value="14:00">02:00 PM</option>
+        <option value="15:00">03:00 PM</option>
+        <option value="16:00">04:00 PM</option>
+    </select>
 </div>
 
 <div class="form-group full">
-<label>Time</label>
-<select name="time" required>
+            <label>Additional Information</label>
+            <textarea name="request" placeholder="Tell us more about your ironwork needs..." rows="3"></textarea>
+        </div>
 
-<option value="">Select Time</option>
+        <div class="form-group full reference-upload-field">
+            <label>
+                Reference Image (Optional)
+                <span class="ux-helper">Have a specific design in mind? Upload a photo here for our reference. (Note: This is separate from the selected design shown above.)</span>
+            </label>
+            <input type="file" name="ref_image" accept="image/*">
+        </div>
 
-<option value="08:00">08:00 AM</option>
-<option value="09:00">09:00 AM</option>
-<option value="10:00">10:00 AM</option>
-<option value="11:00">11:00 AM</option>
 
-<option value="13:00">01:00 PM</option>
-<option value="14:00">02:00 PM</option>
-<option value="15:00">03:00 PM</option>
-<option value="16:00">04:00 PM</option>
-
-</select>
 </div>
 
-<div class="form-group full">
-<label>Additional Details</label>
-<textarea 
-name="request" 
-placeholder="Additional details">
-</textarea>
-</div>
 
-<div class="form-group full">
-<label>Upload Reference Image</label>
-<input 
-type="file" 
-id="referenceImage" 
-accept="image/*"
->
-</div>
 
-<button type="submit">
-Submit Booking
-</button>
 
+
+<button type="submit" class="btn-submit">Confirm Booking</button>
 </form>
 
 </section>
-
 
 <script src="js/book_popup.js"></script>
 

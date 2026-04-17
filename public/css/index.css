@@ -152,3 +152,63 @@ color:#222;
     .gallery-grid img:hover{
     transform:scale(1.03);
     }
+
+    /* IMAGE PREVIEW MODAL */
+.image-modal{
+   position:fixed;
+   top:0;
+   left:0;
+   width:100%;
+   height:100%;
+   background:rgba(0,0,0,0.9);
+   
+   display:flex;
+   align-items:center;
+   justify-content:center;
+   
+   opacity:0;
+   pointer-events:none;
+   transition:0.3s;
+   
+   z-index:999;
+   }
+   
+   .image-modal.show{
+   opacity:1;
+   pointer-events:auto;
+   }
+   
+   .image-modal img{
+   max-width:90%;
+   max-height:90%;
+   border-radius:10px;
+   }
+   
+   .close-btn{
+   position:absolute;
+   top:20px;
+   right:25px;
+   
+   background:rgba(0,0,0,0.6);
+   color:white;
+   
+   border:none;
+   border-radius:50%;
+   
+   width:45px;
+   height:45px;
+   
+   font-size:22px;
+   cursor:pointer;
+   
+   display:flex;
+   align-items:center;
+   justify-content:center;
+   
+   z-index:1000;
+   }
+   
+   .close-btn:hover{
+   background:red;
+   transform:scale(1.1);
+   }

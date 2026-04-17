@@ -1,28 +1,26 @@
-/* ================= HERO ================= */
-
+/* HERO */
 .hero{
     position:relative;
-    height:350px;
-    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:60vh;
+    padding:60px 20px;
+    background:url("../hompage_photos/Work.webp") center/cover no-repeat;
+    color:white;
     }
     
-    .hero img{
+    .hero::before{
+    content:"";
+    position:absolute;
     width:100%;
     height:100%;
-    object-fit:cover;
+    background:rgba(0,0,0,0.6);
     }
     
     .hero blockquote{
-    position:absolute;
-    bottom:40px;
-    left:50%;
-    transform:translateX(-50%);
-    color:white;
-    background:rgba(0,0,0,.45);
-    padding:20px 30px;
-    border-radius:8px;
-    font-size:18px;
-    max-width:700px;
+    position:relative;
+    z-index:2;
     text-align:center;
     }
     
@@ -32,105 +30,204 @@
     left:20px;
     background:black;
     color:white;
-    padding:6px 14px;
-    border-radius:999px;
-    font-size:12px;
-    font-weight:600;
+    padding:6px 12px;
+    border-radius:20px;
+    z-index:2;
     }
     
-    
-    /* ================= CONTAINER ================= */
-    
-    .admin-container{
+    /* GALLERY */
+    .gallery{
+    padding:80px 20px;
     max-width:1200px;
     margin:auto;
-    padding:40px 20px;
-    display:flex;
-    flex-direction:column;
-    gap:40px;
+    text-align:center;
     }
     
-    
-    
-    /* ================= CARD ================= */
-    
-    .admin-card{
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 2px 8px rgba(0,0,0,.05);
+    /* ACTIONS */
+    .admin-actions{
+    margin:20px 0 40px;
     }
     
-    
-    .card-header{
-    margin-bottom:15px;
-    border-bottom:1px solid #eee;
-    padding-bottom:10px;
-    }
-    
-    
-    
-    /* ================= GALLERY GRID ================= */
-    
-    .gallery-grid{
-    display:grid;
-    grid-template-columns:
-    repeat(auto-fill,minmax(220px,1fr));
-    gap:15px;
-    margin-top:15px;
-    }
-    
-    
-    .gallery-grid img{
-    width:100%;
-    height:180px;
-    object-fit:cover;
+    #postBtn{
+    background:black;
+    color:white;
+    padding:10px 20px;
+    border:none;
     border-radius:8px;
+    cursor:pointer;
     }
     
+    .upload-hint{
+    color:#777;
+    font-size:14px;
+    }
     
+    /* CATEGORY */
+    .category-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 10px;
+    }
     
-    /* ================= REMOVE BUTTON ================= */
+    /* UPLOAD */
+    .upload-btn{
+    background:#007bff;
+    color:white;
+    border:none;
+    padding:6px 14px;
+    border-radius:6px;
+    cursor:pointer;
+    }
+    
+    .upload-btn:hover{
+    background:#0056b3;
+    }
+    
+    /* GRID */
+    .gallery-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    justify-content:center;
+    margin-bottom:30px;
+    }
+    
+    /* IMAGE */
+    .gallery-item{
+    position:relative;
+    }
+    
+    .gallery-item img{
+    width:300px;
+    height:auto;
+    border-radius:10px;
+    }
+    
+    /* DELETE */
+    .overlay{
+    position:absolute;
+    top:8px;
+    right:8px;
+    opacity:0;
+    transition:0.3s;
+    }
+    
+    .gallery-item:hover .overlay{
+    opacity:1;
+    }
     
     .remove-btn{
-    background:#eee;
+    background:red;
+    color:white;
     border:none;
-    padding:5px;
-    font-size:12px;
-    margin-top:6px;
+    border-radius:50%;
+    width:28px;
+    height:28px;
     cursor:pointer;
-    border-radius:4px;
     }
     
-    
-    
-    /* ================= UPLOAD ================= */
-    
-    .upload-box{
-    margin-top:20px;
-    background:#f8f8f8;
-    padding:15px;
-    border-radius:8px;
-    }
-    
-    
-    .upload-box label{
-    display:block;
-    margin-bottom:6px;
-    font-weight:600;
-    }
-    
-    
-    .upload-box input{
+    /* DELETE MODAL */
+    .modal{
+    position:fixed;
+    top:0;
+    left:0;
     width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:0.3s;
+    z-index:998;
     }
     
+    .modal.show{
+    opacity:1;
+    pointer-events:auto;
+    }
     
-    
-    /* ================= FOOTER ================= */
-    
-    footer{
-    margin-top:40px;
+    .modal-content{
+    background:white;
+    padding:25px;
+    border-radius:10px;
     text-align:center;
-    padding:20px;
+    }
+    
+    /* IMAGE MODAL */
+    .image-modal{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.9);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:0.3s;
+    z-index:999;
+    }
+    
+    .image-modal.show{
+    opacity:1;
+    pointer-events:auto;
+    }
+    
+    .image-modal img{
+    max-width:90%;
+    max-height:90%;
+    border-radius:10px;
+    }
+    
+    /* CLOSE BUTTON (FIXED) */
+    .close-btn{
+    position:absolute;
+    top:20px;
+    right:25px;
+    background:rgba(0,0,0,0.6);
+    color:white;
+    border:none;
+    border-radius:50%;
+    width:45px;
+    height:45px;
+    font-size:22px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+    }
+    
+    .close-btn:hover{
+    background:red;
+    transform:scale(1.1);
+    }
+    
+    /* TOAST */
+    #toast{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:black;
+    color:white;
+    padding:10px 20px;
+    border-radius:8px;
+    opacity:0;
+    transition:0.3s;
+    }
+    
+    #toast.show{
+    opacity:1;
+    }
+    
+    /* EMPTY */
+    .empty-state{
+    margin:80px 0;
+    color:#777;
     }

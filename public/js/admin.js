@@ -1,100 +1,194 @@
+let postMode = false;
+let deleteId = null;
+
+/* TOGGLE POST MODE */
+function togglePostMode(){
+postMode = !postMode;
+document.getElementById("postBtn").textContent =
+postMode ? "Cancel" : "Post";
+loadGallery();
+}
+
+/* LOAD GALLERY */
 async function loadGallery(){
 
-    try{
-    
-    const res = await fetch('/gallery');
-    const data = await res.json();
-    
-    
-    const categories = ["Gate","Grill","Railing"];
-    
-    categories.forEach(cat => {
-    
-    const container =
-    document.getElementById(cat);
-    
-    container.innerHTML = "";
-    
-    const filtered =
-    data.filter(item => item.category === cat);
-    
-    filtered.forEach(item => {
-    
-    const div =
-    document.createElement("div");
-    
-    const img =
-    document.createElement("img");
-    
-    img.src =
-    item.image_url;
-    
-    const remove =
-    document.createElement("button");
-    
-    remove.textContent =
-    "Remove";
-    
-    remove.className =
-    "remove-btn";
-    
-    remove.onclick =
-    ()=>deleteImage(item.id);
-    
-    div.appendChild(img);
-    div.appendChild(remove);
-    
-    container.appendChild(div);
-    
-    });
-    
-    });
-    
-    }catch(err){
-    console.error(err);
-    }
-    
-    }
-    
-    
-    
-    async function uploadImage(e,category){
-    
-    const file =
-    e.target.files[0];
-    
-    if(!file) return;
-    
-    const formData =
-    new FormData();
-    
-    formData.append("image",file);
-    formData.append("category",category);
-    
-    await fetch("/gallery",{
-    method:"POST",
-    body:formData
-    });
-    
-    loadGallery();
-    
-    }
-    
-    
-    
-    async function deleteImage(id){
-    
-    await fetch("/gallery/"+id,{
-    method:"DELETE"
-    });
-    
-    loadGallery();
-    
-    }
-    
-    
-    
-    document.addEventListener(
-    "DOMContentLoaded",
-    loadGallery
-    );
+const res = await fetch('/gallery');
+const data = await res.json();
+
+const container = document.getElementById('Gallery');
+container.innerHTML = '';
+
+if (!data.length){
+container.innerHTML = `
+<div class="empty-state">
+<p>No images yet</p>
+<span>Click "Post" to start uploading</span>
+</div>`;
+return;
+}
+
+const grouped = {};
+
+data.forEach(item=>{
+if(!grouped[item.category]) grouped[item.category]=[];
+grouped[item.category].push(item);
+});
+
+Object.keys(grouped).forEach(category=>{
+
+const wrapper = document.createElement("div");
+wrapper.className="category-wrapper";
+
+/* HEADER */
+const header = document.createElement("div");
+header.className="category-header";
+
+const title = document.createElement("h3");
+title.textContent=category;
+
+header.appendChild(title);
+
+if(postMode){
+const uploadBtn=document.createElement("button");
+uploadBtn.innerHTML="＋ Upload";
+uploadBtn.className="upload-btn";
+uploadBtn.onclick=()=>uploadToCategory(category);
+header.appendChild(uploadBtn);
+}
+
+wrapper.appendChild(header);
+
+/* GRID */
+const grid=document.createElement("div");
+grid.className="gallery-grid";
+
+grouped[category].forEach(item=>{
+
+const div=document.createElement("div");
+div.className="gallery-item";
+
+/* IMAGE */
+const img=document.createElement("img");
+img.src=item.image_url;
+img.style.cursor="pointer";
+
+/* CLICK PREVIEW */
+img.onclick=()=>openImageModal(item.image_url);
+
+/* DELETE */
+const overlay=document.createElement("div");
+overlay.className="overlay";
+
+const remove=document.createElement("button");
+remove.textContent="✕";
+remove.className="remove-btn";
+
+remove.onclick=()=>openDeleteModal(item.id);
+
+overlay.appendChild(remove);
+
+div.appendChild(img);
+div.appendChild(overlay);
+
+grid.appendChild(div);
+
+});
+
+wrapper.appendChild(grid);
+container.appendChild(wrapper);
+
+});
+
+}
+
+/* DELETE MODAL */
+function openDeleteModal(id){
+deleteId=id;
+document.getElementById("deleteModal").classList.add("show");
+}
+
+function closeDeleteModal(){
+deleteId=null;
+document.getElementById("deleteModal").classList.remove("show");
+}
+
+document.getElementById("cancelDelete").onclick=closeDeleteModal;
+
+document.getElementById("confirmDelete").onclick=async ()=>{
+if(deleteId){
+await deleteImage(deleteId);
+}
+closeDeleteModal();
+};
+
+/* DELETE */
+async function deleteImage(id){
+await fetch("/gallery/"+id,{method:"DELETE"});
+showToast("Image deleted");
+loadGallery();
+}
+
+/* UPLOAD */
+function uploadToCategory(category){
+
+const input=document.createElement("input");
+input.type="file";
+input.accept="image/*";
+
+input.onchange=async(e)=>{
+
+const file=e.target.files[0];
+if(!file) return;
+
+const formData=new FormData();
+formData.append("image",file);
+formData.append("category",category);
+
+await fetch("/gallery",{method:"POST",body:formData});
+
+showToast("Uploaded to "+category);
+loadGallery();
+};
+
+input.click();
+}
+
+/* IMAGE MODAL */
+function openImageModal(src){
+document.getElementById("modalImage").src = src;
+document.getElementById("imageModal").classList.add("show");
+}
+
+function closeImageModal(){
+document.getElementById("imageModal").classList.remove("show");
+}
+
+/* CLOSE BUTTON */
+document.getElementById("closeImageModal").onclick = closeImageModal;
+
+/* CLICK OUTSIDE */
+document.getElementById("imageModal").onclick = (e)=>{
+if(e.target.id === "imageModal"){
+closeImageModal();
+}
+};
+
+/* ESC KEY */
+document.addEventListener("keydown",(e)=>{
+if(e.key === "Escape"){
+closeImageModal();
+}
+});
+
+/* TOAST */
+function showToast(message){
+const toast=document.getElementById("toast");
+toast.textContent=message;
+toast.classList.add("show");
+
+setTimeout(()=>{
+toast.classList.remove("show");
+},2000);
+}
+
+document.addEventListener("DOMContentLoaded", loadGallery);

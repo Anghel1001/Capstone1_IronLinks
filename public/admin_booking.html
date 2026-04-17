@@ -5,237 +5,84 @@
 <title>Admin Bookings | IronLinks</title>
 
 <link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/admin_booking.css">
 
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
-<style>
-#admin-calendar {
-  max-width: 1100px;
-  margin: 40px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 14px;
-}
-
-.table-wrapper {
-  max-width: 1100px;
-  margin: 40px auto;
-  background: white;
-  border-radius: 14px;
-  padding: 20px;
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-}
-
-th {
-  background: #111;
-  color: #fff;
-}
-
-.status-pending { color: #856404; }
-.status-approved { color: #198754; }
-.status-rejected { color: #dc3545; }
-
-button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #fff;
-  font-size: 13px;
-}
-
-.btn-approve { background: #198754; }
-.btn-reject { background: #dc3545; }
-
-.reference-img{
-width:70px;
-height:70px;
-object-fit:cover;
-border-radius:6px;
-cursor:pointer;
-}
-
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.8);
-justify-content:center;
-align-items:center;
-}
-
-.modal img{
-max-width:80%;
-max-height:80%;
-border-radius:10px;
-}
-
-.modal.show{
-display:flex;
-}
-</style>
 </head>
 
 <body>
 
 <header>
-  <h1>Iron <span>works</span> Admin</h1>
-  <nav>
-    <a href="index.html">view public page</a> |
-    <a href="admin.html">admin profile</a> |
-    <a href="admin_booking.html">Schedules</a>
-  </nav>
+<h1>Galubs <span>Ironworks</span></h1>
+<nav>
+<a href="index.html">View Public Page</a> |
+<a href="admin.html">Admin Profile</a> |
+<a href="admin_booking.html">Schedules</a>
+</nav>
 </header>
 
 <section>
-  <h2 style="text-align:center;">Booking Calendar</h2>
-  <div id="admin-calendar"></div>
+<h2 style="text-align:center;">Booking Calendar</h2>
+
+<div class="calendar-legend">
+  <div class="legend-item"><span class="dot approved"></span> Approved</div>
+  <div class="legend-item"><span class="dot pending"></span> Pending</div>
+  <div class="legend-item"><span class="dot rejected"></span> Rejected</div>
+</div>
+
+<div id="admin-calendar"></div>
 </section>
+
+<div class="table-tabs">
+  <button class="tab-btn active" onclick="switchTab('approved', event)">Approved</button>
+  <button class="tab-btn" onclick="switchTab('pending', event)">Pending</button>
+  <button class="tab-btn" onclick="switchTab('rejected', event)">Rejected</button>
+</div>
 
 <section class="table-wrapper">
-  <h2>All Bookings (Database)</h2>
-  <table id="bookingsTable">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Date</th>
-        <th>Time</th>
-        <th>Status</th>
-        <th>Reference</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<h2 id="tableTitle">Approved Bookings</h2>
+
+<table id="bookingsTable">
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Date</th>
+<th>Time</th>
+<th>Status</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
 </section>
 
-<div id="modal" class="modal" onclick="closeModal()">
+<!-- BOOKING POPUP -->
+<div id="bookingPopup" class="popup">
+<h3 id="popupName"></h3>
+<p id="popupDate"></p>
+<p id="popupTime"></p>
+<p id="popupStatus"></p>
+
+<div class="popup-actions">
+<button id="approveBtn" class="btn-approve">Approve</button>
+<button id="rejectBtn" class="btn-reject">Reject</button>
+</div>
+
+<button class="close-btn" onclick="closePopup()">✕</button>
+</div>
+
+<div id="popupOverlay" class="overlay"></div>
+
+<!-- IMAGE MODAL -->
+<div id="modal" class="modal">
 <img id="modalImg">
 </div>
 
-<script>
-
-async function loadAdmin() {
-
-const res = await fetch("/bookings");
-const bookings = await res.json();
-
-const calendar = new FullCalendar.Calendar(
-document.getElementById("admin-calendar"),
-{
-initialView:"dayGridMonth",
-height:"auto",
-
-events: bookings.map(b=>({
-title:b.name,
-start:b.date,
-color:
-b.status==="approved"?"#198754":
-b.status==="pending"?"#ffc107":
-"#dc3545"
-}))
-});
-
-calendar.render();
-
-const tbody =
-document.querySelector("#bookingsTable tbody");
-
-tbody.innerHTML="";
-
-bookings.forEach(b=>{
-
-let reference="—";
-
-if(b.reference_image_url){
-reference=`
-<img 
-src="${b.reference_image_url}" 
-class="reference-img"
-onclick="openModal('${b.reference_image_url}')"
->
-`;
-}
-
-tbody.innerHTML+=`
-<tr>
-<td>${b.name}</td>
-<td>${b.email}</td>
-<td>${b.phone}</td>
-<td>${b.date}</td>
-<td>${b.time}</td>
-<td class="status-${b.status}">${b.status}</td>
-<td>${reference}</td>
-<td>
-<button class="btn-approve" onclick="approve('${b.id}')">Accept</button>
-<button class="btn-reject" onclick="reject('${b.id}')">Reject</button>
-</td>
-</tr>
-`;
-
-});
-
-}
-
-function openModal(src){
-document.getElementById("modalImg").src=src;
-document.getElementById("modal").classList.add("show");
-}
-
-function closeModal(){
-document.getElementById("modal").classList.remove("show");
-}
-
-async function approve(id){
-
-await fetch(`/bookings/${id}`,{
-method:"PATCH",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-status:"approved"
-})
-});
-
-location.reload();
-}
-
-async function reject(id){
-
-await fetch(`/bookings/${id}`,{
-method:"PATCH",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-status:"rejected"
-})
-});
-
-location.reload();
-}
-
-document.addEventListener("DOMContentLoaded",loadAdmin);
-
-</script>
+<script src="js/admin_booking.js"></script>
 
 </body>
 </html>

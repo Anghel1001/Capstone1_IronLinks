@@ -219,3 +219,77 @@ openBooking()
 }
 
 })  
+
+/* ===============================
+GLOBAL CONTACT POPUP
+================================ */
+
+window.openContact = function(){
+
+let popup =
+document.getElementById("globalContactPopup")
+
+if(!popup){
+
+popup = document.createElement("div")
+
+popup.id = "globalContactPopup"
+
+popup.innerHTML = `
+
+<div class="popup-overlay">
+
+<div class="popup-content">
+
+<button class="close-btn" onclick="closeContact()">✕</button>
+
+<div class="contact-content">
+
+<h2>Contact Us</h2>
+
+<p><strong>📞 Phone:</strong> 0966 360 4814</p>
+
+<p><strong>✉ Email:</strong> email@gabubs.com</p>
+
+<p><strong>📍 Address:</strong>
+<a href="https://www.google.com/maps/place/Apugan,+Irisan,+Baguio+City/@16.418572,120.5589116,18.32z/data=!4m6!3m5!1s0x3391a18e2adc7103:0x689d86cd793451cc!8m2!3d16.4186159!4d120.5595002!16s%2Fg%2F11fx921dg3?entry=ttu&g_ep=EgoyMDI2MDQwOC4wIKXMDSoASAFQAw%3D%3D" 
+target="_blank">
+Apugan, Irisan, Baguio City, Philippines
+</a>
+</p>
+
+<p>
+<a href="https://www.facebook.com/profile.php?id=100047483532832" target="_blank">Facebook</a> |
+<a href="https://www.facebook.com/profile.php?id=100047483532832" target="_blank">Messenger</a>
+</p>
+
+
+
+</div>
+
+</div>
+
+</div>
+
+`
+
+document.body.appendChild(popup)
+
+}
+
+popup.style.display = "flex"
+
+}
+
+
+/* ===============================
+CLOSE CONTACT
+================================ */
+
+window.closeContact = function(){
+
+document
+.getElementById("globalContactPopup")
+.style.display = "none"
+
+}

@@ -1,12 +1,13 @@
 let allBookings = [];
+let currentTab = "approved";
 
-async function loadAdmin() {
+/* INIT */
+async function loadAdmin(){
 
 const res = await fetch("/bookings");
 allBookings = await res.json();
 
-/* ================= CALENDAR ================= */
-
+/* CALENDAR */
 const calendar = new FullCalendar.Calendar(
 document.getElementById("admin-calendar"),
 {
@@ -23,43 +24,65 @@ b.status==="pending"?"#ffc107":
 "#dc3545"
 })),
 
-/* 🔥 CLICK POPUP */
-eventClick: function(info){
+eventClick:function(info){
 
 const b = info.event.extendedProps;
 
 document.getElementById("popupName").textContent = b.name;
-document.getElementById("popupDate").textContent = "Date: " + b.date;
-document.getElementById("popupTime").textContent = "Time: " + formatTime(b.time);
-document.getElementById("popupStatus").textContent = "Status: " + b.status;
+document.getElementById("popupDate").textContent = "Date: "+b.date;
+document.getElementById("popupTime").textContent = "Time: "+formatTime(b.time);
+document.getElementById("popupStatus").textContent = "Status: "+b.status;
 
-document.getElementById("bookingPopup").classList.remove("hidden");
-document.getElementById("popupOverlay").classList.remove("hidden");
+document.getElementById("bookingPopup").classList.add("show");
+document.getElementById("popupOverlay").classList.add("show");
 
-/* BUTTONS */
 document.getElementById("approveBtn").onclick = ()=>approve(b.id);
 document.getElementById("rejectBtn").onclick = ()=>reject(b.id);
 
 }
-
 });
 
 calendar.render();
 
+renderTable();
+}
 
-/* ================= TABLE (APPROVED ONLY) ================= */
+/* TAB SWITCH */
+function switchTab(status,e){
+
+currentTab = status;
+
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+btn.classList.remove("active");
+});
+
+if(e) e.target.classList.add("active");
+
+document.getElementById("tableTitle").textContent =
+status.charAt(0).toUpperCase()+status.slice(1)+" Bookings";
+
+renderTable();
+}
+
+/* TABLE */
+function renderTable(){
 
 const tbody = document.querySelector("#bookingsTable tbody");
-tbody.innerHTML = "";
+tbody.innerHTML="";
 
-const approved = allBookings.filter(b=>b.status==="approved");
+const filtered = allBookings.filter(b=>b.status===currentTab);
 
-approved.forEach(b=>{
+if(!filtered.length){
+tbody.innerHTML=`<tr><td colspan="7">No data</td></tr>`;
+return;
+}
 
-let reference="—";
+filtered.forEach(b=>{
+
+let reference = "—";
 
 if(b.reference_image_url){
-reference=`
+reference = `
 <img src="${b.reference_image_url}" 
 class="reference-img"
 onclick="openModal('${b.reference_image_url}')">
@@ -73,63 +96,75 @@ tbody.innerHTML+=`
 <td>${b.phone}</td>
 <td>${b.date}</td>
 <td>${formatTime(b.time)}</td>
-<td class="status-approved">${b.status}</td>
+<td>${b.status}</td>
 <td>${reference}</td>
 </tr>
 `;
 
 });
-
 }
 
-
-/* ================= POPUP ================= */
-
+/* POPUP */
 function closePopup(){
-document.getElementById("bookingPopup").classList.add("hidden");
-document.getElementById("popupOverlay").classList.add("hidden");
+document.getElementById("bookingPopup").classList.remove("show");
+document.getElementById("popupOverlay").classList.remove("show");
 }
 
+document.getElementById("popupOverlay").onclick = closePopup;
 
-/* ================= APPROVE ================= */
+/* IMAGE MODAL */
+function openModal(src){
+document.getElementById("modalImg").src = src;
+document.getElementById("modal").classList.add("show");
+}
 
+document.getElementById("modal").onclick = ()=>{
+document.getElementById("modal").classList.remove("show");
+};
+
+/* APPROVE */
 async function approve(id){
 
 await fetch(`/bookings/${id}`,{
 method:"PATCH",
 headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({ status:"approved" })
+body:JSON.stringify({status:"approved"})
 });
 
-location.reload();
+allBookings = allBookings.map(b=>{
+if(b.id===id) b.status="approved";
+return b;
+});
+
+closePopup();
+renderTable();
 }
 
-/* ================= REJECT ================= */
-
+/* REJECT */
 async function reject(id){
 
 await fetch(`/bookings/${id}`,{
 method:"PATCH",
 headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({ status:"rejected" })
+body:JSON.stringify({status:"rejected"})
 });
 
-location.reload();
+allBookings = allBookings.map(b=>{
+if(b.id===id) b.status="rejected";
+return b;
+});
+
+closePopup();
+renderTable();
 }
 
-
-/* ================= FORMAT TIME ================= */
-
+/* TIME FORMAT */
 function formatTime(time){
-
-const [hour, minute] = time.split(":");
-const h = parseInt(hour);
-
-const suffix = h >= 12 ? "PM" : "AM";
-const hour12 = ((h + 11) % 12 + 1);
-
-return `${hour12}:${minute} ${suffix}`;
+const [h,m]=time.split(":");
+const hour=parseInt(h);
+const suffix=hour>=12?"PM":"AM";
+const h12=((hour+11)%12+1);
+return `${h12}:${m} ${suffix}`;
 }
-
 
 document.addEventListener("DOMContentLoaded",loadAdmin);

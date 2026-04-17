@@ -25,31 +25,24 @@
 
 <section>
 <h2 style="text-align:center;">Booking Calendar</h2>
-<!-- COLOR LEGEND -->
+
 <div class="calendar-legend">
-
-  <div class="legend-item">
-    <span class="dot approved"></span>
-    <p>Approved</p>
-  </div>
-
-  <div class="legend-item">
-    <span class="dot pending"></span>
-    <p>Pending</p>
-  </div>
-
-  <div class="legend-item">
-    <span class="dot rejected"></span>
-    <p>Rejected</p>
-  </div>
-
+  <div class="legend-item"><span class="dot approved"></span> Approved</div>
+  <div class="legend-item"><span class="dot pending"></span> Pending</div>
+  <div class="legend-item"><span class="dot rejected"></span> Rejected</div>
 </div>
-<div id="admin-calendar"></div>
 
+<div id="admin-calendar"></div>
 </section>
 
+<div class="table-tabs">
+  <button class="tab-btn active" onclick="switchTab('approved', event)">Approved</button>
+  <button class="tab-btn" onclick="switchTab('pending', event)">Pending</button>
+  <button class="tab-btn" onclick="switchTab('rejected', event)">Rejected</button>
+</div>
+
 <section class="table-wrapper">
-<h2>Approved Bookings Only</h2>
+<h2 id="tableTitle">Approved Bookings</h2>
 
 <table id="bookingsTable">
 <thead>
@@ -65,12 +58,10 @@
 </thead>
 <tbody></tbody>
 </table>
-
 </section>
 
 <!-- BOOKING POPUP -->
-<div id="bookingPopup" class="popup hidden">
-
+<div id="bookingPopup" class="popup">
 <h3 id="popupName"></h3>
 <p id="popupDate"></p>
 <p id="popupTime"></p>
@@ -82,10 +73,14 @@
 </div>
 
 <button class="close-btn" onclick="closePopup()">✕</button>
-
 </div>
 
-<div id="popupOverlay" class="overlay hidden" onclick="closePopup()"></div>
+<div id="popupOverlay" class="overlay"></div>
+
+<!-- IMAGE MODAL -->
+<div id="modal" class="modal">
+<img id="modalImg">
+</div>
 
 <script src="js/admin_booking.js"></script>
 

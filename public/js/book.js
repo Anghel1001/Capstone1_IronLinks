@@ -61,8 +61,14 @@ async function handleAuth() {
             alert("Invalid login credentials");
             return;
         }
+        
         localStorage.setItem("user", JSON.stringify(data));
-        loadUser();
+        
+        if (data.email === "admin@ironlinks.com") {
+            window.location.href = "admin_booking.html";
+        } else {
+            loadUser();
+        }
     }
 }
 

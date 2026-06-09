@@ -5,6 +5,7 @@ import path from "path";
 import { createClient } from "@supabase/supabase-js";
 import multer from "multer";
 import OpenAI from "openai";
+import nodemailer from "nodemailer";
 
 const __dirname = path.resolve();
 const app = express();
@@ -39,7 +40,16 @@ const supabase = createClient(
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
-
+// ============================
+// EMAIL TRANSPORTER
+// ============================
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 // ============================
 // HOME
 // ============================
@@ -179,25 +189,115 @@ app.get("/bookings", async (req, res) => {
 // =================================================
 app.patch("/bookings/:id", async (req, res) => {
   try {
+
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, reason } = req.body;
 
     if (!status) {
-      return res.status(400).json({ error: "Status is required" });
+      return res.status(400).json({
+        error: "Status is required"
+      });
     }
 
+    // get booking first
+    const { data: booking, error: fetchError } =
+      await supabase
+      .from("bookings")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    // update status
     const { error } = await supabase
       .from("bookings")
-      .update({ status })
+      .update({
+        status
+      })
       .eq("id", id);
 
     if (error) throw error;
 
-    res.json({ success: true });
+    // ==========================
+    // SEND EMAIL
+    // ==========================
+
+    if (status === "approved") {
+
+      await transporter.sendMail({
+
+        from: process.env.EMAIL_USER,
+
+        to: booking.email,
+
+        subject: "IronLinks Consultation Approved",
+
+        html: `
+          <h2>Booking Approved</h2>
+
+          <p>Hello ${booking.name},</p>
+
+          <p>Your consultation request has been approved.</p>
+
+          <p>
+          <strong>Date:</strong> ${booking.date}<br>
+          <strong>Time:</strong> ${booking.time}
+          </p>
+
+          <p>
+          Thank you for choosing IronLinks.
+          </p>
+        `
+      });
+
+    }
+
+    if (status === "rejected") {
+
+      await transporter.sendMail({
+
+        from: process.env.EMAIL_USER,
+
+        to: booking.email,
+
+        subject: "IronLinks Consultation Rejected",
+
+        html: `
+          <h2>Booking Rejected</h2>
+
+          <p>Hello ${booking.name},</p>
+
+          <p>
+          Unfortunately your consultation request
+          could not be approved.
+          </p>
+
+          <p>
+          <strong>Reason:</strong><br>
+          ${reason || "No reason provided."}
+          </p>
+
+          <p>
+          Please submit another booking request.
+          </p>
+        `
+      });
+
+    }
+
+    res.json({
+      success: true
+    });
 
   } catch (err) {
+
     console.error("❌ Update error:", err);
-    res.status(500).json({ error: "Failed to update booking" });
+
+    res.status(500).json({
+      error: "Failed to update booking"
+    });
+
   }
 });
 

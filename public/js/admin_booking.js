@@ -143,11 +143,21 @@ renderTable();
 /* REJECT */
 async function reject(id){
 
-await fetch(`/bookings/${id}`,{
-method:"PATCH",
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({status:"rejected"})
-});
+    const reason =
+    prompt("Enter rejection reason:");
+    
+    if(!reason) return;
+    
+    await fetch(`/bookings/${id}`,{
+    method:"PATCH",
+    headers:{
+    "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+    status:"rejected",
+    reason
+    })
+    });
 
 allBookings = allBookings.map(b=>{
 if(b.id===id) b.status="rejected";

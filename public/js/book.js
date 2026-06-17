@@ -64,7 +64,7 @@ async function handleAuth() {
         
         localStorage.setItem("user", JSON.stringify(data));
         
-        if (data.email === "admin@ironlinks.com") {
+        if (data.email === "ironlinksadmin@gmail.com") {
             window.location.href = "admin_booking.html";
         } else {
             loadUser();

@@ -115,14 +115,22 @@ if(!auth) return
 
 if(isLoggedIn()){
 
+const user = JSON.parse(localStorage.getItem("user"));
+
+let profileLink = "book.html";
+
+if(user.email === "ironlinksadmin@gmail.com"){
+    profileLink = "admin.html";
+}
+
 auth.innerHTML = `
-<a href="book.html">Profile</a>
+<a href="${profileLink}">Profile</a>
 <a href="#" id="logoutBtn">Logout</a>
-`
+`;
 
 document
 .getElementById("logoutBtn")
-.addEventListener("click", logout)
+.addEventListener("click", logout);
 
 }else{
 

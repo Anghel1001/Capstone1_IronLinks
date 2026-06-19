@@ -159,6 +159,36 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
 
     if (error) throw error;
 
+    // ==========================
+    // SEND EMAIL TO ADMIN
+    // ==========================
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+
+      to: "ironlinksadmin@gmail.com",
+
+      subject: "may kupal na nag book",
+
+      html: `
+        <h2>New Consultation Booking</h2>
+
+        <p>A customer has submitted a booking request.</p>
+
+        <p>
+          <strong>Name:</strong> ${name}<br>
+          <strong>Email:</strong> ${email}<br>
+          <strong>Phone:</strong> ${phone}<br>
+          <strong>Date:</strong> ${date}<br>
+          <strong>Time:</strong> ${time}
+        </p>
+
+        <p>
+          <strong>Request:</strong><br>
+          ${request || "No request provided"}
+        </p>
+      `
+    });
+
     res.send("Booking successful!");
 
   } catch (err) {

@@ -1,3 +1,17 @@
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+    alert("Please login first.");
+    window.location.href = "book.html";
+    throw new Error("Unauthorized");
+}
+
+if (user.email !== "ironlinksadmin@gmail.com") {
+    alert("Access denied.");
+    window.location.href = "index.html";
+    throw new Error("Unauthorized");
+}
+
 let allBookings = [];
 let currentTab = "approved";
 

@@ -1,3 +1,15 @@
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+    alert("Please login first.");
+    window.location.href = "book.html";
+}
+
+if (user.email !== "ironlinksadmin@gmail.com") {
+    alert("Access denied.");
+    window.location.href = "index.html";
+}
+
 let postMode = false;
 let deleteId = null;
 

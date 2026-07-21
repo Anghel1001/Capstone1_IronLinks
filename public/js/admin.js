@@ -143,27 +143,27 @@ loadGallery();
 /* UPLOAD */
 function uploadToCategory(category){
 
-const input=document.createElement("input");
-input.type="file";
-input.accept="image/*";
-
-input.onchange=async(e)=>{
-
-const file=e.target.files[0];
-if(!file) return;
-
-const formData=new FormData();
-formData.append("image",file);
-formData.append("category",category);
-
-await fetch("/gallery",{method:"POST",body:formData});
-
-showToast("Uploaded to "+category);
-loadGallery();
-};
-
-input.click();
-}
+    const input=document.createElement("input");
+    input.type="file";
+    input.accept="image/*";
+    
+    input.onchange=async(e)=>{
+    
+    const file=e.target.files[0];
+    if(!file) return;
+    
+    const formData=new FormData();
+    formData.append("image",file);
+    formData.append("category",category);
+    
+    await fetch("/gallery",{method:"POST",body:formData});
+    
+    showToast("Uploaded to "+category);
+    loadGallery();
+    };
+    
+    input.click();
+    }
 
 /* IMAGE MODAL */
 function openImageModal(src){

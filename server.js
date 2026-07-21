@@ -5,6 +5,7 @@ import path from "path";
 import { createClient } from "@supabase/supabase-js";
 import multer from "multer";
 import OpenAI from "openai";
+import fs from "fs";
 import nodemailer from "nodemailer";
 
 const __dirname = path.resolve();
@@ -40,6 +41,7 @@ const supabase = createClient(
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
+
 // ============================
 // EMAIL TRANSPORTER
 // ============================
@@ -60,7 +62,22 @@ app.get("/", (req, res) => {
 // =================================================
 // CREATE BOOKING (WITH TIME + SUNDAY VALIDATION)
 // =================================================
-app.post("/book", upload.single("reference_image"), async (req, res) => {
+app.post("/book", (req, res, next) => {
+
+  upload.single("reference_image")(req, res, function (err) {
+
+      if (err) {
+          console.log("====== MULTER ERROR ======");
+          console.log(err);
+          console.log("FIELD:", err.field);
+          return res.status(500).send(err.message);
+      }
+
+      next();
+
+  });
+
+}, async (req, res) => {
   try {
     const { name, email, phone, date, time, request } = req.body;
 
@@ -118,31 +135,64 @@ app.post("/book", upload.single("reference_image"), async (req, res) => {
     // ============================
     let imageUrl = null;
 
-    if (req.file) {
-
-      const fileExt =
-      req.file.originalname.split(".").pop();
-      
-      const filePath =
-      `bookings/${Date.now()}.${fileExt}`;
-      
-      const { error: uploadError } =
-      await supabase.storage
-      .from("booking-images")
-      .upload(filePath, req.file.buffer, {
-      contentType: req.file.mimetype
-      });
-      
-      if (uploadError) throw uploadError;
-      
-      imageUrl =
-      supabase.storage
-      .from("booking-images")
-      .getPublicUrl(filePath)
-      .data.publicUrl;
-      
-      }
-
+    // ------------------------------
+    // Uploaded Reference Image
+    // ------------------------------
+    if(req.file){
+    
+        const fileExt = req.file.originalname.split(".").pop();
+    
+        const filePath =
+            `bookings/${Date.now()}-reference.${fileExt}`;
+    
+        const { error: uploadError } =
+            await supabase.storage
+            .from("booking-images")
+            .upload(filePath, req.file.buffer,{
+                contentType:req.file.mimetype
+            });
+    
+        if(uploadError) throw uploadError;
+    
+        imageUrl =
+            supabase.storage
+            .from("booking-images")
+            .getPublicUrl(filePath)
+            .data.publicUrl;
+    }
+    
+    // ------------------------------
+    // AI Generated Image
+    // ------------------------------
+    else if(req.body.generated_image){
+    
+        const base64 =
+            req.body.generated_image.replace(
+                /^data:image\/\w+;base64,/,
+                ""
+            );
+    
+        const buffer =
+            Buffer.from(base64,"base64");
+    
+        const filePath =
+            `bookings/${Date.now()}-generated.png`;
+    
+        const { error: uploadError } =
+            await supabase.storage
+            .from("booking-images")
+            .upload(filePath, buffer,{
+                contentType:"image/png"
+            });
+    
+        if(uploadError) throw uploadError;
+    
+        imageUrl =
+            supabase.storage
+            .from("booking-images")
+            .getPublicUrl(filePath)
+            .data.publicUrl;
+    }
     // ============================
     // INSERT BOOKING
     // ============================
@@ -446,19 +496,30 @@ app.post("/design-finder", upload.single("reference_image"), async (req, res) =>
   let image;
   
   if(req.file){
-  
-  // IMAGE EDIT MODE
-  image = await openai.images.edit({
-  
-  model:"gpt-image-1",
-  
-  image: req.file.buffer,
-  
-  prompt,
-  
-  size:"1024x1024"
-  
-  });
+    console.log("===== FILE RECEIVED =====");
+    console.log(req.file);
+
+    // IMAGE EDIT MODE
+    const file = new File(
+        [req.file.buffer],
+        req.file.originalname,
+        {
+            type: req.file.mimetype
+        }
+    );
+
+    image = await openai.images.edit({
+
+        model:"gpt-image-1",
+
+        image:file,
+
+        prompt,
+
+        size:"1024x1024"
+
+    });
+
   
   }else{
   

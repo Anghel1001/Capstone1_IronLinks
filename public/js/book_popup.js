@@ -32,8 +32,8 @@ function loadUser(){
 
     document.getElementById("userName").textContent = user.name || "-";
     document.getElementById("userEmail").textContent = user.email || "-";
-    document.getElementById("userPhone").textContent = user.phone || "-";
-    document.getElementById("userLocation").textContent = user.location || "-";
+    document.getElementById("userPhone").value = user.phone || "";
+    document.getElementById("userLocation").value = user.location || "";
 }
 
 /* ===============================
@@ -276,29 +276,68 @@ document.getElementById("bookingForm")
 
     formData.append("name", user.name);
     formData.append("email", user.email);
-    formData.append("phone", user.phone);
+    formData.append(
+        "phone",
+        document.getElementById("userPhone").value.trim());
+    formData.append(
+        "location",
+        document.getElementById("userLocation").value.trim());
     formData.append("date", document.getElementById("dateInput").value);
     formData.append("time", e.target.time.value);
     formData.append("request", e.target.request.value);
 
-    await fetch("/book", {
-        method: "POST",
-        body: formData
-    });
+    // Optional uploaded reference image
+    const refFile =
+        document.querySelector("input[name='ref_image']").files[0];
+
+    if(refFile){
+        formData.append("reference_image", refFile);
+    }
+
+// AI Generated Image
+const generatedImage = localStorage.getItem("generatedDesign");
+
+if (generatedImage) {
+
+    const imageResponse = await fetch(generatedImage);
+
+    const blob = await imageResponse.blob();
+
+    formData.append(
+        "reference_image",
+        blob,
+        "generated-design.png"
+    );
+
+}
+console.log("====== FORM DATA ======");
+
+for (const [key, value] of formData.entries()) {
+    console.log(key, value);
+}
+
+const response = await fetch("/book", {
+    method: "POST",
+    body: formData
+});
+
+    if(!response.ok){
+        alert(await response.text());
+        return;
+    }
 
     alert("Booking submitted successfully!");
 
-// 🧹 optional cleanup (prevents old data showing again)
-localStorage.removeItem("generatedDesign");
-localStorage.removeItem("estimatedCost");
+    localStorage.removeItem("generatedDesign");
+    localStorage.removeItem("estimatedCost");
 
-const btn = document.querySelector(".btn-submit");
-btn.textContent = "Booking Confirmed ✓";
-btn.disabled = true;
-btn.style.background = "#27ae60";
+    const btn = document.querySelector(".btn-submit");
+    btn.textContent = "Booking Confirmed ✓";
+    btn.disabled = true;
+    btn.style.background = "#27ae60";
 
-setTimeout(() => {
-    window.close();
-}, 500);
+    setTimeout(()=>{
+        window.close();
+    },500);
 
 });

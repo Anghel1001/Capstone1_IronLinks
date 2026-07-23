@@ -56,7 +56,12 @@ const header = document.createElement("div");
 header.className="category-header";
 
 const title = document.createElement("h3");
-title.textContent=category;
+
+title.innerHTML = `
+${category}
+<br>
+<small>${grouped[category].length} Images</small>
+`;
 
 header.appendChild(title);
 
@@ -143,27 +148,41 @@ loadGallery();
 /* UPLOAD */
 function uploadToCategory(category){
 
-    const input=document.createElement("input");
-    input.type="file";
-    input.accept="image/*";
-    
-    input.onchange=async(e)=>{
-    
-    const file=e.target.files[0];
-    if(!file) return;
-    
-    const formData=new FormData();
-    formData.append("image",file);
-    formData.append("category",category);
-    
-    await fetch("/gallery",{method:"POST",body:formData});
-    
-    showToast("Uploaded to "+category);
-    loadGallery();
+    const input = document.createElement("input");
+
+    input.type = "file";
+    input.accept = "image/*";
+    input.multiple = true;
+
+    input.onchange = async (e)=>{
+
+        const files = e.target.files;
+
+        if(files.length === 0) return;
+
+        for(const file of files){
+
+            const formData = new FormData();
+
+            formData.append("image", file);
+            formData.append("category", category);
+
+            await fetch("/gallery",{
+                method:"POST",
+                body:formData
+            });
+
+        }
+
+        showToast(`${files.length} image(s) uploaded`);
+
+        loadGallery();
+
     };
-    
+
     input.click();
-    }
+
+}
 
 /* IMAGE MODAL */
 function openImageModal(src){

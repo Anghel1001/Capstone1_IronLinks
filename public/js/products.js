@@ -180,7 +180,7 @@ generateBtn?.addEventListener("click", async () => {
 
   if (!description.value.trim() && !referenceImage?.files[0]) {
   alert("Add description or upload image");
-  return;
+  return;z
   }
   
   document.getElementById("placeholder").style.display = "none";

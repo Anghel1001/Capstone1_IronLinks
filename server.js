@@ -212,34 +212,45 @@ app.post("/book", (req, res, next) => {
     // ==========================
     // SEND EMAIL TO ADMIN
     // ==========================
+    try {
+
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+        from: process.env.EMAIL_USER,
 
-      to: "ironlinksadmin@gmail.com",
+        to: "ironlinksadmin@gmail.com",
 
-      subject: "may kupal na nag book",
+        subject: "MAY KUPAL NA NAG BOOK",
 
-      html: `
-        <h2>New Consultation Booking</h2>
+        html: `
+            <h2>New Consultation Booking</h2>
 
-        <p>A customer has submitted a booking request.</p>
+            <p>A customer has submitted a booking request.</p>
 
-        <p>
-          <strong>Name:</strong> ${name}<br>
-          <strong>Email:</strong> ${email}<br>
-          <strong>Phone:</strong> ${phone}<br>
-          <strong>Date:</strong> ${date}<br>
-          <strong>Time:</strong> ${time}
-        </p>
+            <p>
+                <strong>Name:</strong> ${name}<br>
+                <strong>Email:</strong> ${email}<br>
+                <strong>Phone:</strong> ${phone}<br>
+                <strong>Date:</strong> ${date}<br>
+                <strong>Time:</strong> ${time}
+            </p>
 
-        <p>
-          <strong>Request:</strong><br>
-          ${request || "No request provided"}
-        </p>
-      `
+            <p>
+                <strong>Request:</strong><br>
+                ${request || "No request provided"}
+            </p>
+        `
     });
 
-    res.send("Booking successful!");
+} catch (emailError) {
+
+    console.error("Email failed:", emailError);
+
+    // Booking is already saved.
+    // Do NOT stop the request because of email.
+
+}
+
+res.send("Booking successful!");
 
   } catch (err) {
     console.error("❌ Booking error:", err);

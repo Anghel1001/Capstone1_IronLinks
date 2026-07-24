@@ -321,23 +321,34 @@ const response = await fetch("/book", {
     body: formData
 });
 
-    if(!response.ok){
-        alert(await response.text());
-        return;
-    }
+    if (!response.ok) {
+    alert(await response.text());
+    return;
+}
 
-    alert("Booking submitted successfully!");
+// Clear local storage
+localStorage.removeItem("generatedDesign");
+localStorage.removeItem("estimatedCost");
 
-    localStorage.removeItem("generatedDesign");
-    localStorage.removeItem("estimatedCost");
+// Change button
+const btn = document.getElementById("confirmBookingBtn");
 
-    const btn = document.querySelector(".btn-submit");
-    btn.textContent = "Booking Confirmed ✓";
-    btn.disabled = true;
-    btn.style.background = "#27ae60";
+btn.innerHTML = "✓ BOOKING SUBMITTED";
+btn.disabled = true;
+btn.style.background = "#28a745";
+btn.style.cursor = "not-allowed";
 
-    setTimeout(()=>{
-        window.close();
-    },500);
+// Disable all form inputs
+document.querySelectorAll("#bookingForm input, #bookingForm textarea, #bookingForm select")
+    .forEach(el => el.disabled = true);
+
+// Optional message below button
+const msg = document.createElement("p");
+msg.innerHTML =
+    "<strong style='color:#28a745;'>Your consultation request has been submitted successfully.</strong><br>It is now pending approval.";
+msg.style.textAlign = "center";
+msg.style.marginTop = "15px";
+
+btn.parentNode.insertBefore(msg, btn.nextSibling);
 
 });

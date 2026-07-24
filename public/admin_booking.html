@@ -35,14 +35,38 @@
 <div id="admin-calendar"></div>
 </section>
 
-<div class="table-tabs">
-  <button class="tab-btn active" onclick="switchTab('approved', event)">Approved</button>
-  <button class="tab-btn" onclick="switchTab('pending', event)">Pending</button>
-  <button class="tab-btn" onclick="switchTab('rejected', event)">Rejected</button>
+<div class="filter-container">
+
+    <div class="toolbar">
+
+    <div class="filter-group">
+        <label for="statusFilter">Status</label>
+
+        <select id="statusFilter" onchange="renderTable()">
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+        </select>
+    </div>
+
+    <div class="search-group">
+        <label for="searchBooking">Search</label>
+
+        <input
+            type="text"
+            id="searchBooking"
+            placeholder="Search customer..."
+            onkeyup="renderTable()">
+    </div>
+
+</div>
+</select>
+
 </div>
 
 <section class="table-wrapper">
-<h2 id="tableTitle">Approved Bookings</h2>
+<h2 id="tableTitle">Bookings</h2>
 
 <table id="bookingsTable">
 <thead>
@@ -81,6 +105,12 @@
 <div id="modal" class="modal">
 <img id="modalImg">
 </div>
+
+<input
+    type="text"
+    id="searchBooking"
+    placeholder="Search by name..."
+    onkeyup="renderTable()">
 
 <script src="js/admin_booking.js"></script>
 

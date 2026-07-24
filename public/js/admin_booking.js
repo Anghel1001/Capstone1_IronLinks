@@ -13,13 +13,18 @@ if (user.email !== "ironlinksadmin@gmail.com") {
 }
 
 let allBookings = [];
-let currentTab = "approved";
+
 
 /* INIT */
 async function loadAdmin(){
 
 const res = await fetch("/bookings");
 allBookings = await res.json();
+
+// Sort by date then time
+allBookings.sort((a, b) => {
+    return new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`);
+});
 
 /* CALENDAR */
 const calendar = new FullCalendar.Calendar(
@@ -28,14 +33,13 @@ document.getElementById("admin-calendar"),
 initialView:"dayGridMonth",
 height:"auto",
 
-events: allBookings.map(b=>({
-title:b.name,
-start:b.date,
-extendedProps:b,
-color:
-b.status==="approved"?"#198754":
-b.status==="pending"?"#ffc107":
-"#dc3545"
+events: allBookings
+.filter(b => b.status === "pending")
+.map(b => ({
+    title: `${b.name}\n${formatTime(b.time)}`,
+    start: b.date,
+    extendedProps: b,
+    color: "#ffc107"
 })),
 
 eventClick:function(info){
@@ -61,63 +65,83 @@ calendar.render();
 renderTable();
 }
 
-/* TAB SWITCH */
-function switchTab(status,e){
-
-currentTab = status;
-
-document.querySelectorAll(".tab-btn").forEach(btn=>{
-btn.classList.remove("active");
-});
-
-if(e) e.target.classList.add("active");
-
-document.getElementById("tableTitle").textContent =
-status.charAt(0).toUpperCase()+status.slice(1)+" Bookings";
-
-renderTable();
-}
-
 /* TABLE */
 function renderTable(){
 
-const tbody = document.querySelector("#bookingsTable tbody");
-tbody.innerHTML="";
+    const tbody = document.querySelector("#bookingsTable tbody");
+    tbody.innerHTML = "";
 
-const filtered = allBookings.filter(b=>b.status===currentTab);
+    const status = document.getElementById("statusFilter").value;
+    const keyword = document
+        .getElementById("searchBooking")
+        .value
+        .toLowerCase();
 
-if(!filtered.length){
-tbody.innerHTML=`<tr><td colspan="7">No data</td></tr>`;
-return;
+    // Change table title
+    document.getElementById("tableTitle").textContent =
+        status === "all"
+            ? "All Bookings"
+            : status.charAt(0).toUpperCase() + status.slice(1) + " Bookings";
+
+    // Copy bookings array
+    let filtered = [...allBookings];
+
+    // Filter by status
+    if(status !== "all"){
+        filtered = filtered.filter(b => b.status === status);
+    }
+
+    // Search by name
+    if(keyword){
+        filtered = filtered.filter(b =>
+            b.name.toLowerCase().includes(keyword)
+        );
+    }
+
+    // Latest first (newest date & time)
+    filtered.sort((a,b)=>{
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    if(filtered.length === 0){
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7">No data</td>
+            </tr>
+        `;
+        return;
+    }
+
+    filtered.forEach(b=>{
+
+        let reference = "—";
+
+        if(b.reference_image_url){
+            reference = `
+                <img src="${b.reference_image_url}"
+                     class="reference-img"
+                     onclick="openModal('${b.reference_image_url}')">
+            `;
+        }
+
+        tbody.innerHTML += `
+        <tr>
+            <td>${b.name}</td>
+            <td>${b.email}</td>
+            <td>${b.phone}</td>
+            <td>${b.date}</td>
+            <td>${formatTime(b.time)}</td>
+            <td>
+            <span class="status-badge ${b.status}">
+             ${b.status}
+            </span>
+            </td>
+            <td>${reference}</td>
+        </tr>
+        `;
+    });
+
 }
-
-filtered.forEach(b=>{
-
-let reference = "—";
-
-if(b.reference_image_url){
-reference = `
-<img src="${b.reference_image_url}" 
-class="reference-img"
-onclick="openModal('${b.reference_image_url}')">
-`;
-}
-
-tbody.innerHTML+=`
-<tr>
-<td>${b.name}</td>
-<td>${b.email}</td>
-<td>${b.phone}</td>
-<td>${b.date}</td>
-<td>${formatTime(b.time)}</td>
-<td>${b.status}</td>
-<td>${reference}</td>
-</tr>
-`;
-
-});
-}
-
 /* POPUP */
 function closePopup(){
 document.getElementById("bookingPopup").classList.remove("show");
@@ -184,11 +208,7 @@ renderTable();
 
 /* TIME FORMAT */
 function formatTime(time){
-const [h,m]=time.split(":");
-const hour=parseInt(h);
-const suffix=hour>=12?"PM":"AM";
-const h12=((hour+11)%12+1);
-return `${h12}:${m} ${suffix}`;
+    return time;
 }
 
 document.addEventListener("DOMContentLoaded",loadAdmin);

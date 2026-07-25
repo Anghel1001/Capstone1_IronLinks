@@ -34,13 +34,15 @@ initialView:"dayGridMonth",
 height:"auto",
 
 events: allBookings
-.filter(b => b.status === "pending")
-.map(b => ({
-    title: `${b.name}\n${formatTime(b.time)}`,
-    start: b.date,
-    extendedProps: b,
-    color: "#ffc107"
-})),
+    .filter(b => b.status === "approved" || b.status === "pending")
+    .map(b => ({
+        title: `${b.name}\n${formatTime(b.time)}`,
+        start: b.date,
+        extendedProps: b,
+        color: b.status === "approved"
+            ? "#198754"
+            : "#f7CB73"
+    })),
 
 eventClick:function(info){
 

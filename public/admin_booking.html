@@ -71,9 +71,77 @@
 <table id="bookingsTable">
 <thead>
 <tr>
-<th>Name</th>
-<th>Email</th>
-<th>Phone</th>
+<th>
+    Name
+
+    <div class="filter">
+
+        <button class="filter-btn">▼</button>
+
+        <div class="filter-menu">
+
+             <div onclick="sortBookings(null)">
+            ↺ Default
+             </div>
+
+             <div onclick="sortBookings('name','asc')">
+            ↑ Sort A → Z
+             </div>
+
+             <div onclick="sortBookings('name','desc')">
+            ↓ Sort Z → A
+             </div>
+
+        </div>
+
+    </div>
+
+</th>  
+<th>
+    Email
+
+    <div class="filter">
+
+        <button class="filter-btn">▼</button>
+
+        <div class="filter-menu">
+
+            <div onclick="sortBookings('email','asc')">
+                ↑ Sort A → Z
+            </div>
+
+            <div onclick="sortBookings('email','desc')">
+                ↓ Sort Z → A
+            </div>
+
+        </div>
+
+    </div>
+
+</th>
+
+<th>
+    Phone
+
+    <div class="filter">
+
+        <button class="filter-btn">▼</button>
+
+        <div class="filter-menu">
+
+            <div onclick="sortBookings('phone','asc')">
+                ↑ Lowest → Highest
+            </div>
+
+            <div onclick="sortBookings('phone','desc')">
+                ↓ Highest → Lowest
+            </div>
+
+        </div>
+
+    </div>
+
+</th>
 <th>Date</th>
 <th>Time</th>
 <th>Status</th>

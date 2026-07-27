@@ -270,4 +270,48 @@
     background:#f8d7da;
     color:#721c24;
 }
+
+/* ===== Sort Dropdown ===== */
+
+.filter{
+    position:relative;
+    display:inline-block;
+}
+
+.filter-btn{
+    background:none;
+    border:none;
+    color:white;
+    cursor:pointer;
+    font-size:10px;
+    margin-left:5px;
+}
+
+.filter-menu{
+    display:none;
+    position:absolute;
+    top:22px;
+    right:0;
+    background:#fff;
+    color:#333;
+    min-width:170px;
+    border-radius:8px;
+    box-shadow:0 5px 15px rgba(0,0,0,.2);
+    z-index:9999;
+    overflow:hidden;
+}
+
+.filter-menu.show{
+    display:block;
+}
+
+.filter-menu div{
+    padding:10px 15px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.filter-menu div:hover{
+    background:#f3f3f3;
+}
     

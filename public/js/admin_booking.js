@@ -13,6 +13,8 @@ if (user.email !== "ironlinksadmin@gmail.com") {
 }
 
 let allBookings = [];
+let currentSortField = null;
+let currentSortDirection = "asc";
 
 
 /* INIT */
@@ -100,10 +102,44 @@ function renderTable(){
         );
     }
 
-    // Latest first (newest date & time)
+    // Apply sorting
+if(currentSortField){
+
+    filtered.sort((a,b)=>{
+
+        let valueA = a[currentSortField];
+        let valueB = b[currentSortField];
+
+        if(currentSortField === "phone"){
+
+            valueA = Number(valueA.replace(/\D/g,""));
+            valueB = Number(valueB.replace(/\D/g,""));
+
+        }else{
+
+            valueA = valueA.toLowerCase();
+            valueB = valueB.toLowerCase();
+
+        }
+
+        if(valueA < valueB)
+            return currentSortDirection === "asc" ? -1 : 1;
+
+        if(valueA > valueB)
+            return currentSortDirection === "asc" ? 1 : -1;
+
+        return 0;
+
+    });
+
+}else{
+
+    // Default sorting
     filtered.sort((a,b)=>{
         return new Date(b.created_at) - new Date(a.created_at);
     });
+
+}
 
     if(filtered.length === 0){
         tbody.innerHTML = `
@@ -214,3 +250,59 @@ function formatTime(time){
 }
 
 document.addEventListener("DOMContentLoaded",loadAdmin);
+
+// ===============================
+// SORT DROPDOWN
+// ===============================
+
+document.querySelectorAll(".filter-btn").forEach(button=>{
+
+    button.addEventListener("click",function(e){
+
+        e.stopPropagation();
+
+        document.querySelectorAll(".filter-menu").forEach(menu=>{
+
+            if(menu!==this.nextElementSibling)
+                menu.classList.remove("show");
+
+        });
+
+        this.nextElementSibling.classList.toggle("show");
+
+    });
+
+});
+
+document.addEventListener("click",()=>{
+
+    document.querySelectorAll(".filter-menu").forEach(menu=>{
+
+        menu.classList.remove("show");
+
+    });
+
+});
+
+
+// ===============================
+// SORT FUNCTION
+// ===============================
+
+function sortBookings(field, direction){
+
+    if(field === null){
+
+        currentSortField = null;
+        currentSortDirection = "asc";
+
+    }else{
+
+        currentSortField = field;
+        currentSortDirection = direction;
+
+    }
+
+    renderTable();
+
+}

@@ -59,7 +59,7 @@ document.getElementById("bookingPopup").classList.add("show");
 document.getElementById("popupOverlay").classList.add("show");
 
 document.getElementById("approveBtn").onclick = ()=>approve(b.id);
-document.getElementById("rejectBtn").onclick = ()=>reject(b.id);
+document.getElementById("rejectBtn").onclick = () => rejectBooking(b.id);
 
 }
 });
@@ -207,41 +207,29 @@ headers:{ "Content-Type":"application/json" },
 body:JSON.stringify({status:"approved"})
 });
 
-allBookings = allBookings.map(b=>{
-if(b.id===id) b.status="approved";
-return b;
-});
+const res = await fetch("/bookings");
+allBookings = await res.json();
 
 closePopup();
-renderTable();
+await loadAdmin();
 }
 
 /* REJECT */
-async function reject(id){
+async function rejectBooking(id) {
 
-    const reason =
-    prompt("Enter rejection reason:");
-    
-    if(!reason) return;
-    
-    await fetch(`/bookings/${id}`,{
-    method:"PATCH",
-    headers:{
-    "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-    status:"rejected",
-    reason
-    })
+    await fetch(`/bookings/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            status: "rejected",
+            reason: "Rejected by the administrator."
+        })
     });
 
-allBookings = allBookings.map(b=>{
-if(b.id===id) b.status="rejected";
-return b;
-});
-
-closePopup();
-renderTable();
+    closePopup();
+    await loadAdmin();
 }
 
 /* TIME FORMAT */

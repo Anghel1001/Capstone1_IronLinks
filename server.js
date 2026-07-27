@@ -116,18 +116,21 @@ app.post("/book", (req, res, next) => {
     }
 
     // ============================
-    // 🚫 PREVENT DOUBLE BOOKING
+    // 🚫 BLOCK ONLY IF ALREADY APPROVED
     // ============================
-    const { data: existing = [], error: checkError } = await supabase
+    const { data: existingApproved = [], error: checkError } = await supabase
       .from("bookings")
-      .select("*")
+      .select("id")
       .eq("date", date)
-      .eq("time", time);
+      .eq("time", time)
+      .eq("status", "approved");
 
     if (checkError) throw checkError;
 
-    if (existing.length > 0) {
-      return res.status(400).send("This date and time is already booked.");
+    if (existingApproved.length > 0) {
+      return res.status(400).send(
+        "This consultation slot is no longer available because another booking has already been approved."
+      );
     }
 
     // ============================
@@ -301,14 +304,18 @@ app.patch("/bookings/:id", async (req, res) => {
     if (fetchError) throw fetchError;
 
     // update status
-    const { error } = await supabase
-      .from("bookings")
-      .update({
-        status
-      })
-      .eq("id", id);
+    if (status !== "approved") {
 
-    if (error) throw error;
+  const { error } = await supabase
+    .from("bookings")
+    .update({
+    status
+    })
+    .eq("id", id);
+
+  if (error) throw error;
+
+}
 
     // ==========================
     // SEND EMAIL
@@ -316,33 +323,101 @@ app.patch("/bookings/:id", async (req, res) => {
 
     if (status === "approved") {
 
+  // Approve selected booking
+  await supabase
+    .from("bookings")
+    .update({ status: "approved" })
+    .eq("id", id);
+
+  // Get other pending bookings first
+const { data: rejectedBookings, error: fetchOthersError } = await supabase
+  .from("bookings")
+  .select("*")
+  .eq("date", booking.date)
+  .eq("time", booking.time)
+  .eq("status", "pending")
+  .neq("id", id);
+
+if (fetchOthersError) throw fetchOthersError;
+
+// Update them to rejected
+const { error: rejectError } = await supabase
+  .from("bookings")
+  .update({
+    status: "rejected"
+    })
+  .eq("date", booking.date)
+  .eq("time", booking.time)
+  .eq("status", "pending")
+  .neq("id", id);
+
+if (rejectError) throw rejectError;
+
+  if (rejectError) throw rejectError;
+
+  // Send approval email
+  await transporter.sendMail({
+
+    from: process.env.EMAIL_USER,
+
+    to: booking.email,
+
+    subject: "IronLinks Consultation Approved",
+
+    html: `
+      <h2>Booking Approved</h2>
+
+      <p>Hello ${booking.name},</p>
+
+      <p>Your consultation request has been approved.</p>
+
+      <p>
+      <strong>Date:</strong> ${booking.date}<br>
+      <strong>Time:</strong> ${booking.time}
+      </p>
+
+      <p>Thank you for choosing IronLinks.</p>
+    `
+  });
+
+  // Send rejection emails to the others
+  if (rejectedBookings && rejectedBookings.length > 0) {
+
+    for (const customer of rejectedBookings) {
+
       await transporter.sendMail({
 
         from: process.env.EMAIL_USER,
 
-        to: booking.email,
+        to: customer.email,
 
-        subject: "IronLinks Consultation Approved",
+        subject: "IronLinks Consultation Rejected",
 
         html: `
-          <h2>Booking Approved</h2>
+          <h2>Booking Rejected</h2>
 
-          <p>Hello ${booking.name},</p>
-
-          <p>Your consultation request has been approved.</p>
+          <p>Hello ${customer.name},</p>
 
           <p>
-          <strong>Date:</strong> ${booking.date}<br>
-          <strong>Time:</strong> ${booking.time}
+          Unfortunately, your consultation request has been declined.
           </p>
 
           <p>
-          Thank you for choosing IronLinks.
+          <strong>Reason:</strong><br>
+          This consultation request was automatically declined because another booking for the same consultation slot was approved first.
+          </p>
+
+          <p>
+          Please submit another booking request if you would like to schedule a different consultation time.
           </p>
         `
       });
 
     }
+
+  }
+
+}
 
     if (status === "rejected") {
 
@@ -366,7 +441,6 @@ app.patch("/bookings/:id", async (req, res) => {
 
           <p>
           <strong>Reason:</strong><br>
-          ${reason || "No reason provided."}
           </p>
 
           <p>

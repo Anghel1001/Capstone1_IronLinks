@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-/* ========================================
-RESTORE TAB FROM URL
-======================================== */
+/* RESTORE TAB FROM URL */
 
 const params = new URLSearchParams(window.location.search);
 const tab = params.get("tab");
@@ -24,9 +22,7 @@ document.getElementById(tab)
 }
 
 
-/* ========================================
-TAB SWITCHING
-======================================== */
+/* TAB SWITCHING */
 
 const tabs = document.querySelectorAll(".product-tab");
 const sections = document.querySelectorAll(".product-tab-content");
@@ -47,9 +43,7 @@ document.getElementById(target).classList.add("active");
 
 });
   
-  /* ========================================
-  STYLE SWITCHING
-  ======================================== */
+  /* STYLE SWITCHING */
   
   const styleButtons = document.querySelectorAll(".style-btn");
   
@@ -80,9 +74,7 @@ document.getElementById(target).classList.add("active");
   });
   
   
-  /* ========================================
-  3D VIEW
-  ======================================== */
+  /* 3D VIEW */
   
   document.querySelectorAll(".view3d").forEach(button => {
   
@@ -108,9 +100,7 @@ document.getElementById(target).classList.add("active");
   });
   
   
-  /* ========================================
-  QR MODAL
-  ======================================== */
+  /* QR MODAL */
   
   const qrModal = document.getElementById("qrModal");
   const qrImage = document.getElementById("qrImage");
@@ -158,9 +148,7 @@ qrModal.style.display = "flex";
   });
   
   
-  /* ========================================
-  GENERATE DESIGN
-  ======================================== */
+  /* GENERATE DESIGN */
   
   let generatedImage = null;
   
@@ -221,9 +209,7 @@ generateBtn?.addEventListener("click", async () => {
   });
   
   
-  /* ========================================
-  SAVE DESIGN
-  ======================================== */
+  /* SAVE DESIGN */
   
   document
   .getElementById("saveDesign")
@@ -249,9 +235,7 @@ generateBtn?.addEventListener("click", async () => {
   });
   
   
-  /* ========================================
-  COST ESTIMATOR
-  ======================================== */
+  /* COST ESTIMATOR */
   
   const width =
   document.getElementById("width");
@@ -313,7 +297,7 @@ if(storedCost){
     localStorage.setItem("estimatedCost", storedCost);
 }
 
-// ✅ SAVE GENERATED IMAGE
+// SAVE GENERATED IMAGE
 if(generatedImage){
     localStorage.setItem("generatedDesign", generatedImage);
 }

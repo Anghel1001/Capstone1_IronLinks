@@ -101,9 +101,7 @@ setStep(2);
 });
 
 
-/* ========================================
-   SELECT CORNERS
-======================================== */
+// SELECT CORNERS 
 
 canvas.addEventListener("click", (e)=>{
 
@@ -125,9 +123,7 @@ redraw();
 });
 
 
-/* ========================================
-   REDRAW
-======================================== */
+// REDRAW 
 
 function redraw(){
 
@@ -147,9 +143,7 @@ ctx.fill();
 }
 
 
-/* ========================================
-PLACE MODEL
-======================================== */
+// PLACE MODEL 
 
 placeBtn.addEventListener("click",()=>{
 
@@ -177,7 +171,6 @@ viewer.src = modelPath;
 viewer.setAttribute("camera-controls","");
 viewer.setAttribute("auto-rotate","");
 viewer.setAttribute("shadow-intensity","1");
-/*------------------------------------------------ */
 viewer.setAttribute("camera-orbit", "0deg 75deg auto");
 viewer.setAttribute("field-of-view", "20deg");
 viewer.setAttribute("min-camera-orbit", "auto auto auto");
@@ -186,7 +179,7 @@ viewer.setAttribute("camera-controls", "");
 viewer.setAttribute("interaction-prompt", "none");
 viewer.setAttribute("camera-target", "0m 0m 0m");
 viewer.setAttribute("scale", "1 1 1");
-/*------------------------------------------------ */
+
 
 viewer.style.position = "absolute";
 
@@ -214,9 +207,7 @@ setStep(3);
 });
 
 
-/* ========================================
-   RESET
-======================================== */
+// RESET 
 
 resetBtn.addEventListener("click",()=>{
 
@@ -234,9 +225,7 @@ ctx.drawImage(img,0,0,canvas.width,canvas.height);
 });
 
 
-/* ========================================
-   Simple memory back button
-======================================== */
+// Simple memory back button 
 
 function goBack(){
 

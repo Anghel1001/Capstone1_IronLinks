@@ -32,9 +32,7 @@ link.classList.add("active");
 
 });
 
-/* ===============================
-PROFILE DROPDOWN
-================================ */
+// PROFILE DROPDOWN 
 
 function toggleProfileMenu(){
 
@@ -60,9 +58,7 @@ document
 })
 
 
-/* ===============================
-PROFILE CIRCLE
-================================ */
+// PROFILE CIRCLE 
 
 function loadProfileCircle(){
 
@@ -93,18 +89,14 @@ user.name.charAt(0).toUpperCase()
 }
 
 
-/* ===============================
-LOGIN CHECK
-================================ */
+// LOGIN CHECK 
 
 function isLoggedIn(){
 return localStorage.getItem("user") !== null
 }
 
 
-/* ===============================
-AUTH MENU (LOGIN / LOGOUT)
-================================ */
+// AUTH MENU (LOGIN,LOGOUT) 
 
 function loadAuthMenu(){
 
@@ -143,9 +135,7 @@ auth.innerHTML = `
 }
 
 
-/* ===============================
-LOGOUT (GLOBAL)
-================================ */
+// LOGOUT (GLOBAL) 
 
 window.logout = function(){
 
@@ -156,9 +146,7 @@ window.location.href = "index.html"
 }
 
 
-/* ===============================
-GLOBAL BOOKING POPUP
-================================ */
+// GLOBAL BOOKING POPUP 
 
 window.openBooking = function(){
 
@@ -203,9 +191,7 @@ popup.style.display = "flex"
 }
 
 
-/* ===============================
-CLOSE BOOKING
-================================ */
+// CLOSE BOOKING 
 
 window.closeBooking = function(){
 
@@ -216,9 +202,7 @@ document
 }
 
 
-/* ===============================
-GLOBAL BOOKING BUTTONS
-================================ */
+// GLOBAL BOOKING BUTTONS 
 
 document.addEventListener("click", function(e){
 
@@ -228,9 +212,7 @@ openBooking()
 
 })  
 
-/* ===============================
-GLOBAL CONTACT POPUP
-================================ */
+// GLOBAL CONTACT POPUP 
 
 window.openContact = function(){
 
@@ -290,9 +272,7 @@ popup.style.display = "flex"
 }
 
 
-/* ===============================
-CLOSE CONTACT
-================================ */
+// CLOSE CONTACT 
 
 window.closeContact = function(){
 

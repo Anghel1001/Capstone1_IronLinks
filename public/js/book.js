@@ -5,11 +5,9 @@ const { createClient } = supabase;
 const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
 let isLogin = true;
-let editMode = false; // Fixed: Declared editMode variable 
+let editMode = false; 
 
-/* ===============================
-   AUTH SYSTEM TOGGLE
-   ================================ */
+// AUTH SYSTEM TOGGLE 
 function toggleAuth() {
     isLogin = !isLogin;
     document.getElementById("authTitle").textContent = isLogin ? "Login" : "Register";
@@ -152,9 +150,7 @@ async function loadPastConsultations(email) {
     });
 }
 
-/* ===============================
-   FIXED CALENDAR INITIALIZATION
-   ================================ */
+// FIXED CALENDAR INITIALIZATION 
 async function initCalendar() {
     const { data: bookings } = await supabaseClient.from("bookings").select("*");
     const dateMap = {};

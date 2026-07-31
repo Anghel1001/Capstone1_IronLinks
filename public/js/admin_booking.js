@@ -17,7 +17,7 @@ let currentSortField = null;
 let currentSortDirection = "asc";
 
 
-/* INIT */
+// INIT 
 async function loadAdmin(){
 
 const res = await fetch("/bookings");
@@ -28,7 +28,7 @@ allBookings.sort((a, b) => {
     return new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`);
 });
 
-/* CALENDAR */
+// CALENDAR 
 const calendar = new FullCalendar.Calendar(
 document.getElementById("admin-calendar"),
 {
@@ -69,7 +69,7 @@ calendar.render();
 renderTable();
 }
 
-/* TABLE */
+// TABLE 
 function renderTable(){
 
     const tbody = document.querySelector("#bookingsTable tbody");
@@ -180,7 +180,7 @@ if(currentSortField){
     });
 
 }
-/* POPUP */
+// POPUP 
 function closePopup(){
 document.getElementById("bookingPopup").classList.remove("show");
 document.getElementById("popupOverlay").classList.remove("show");
@@ -188,7 +188,7 @@ document.getElementById("popupOverlay").classList.remove("show");
 
 document.getElementById("popupOverlay").onclick = closePopup;
 
-/* IMAGE MODAL */
+// IMAGE MODAL 
 function openModal(src){
 document.getElementById("modalImg").src = src;
 document.getElementById("modal").classList.add("show");
@@ -198,7 +198,7 @@ document.getElementById("modal").onclick = ()=>{
 document.getElementById("modal").classList.remove("show");
 };
 
-/* APPROVE */
+// APPROVE 
 async function approve(id){
 
 await fetch(`/bookings/${id}`,{
@@ -214,7 +214,7 @@ closePopup();
 await loadAdmin();
 }
 
-/* REJECT */
+// REJECT 
 async function rejectBooking(id) {
 
     await fetch(`/bookings/${id}`, {
@@ -232,16 +232,14 @@ async function rejectBooking(id) {
     await loadAdmin();
 }
 
-/* TIME FORMAT */
+// TIME FORMAT 
 function formatTime(time){
     return time;
 }
 
 document.addEventListener("DOMContentLoaded",loadAdmin);
 
-// ===============================
 // SORT DROPDOWN
-// ===============================
 
 document.querySelectorAll(".filter-btn").forEach(button=>{
 
@@ -272,10 +270,7 @@ document.addEventListener("click",()=>{
 
 });
 
-
-// ===============================
 // SORT FUNCTION
-// ===============================
 
 function sortBookings(field, direction){
 

@@ -301,9 +301,7 @@ localStorage.setItem("estimatedCost", formattedCost);
   height?.addEventListener("input",calculate);
   type?.addEventListener("change",calculate);
 
-  /* ========================================
-PROCEED BOOKING
-======================================== */
+  //PROCEED BOOKING 
 
 document
 .getElementById("proceedBooking")
@@ -324,9 +322,7 @@ openBooking();
 
 });
   
-  /* ========================================
-PHOTO VIEW
-======================================== */
+  // PHOTO VIEW 
 
 document.querySelectorAll(".viewScale")
 .forEach(button => {

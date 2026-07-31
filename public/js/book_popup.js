@@ -244,16 +244,12 @@ function openTimeModal(date){
     });
 }
 
-/* ===============================
-   CLOSE MODAL
-=============================== */
+/* CLOSE MODAL */
 function closeTimeModal(){
     document.getElementById("timeModal").classList.add("hidden");
 }
 
-/* ===============================
-   FORMAT TIME
-=============================== */
+/* FORMAT TIME */
 function formatTime(time){
     const [h,m] = time.split(":");
     const hour = parseInt(h);
@@ -262,9 +258,7 @@ function formatTime(time){
     return `${hour12}:${m} ${suffix}`;
 }
 
-/* ===============================
-   SUBMIT
-=============================== */
+/* SUBMIT*/
 document.getElementById("bookingForm")
 .addEventListener("submit", async function(e){
 

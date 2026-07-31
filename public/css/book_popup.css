@@ -1,6 +1,4 @@
-/* ===============================
-   VARIABLES
-=============================== */
+/* VARIABLES */
 :root {
     --iron: #1a1a1a;
     --border-color: #dddddd;
@@ -9,9 +7,7 @@
     --pending: #f39c12;
 }
 
-/* ===============================
-   LEGEND
-=============================== */
+/* LEGEND */
 .legend {
     display: flex;
     justify-content: center;
@@ -38,9 +34,7 @@
 .box-pending { background: #fd7e14; }
 .box-selected { background: #28a745; }
 
-/* ===============================
-   LAYOUT
-=============================== */
+/* LAYOUT */
 .book-section {
     max-width: 900px;
     margin: 20px auto;
@@ -57,9 +51,7 @@ h2 {
     text-transform: uppercase;
 }
 
-/* ===============================
-   CALENDAR
-=============================== */
+/* CALENDAR */
 #calendar {
     background: #fafafa;
     padding: 10px;
@@ -112,9 +104,7 @@ h2 {
     background: #fff9f0;
 }
 
-/* ===============================
-   TIME SLOTS
-=============================== */
+/* TIME SLOTS */
 #timeSlots {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -154,9 +144,7 @@ h2 {
     cursor: not-allowed;
 }
 
-/* ===============================
-   MODAL
-=============================== */
+/* MODAL */
 .time-modal-overlay {
     position: fixed;
     top: 0;
@@ -186,9 +174,7 @@ h2 {
     overflow-y: auto;
 }
 
-/* ===============================
-   FORM
-=============================== */
+/* FORM */
 .book-form {
     padding: 15px;
     margin-top: 20px;
@@ -209,9 +195,7 @@ h2 {
     font-size: 13px;
 }
 
-/* ===============================
-   BUTTON
-=============================== */
+/* BUTTON */
 .btn-submit {
     width: 100%;
     background: var(--iron);
@@ -229,9 +213,7 @@ h2 {
     background: #333;
 }
 
-/* ===============================
-   MODAL HEADER
-=============================== */
+/* MODAL HEADER */
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -258,9 +240,7 @@ h2 {
     background: #444;
 }
 
-/* ===============================
-   IMAGE PREVIEW
-=============================== */
+/* IMAGE PREVIEW */
 #generatedPreview {
     margin: 20px 0;
     padding: 15px;
@@ -275,9 +255,7 @@ h2 {
     object-fit: contain;
 }
 
-/* ===============================
-   UTIL
-=============================== */
+/* UTIL */
 .hidden {
     display: none !important;
 }

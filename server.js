@@ -12,39 +12,35 @@ const __dirname = path.resolve();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ============================
 // MULTER CONFIG (MEMORY ONLY)
-// ============================
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-// ============================
 // MIDDLEWARE
-// ============================
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// ============================
+
 // SUPABASE CLIENT (SERVICE ROLE)
-// ============================
+
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// ============================
 // OPENAI CLIENT
-// ============================
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-// ============================
 // EMAIL TRANSPORTER
-// ============================
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -52,16 +48,15 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS
   }
 });
-// ============================
+
 // HOME
-// ============================
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// =================================================
-// CREATE BOOKING (WITH TIME + SUNDAY VALIDATION)
-// =================================================
+// CREATE BOOKING (WITH TIME)
+
 app.post("/book", (req, res, next) => {
 
   upload.single("reference_image")(req, res, function (err) {
@@ -85,9 +80,8 @@ app.post("/book", (req, res, next) => {
       return res.status(400).send("Please fill in all required fields.");
     }
 
-    // ============================
-    // 🚫 BLOCK SUNDAYS
-    // ============================
+    // BLOCK SUNDAYS
+    
     const selectedDate = new Date(date);
     const day = selectedDate.getDay(); // 0 = Sunday
 
@@ -95,9 +89,8 @@ app.post("/book", (req, res, next) => {
       return res.status(400).send("We are closed on Sundays.");
     }
 
-    // ============================
-    // ⏰ ALLOWED TIME SLOTS ONLY
-    // ============================
+    //  ALLOWED TIME SLOTS ONLY
+    
     const allowedTimes = [
       "08:00",
       "09:00",
@@ -115,9 +108,8 @@ app.post("/book", (req, res, next) => {
       );
     }
 
-    // ============================
-    // 🚫 BLOCK ONLY IF ALREADY APPROVED
-    // ============================
+    // BLOCK ONLY IF ALREADY APPROVED
+
     const { data: existingApproved = [], error: checkError } = await supabase
       .from("bookings")
       .select("id")
@@ -133,14 +125,12 @@ app.post("/book", (req, res, next) => {
       );
     }
 
-    // ============================
     // IMAGE UPLOAD
-    // ============================
+
     let imageUrl = null;
 
-    // ------------------------------
     // Uploaded Reference Image
-    // ------------------------------
+
     if(req.file){
     
         const fileExt = req.file.originalname.split(".").pop();
@@ -164,9 +154,8 @@ app.post("/book", (req, res, next) => {
             .data.publicUrl;
     }
     
-    // ------------------------------
     // AI Generated Image
-    // ------------------------------
+
     else if(req.body.generated_image){
     
         const base64 =
@@ -196,9 +185,9 @@ app.post("/book", (req, res, next) => {
             .getPublicUrl(filePath)
             .data.publicUrl;
     }
-    // ============================
+
     // INSERT BOOKING
-    // ============================
+
     const { error } = await supabase.from("bookings").insert([{
       name,
       email,
@@ -212,9 +201,8 @@ app.post("/book", (req, res, next) => {
 
     if (error) throw error;
 
-    // ==========================
     // SEND EMAIL TO ADMIN
-    // ==========================
+
     try {
 
     await transporter.sendMail({
@@ -261,9 +249,8 @@ res.send("Booking successful!");
   }
 });
 
-// ============================
 // GET ALL BOOKINGS
-// ============================
+
 app.get("/bookings", async (req, res) => {
   const { data, error } = await supabase
     .from("bookings")
@@ -278,9 +265,8 @@ app.get("/bookings", async (req, res) => {
   res.json(data);
 });
 
-// =================================================
 // UPDATE BOOKING STATUS
-// =================================================
+
 app.patch("/bookings/:id", async (req, res) => {
   try {
 
@@ -317,9 +303,7 @@ app.patch("/bookings/:id", async (req, res) => {
 
 }
 
-    // ==========================
     // SEND EMAIL
-    // ==========================
 
     if (status === "approved") {
 
@@ -466,9 +450,8 @@ if (rejectError) throw rejectError;
   }
 });
 
-// =================================================
-// GALLERY UPLOAD (UNCHANGED)
-// =================================================
+// GALLERY UPLOAD
+
 app.post("/gallery", upload.single("image"), async (req, res) => {
   try {
     const { category } = req.body;
@@ -505,9 +488,8 @@ app.post("/gallery", upload.single("image"), async (req, res) => {
   }
 });
 
-// ============================
 // GET GALLERY
-// ============================
+
 app.get("/gallery", async (req, res) => {
   const { data, error } = await supabase
     .from("gallery")
@@ -522,9 +504,8 @@ app.get("/gallery", async (req, res) => {
   res.json(data);
 });
 
-// =================================================
 // DELETE GALLERY IMAGE
-// =================================================
+
 app.delete("/gallery/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -541,9 +522,9 @@ app.delete("/gallery/:id", async (req, res) => {
   res.send("Gallery image deleted");
 });
 
-// =================================================
-// OPENAI DESIGN FINDER (IMAGE + TEXT)
-// =================================================
+
+// OPENAI DESIGN FINDER
+
 app.post("/design-finder", upload.single("reference_image"), async (req, res) => {
   try {
   
@@ -641,9 +622,9 @@ app.post("/design-finder", upload.single("reference_image"), async (req, res) =>
   }
   
   });
-// ============================
+
 // SERVER RUN
-// ============================
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

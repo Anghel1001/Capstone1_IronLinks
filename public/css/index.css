@@ -1,9 +1,5 @@
-/* ===============================
-   DASHBOARD
-================================ */
-/* ===============================
-   HERO SECTION (UPDATED DESIGN)
-================================ */
+/* DASHBOARD */
+/* HERO SECTION */
 
 .hero{
    position:relative;
@@ -61,9 +57,7 @@
    transform:scale(1.02);
    transition:.3s;
    }
-    /* ===============================
-       ABOUT SECTION
-    ================================ */
+    /* ABOUT SECTION */
     
     .about{
       background:rgba(255, 255, 255, 0.95);
@@ -109,9 +103,7 @@ color:#444;
 }
     
     
-    /* ===============================
-       GALLERY
-    ================================ */
+    /* GALLERY */
     
 .gallery{
 padding:80px 20px;

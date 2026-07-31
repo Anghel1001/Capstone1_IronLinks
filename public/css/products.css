@@ -1,6 +1,4 @@
-/* ========================================
-   BODY
-======================================== */
+/* BODY */
 
 body{
    margin:0;
@@ -8,9 +6,7 @@ body{
    }
    
    
-   /* ========================================
-      PRODUCT SECTION
-   ======================================== */
+   /* PRODUCT SECTION */
    
    .product-section{
    
@@ -24,7 +20,7 @@ body{
    flex-direction:column;
    align-items:center;
    
-   /* IMPORTANT: prevents shrinking */
+   /* prevents shrinking */
    justify-content:flex-start;
    
    padding:40px 20px;
@@ -53,9 +49,7 @@ body{
    }
    
    
-   /* ========================================
-      TITLE
-   ======================================== */
+   /* TITLE */
    
    .product-section h2{
    font-family:'Playfair Display';
@@ -66,9 +60,7 @@ body{
    }
    
    
-   /* ========================================
-      NAVIGATION
-   ======================================== */
+   /* NAVIGATION */
    
    .product-nav{
    display:flex;
@@ -94,9 +86,7 @@ body{
    }
    
    
-   /* ========================================
-      TAB CONTENT
-   ======================================== */
+   /* TAB CONTENT */
    
    .product-tab-content{
    display:none;
@@ -110,9 +100,7 @@ body{
    }
    
    
-   /* ========================================
-      LARGE PRODUCT CARD (CONSISTENT SIZE)
-   ======================================== */
+   /* LARGE PRODUCT CARD (CONSISTENT SIZE) */
    
    .product-container{
    
@@ -137,9 +125,7 @@ min-height:auto;
    }
    
    
-   /* ========================================
-      PRODUCT IMAGE
-   ======================================== */
+   /* PRODUCT IMAGE */
    
    .product-image{
    display:flex;
@@ -164,9 +150,7 @@ background:#f5f5f5;
    }
    
    
-   /* ========================================
-      PRODUCT DETAILS
-   ======================================== */
+   /* PRODUCT DETAILS */
    
    .product-details{
    display:flex;
@@ -191,9 +175,7 @@ background:#f5f5f5;
    }
    
    
-   /* ========================================
-      STYLE OPTIONS
-   ======================================== */
+   /* STYLE OPTIONS */
    
    .style-options{
    display:flex;
@@ -217,9 +199,7 @@ background:#f5f5f5;
    }
    
    
-   /* ========================================
-      BUTTON ICONS
-   ======================================== */
+   /* BUTTON ICONS */
    
    .product-icons{
    display:flex;
@@ -241,9 +221,7 @@ background:#f5f5f5;
    }
    
    
-   /* ========================================
-      QUOTE BOX
-   ======================================== */
+   /* QUOTE BOX */
    
    .quote-box{
    background:#f5f5f5;
@@ -265,9 +243,7 @@ background:#f5f5f5;
    }
    
    
-   /* ========================================
-      CUSTOMIZE
-   ======================================== */
+   /* CUSTOMIZE */
    
    .customize-card{
    display:grid;
@@ -324,9 +300,7 @@ background:#f5f5f5;
 
    pointer-events:none;
 }
-   /* ========================================
-      CUSTOM BUTTONS
-   ======================================== */
+   /* CUSTOM BUTTONS */
    
    .custom-actions{
    display:flex;
@@ -354,9 +328,7 @@ background:#f5f5f5;
    }
    
    
-   /* ========================================
-      RESPONSIVE
-   ======================================== */
+   /* RESPONSIVE */
    
    @media(max-width:1100px){
    
@@ -403,9 +375,7 @@ background:#f5f5f5;
    }
    
    
-   /* ========================================
-      QR MODAL
-   ======================================== */
+   /* QR MODAL */
    
    .modal{
    display:none;
@@ -466,9 +436,7 @@ background:#f5f5f5;
    background:#333;
    }
 
-   /* ===============================
-LOADING SPINNER
-=============================== */
+   /* LOADING SPINNER */
 
 .loading-design{
    text-align:center;

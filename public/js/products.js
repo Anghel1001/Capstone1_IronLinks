@@ -308,22 +308,26 @@ openBooking();
   
   // PHOTO VIEW 
 
-document.querySelectorAll(".viewScale")
-.forEach(button => {
+document.querySelectorAll(".viewScale").forEach(button => {
 
-button.addEventListener("click", () => {
+    button.addEventListener("click", () => {
 
-const model =
-button.getAttribute("data-model")
+        const container = button.closest(".product-container");
 
-const photoUrl =
-button.getAttribute("data-photo") +
-"&model=" + encodeURIComponent(model)
+        // Get the currently selected style
+        const activeStyle = container.querySelector(".style-btn.active");
 
-window.open(photoUrl, "_blank")
+        const model = activeStyle.dataset.model;
 
-})
-})
+        const photoUrl =
+            button.dataset.photo +
+            "&model=" + encodeURIComponent(model);
+
+        window.open(photoUrl, "_blank");
+
+    });
+
+});
 
 
 window.addEventListener("beforeunload", () => {
